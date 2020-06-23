@@ -1,0 +1,52 @@
+{
+  "name": "@gridsuite/commons-ui",
+  "version": "1.0.0",
+  "description": "common react components for gridsuite applications",
+  "main": "lib/index.js",
+  "files": [
+    "css",
+    "es",
+    "lib",
+    "umd"
+  ],
+  "scripts": {
+    "build": "nwb build-react-component --copy-files --no-demo",
+    "clean": "nwb clean-module && nwb clean-demo",
+    "prepublishOnly": "npm run build",
+    "start": "nwb serve-react-demo",
+    "test": "nwb test-react",
+    "test:coverage": "nwb test-react --coverage",
+    "test:watch": "nwb test-react --server"
+  },
+  "dependencies": {
+    "react-intl": "^3.11.0",
+    "react-request-fullscreen": "^1.1.2",
+    "prop-types": "15.7.2",
+    "@svgr/webpack": "^5.4.0"
+  },
+  "peerDependencies": {
+    "@material-ui/icons": "^4.5.1",
+    "@material-ui/core": "^4.9.5",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@material-ui/icons": "^4.5.1",
+    "@material-ui/core": "^4.9.5",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "bufferutil": "^4.0.1",
+    "inferno": "^7.4.2",
+    "nwb": "^0.25.x",
+    "type-fest": "^0.13.1",
+    "utf-8-validate": "^5.0.2",
+    "webpack-plugin-serve": "^1.0.1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "author": "gridsuite team",
+  "homepage": "https://github.com/gridsuite",
+  "license": "MPL",
+  "repository": "git://github.com/gridsuite/commons-ui.git"
+}
