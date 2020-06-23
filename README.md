@@ -2,7 +2,8 @@
 
 Library for sharing GridSuite apps commons components
 
-###For developpers
+#### For developpers
+
 If you want to test the library usage in a consumer application my-app
 change the dependency from `@gridsuite/commons-ui:'^x.x.x'` to  `@gridsuite/commons-ui:'file:../path/to/the/commons-ui'` 
 then build the commons-ui `npm install` `npm run build`
