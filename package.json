@@ -2,7 +2,7 @@
   "name": "@gridsuite/commons-ui",
   "version": "1.0.0",
   "description": "common react components for gridsuite applications",
-  "main": "lib/index.js",
+  "main": "lib/src/index.js",
   "files": [
     "css",
     "es",
