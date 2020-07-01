@@ -34,8 +34,8 @@ import FullScreen, {fullScreenSupported} from "react-request-fullscreen";
 
 
 import {IntlProvider} from 'react-intl';
-import messages_en from "../translations/en.json";
-import messages_fr from "../translations/fr.json";
+import messages_en from "../translations/top-bar-en.json";
+import messages_fr from "../translations/top-bar-fr.json";
 
 const messages = {
     'en': messages_en,

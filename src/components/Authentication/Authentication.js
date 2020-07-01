@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 import {IntlProvider} from 'react-intl';
-import messages_en from "../translations/en.json";
-import messages_fr from "../translations/fr.json";
+import messages_en from "../translations/authentication-en.json";
+import messages_fr from "../translations/authentication-fr.json";
 
 const messages = {
     'en': messages_en,
