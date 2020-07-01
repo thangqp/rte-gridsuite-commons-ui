@@ -148,7 +148,7 @@ const TopBar = ({appName, onParametersClick, onLogoutClick, onLogoClick, user}) 
             <Toolbar>
                 <PowsyblLogo className={classes.logo} onClick={onLogoClick}/>
                 <Typography variant="h6" className={classes.title} onClick={onLogoClick}>
-                <h1> {appName} </h1>
+                    {appName}
                 </Typography>
                 <div className={classes.grow} />
 

@@ -11,6 +11,7 @@ import {render} from 'react-dom'
 import TopBar from '../../src/components/TopBar'
 
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
+import Authentication from "../../src/components/Authentication";
 
 const lightTheme = createMuiTheme({
     palette: {
@@ -29,6 +30,8 @@ const Demo = () => {
         <div>
             <ThemeProvider theme={lightTheme}>
                     <TopBar appName="StudyGrid" onParametersClick={() => console.log("settings")} onLogoutClick={() => console.log("logout")} onLogoClick={() => console.log("logo")} user={{profile : {name : "John Doe"}}} />
+                    <Authentication  onLoginClick={() => console.log("onLoginClick callback")} disabled={false}/>
+                    <Authentication  onLoginClick={() => console.log("onLoginClick callback")} disabled={true}/>
             </ThemeProvider>
         </div>
   )
