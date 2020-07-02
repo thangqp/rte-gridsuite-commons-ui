@@ -50,7 +50,7 @@ const messages = {
 const language = navigator.language.split(/[-_]/)[0];  //
 
 
-const Authentication = ({onLoginClick, disabled}) => {
+const Login = ({onLoginClick, disabled}) => {
     const classes = useStyles();
 
     function Copyright() {
@@ -97,4 +97,4 @@ const Authentication = ({onLoginClick, disabled}) => {
     );
 };
 
-export default Authentication;
+export default Login;

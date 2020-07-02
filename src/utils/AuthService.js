@@ -6,7 +6,7 @@
  */
 import {UserManager} from 'oidc-client';
 import {UserManagerMock} from "./UserManagerMock";
-import {setLoggedUser, setSignInCallbackError} from "../../redux/actions";
+import {setLoggedUser, setSignInCallbackError} from "./actions";
 import jwtDecode from 'jwt-decode';
 
 const hackauthoritykey = "oidc.hack.authority";
@@ -46,7 +46,6 @@ function initializeAuthentication(dispatch, isSilentRenew, idpSettings, useAuthe
                     }
                 }
                 authority = authority || sessionStorage.getItem(hackauthoritykey) || idpSettings.authority;
-
                 let settings = {
                     authority,
                     client_id: idpSettings.client_id,

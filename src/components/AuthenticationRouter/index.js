@@ -7,4 +7,4 @@
 
 import React from 'react'
 
-export { default } from './Authentication';
+export { default } from './AuthenticationRouter';
