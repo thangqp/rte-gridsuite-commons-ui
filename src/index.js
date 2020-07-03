@@ -8,3 +8,4 @@ export AuthenticationRouter from './components/AuthenticationRouter'
 
 export UserManagerMock from './utils/UserManagerMock'
 export {initializeAuthentication, handleSilentRenewCallback, login, logout, dispatchUser, handleSigninCallback, getPreLoginPath} from './utils/AuthService'
+export {USER, setLoggedUser, SIGNIN_CALLBACK_ERROR, setSignInCallbackError} from './utils/actions'
