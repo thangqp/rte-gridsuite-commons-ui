@@ -38,18 +38,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-import {IntlProvider} from 'react-intl';
-import messages_en from "../translations/authentication-en.json";
-import messages_fr from "../translations/authentication-fr.json";
-
-const messages = {
-    'en': messages_en,
-    'fr': messages_fr
-};
-
-const language = navigator.language.split(/[-_]/)[0];  //
-
-
 const Login = ({onLoginClick, disabled}) => {
     const classes = useStyles();
 
@@ -67,33 +55,31 @@ const Login = ({onLoginClick, disabled}) => {
     }
 
     return (
-        <IntlProvider locale={language} messages={messages[language]}>
-            <Container component="main" maxWidth="xs">
-                <CssBaseline />
-                <div className={classes.paper}>
-                    <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        <FormattedMessage id="login"/> ?
-                    </Typography>
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                    <FormattedMessage id="login/login" defaultMessage={"login"}/> ?
+                </Typography>
 
-                    <Button
-                        disabled={disabled}
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                        onClick={onLoginClick}
-                    >
-                        <FormattedMessage id="connection"/>
-                    </Button>
-                </div>
-                <Box mt={2}>
-                    <Copyright />
-                </Box>
-            </Container>
-        </IntlProvider>
+                <Button
+                    disabled={disabled}
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={onLoginClick}
+                >
+                    <FormattedMessage id="login/connection" defaultMessage={"connection"}/>
+                </Button>
+            </div>
+            <Box mt={2}>
+                <Copyright />
+            </Box>
+        </Container>
     );
 };
 

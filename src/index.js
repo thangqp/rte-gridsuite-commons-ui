@@ -1,5 +1,9 @@
 export TopBar from './components/TopBar'
 export AuthenticationRouter from './components/AuthenticationRouter'
 
-export {initializeAuthentication, logout, dispatchUser, getPreLoginPath} from './utils/AuthService'
+export {initializeAuthenticationDev, initializeAuthenticationProd, logout, dispatchUser, getPreLoginPath} from './utils/AuthService'
 export {USER, setLoggedUser, SIGNIN_CALLBACK_ERROR, setSignInCallbackError} from './utils/actions'
+export logon_en from './components/translations/login-en'
+export login_fr from './components/translations/login-fr'
+export top_bar_en from './components/translations/top-bar-en'
+export top_bar_fr from './components/translations/top-bar-fr'
