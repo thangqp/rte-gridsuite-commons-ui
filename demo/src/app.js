@@ -5,14 +5,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 import TopBar from '../../src/components/TopBar'
 
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import AuthenticationRouter from "../../src/components/AuthenticationRouter";
-import {UserManagerMock} from "../../src/utils/UserManagerMock";
-import {logout} from "../../src/utils/AuthService";
+import {initializeAuthenticationDev,logout} from "../../src/utils/AuthService";
+import { useRouteMatch } from 'react-router';
 
 import {
     useHistory,
@@ -32,28 +32,38 @@ const App = () => {
     const [userManager, setUserManager] = useState({instance: null, error : null});
     const [user, setUser] = useState(null);
 
-    setTimeout(() => setUserManager({instance: new UserManagerMock({}), error : null}), 2000);
+    let matchSilentRenewCallbackUrl = useRouteMatch({
+        path: '/silent-renew-callback',
+        exact: true,
+    });
+
+    const dispatch = (e) => {if (e.type === 'USER' ) {setUser(e.user)}};
+
+    useEffect(() => {
+        initializeAuthenticationDev(dispatch, matchSilentRenewCallbackUrl != null)
+            .then((userManager) => {
+                setUserManager({ instance: userManager, error: null });
+            })
+            .catch(function (error) {
+                setUserManager({ instance: null, error: error.message });
+                console.debug('error when creating userManager');
+            });
+    }, []);
 
     return (
             <div>
                 <ThemeProvider theme={lightTheme}>
-                    <TopBar appName="StudyGrid"
+                    <TopBar appName="DemoApp"
                             onParametersClick={() => console.log("settings")}
-                            onLogoutClick={() => console.log('logout')}
+                            onLogoutClick={() =>  logout(dispatch, userManager.instance)}
                             onLogoClick={() => console.log("logo")}
-                            user={{profile : {name : "John Doe"}}} />
-
+                            user={user} />
                     {
                         user !== null ?
-                            (<TopBar appName="StudyGrid"
-                                     onParametersClick={() => console.log("settings")}
-                                     onLogoutClick={() => setUser(null)}
-                                     onLogoClick={() => console.log("logo")}
-                                     user={{profile : {name : "John Doe"}}} />
-                            ) :
+                            (<h1 style={{'marginLeft' : '45%', 'marginTop' : '10%'}}>Connected</h1>) :
                             (<AuthenticationRouter userManager={userManager}
                                               signInCallbackError={null}
-                                              dispatch={(e) => setUser(e.user)}
+                                              dispatch={dispatch}
                                               history={history}
                                               location={location}/>)
                     }
