@@ -37,9 +37,20 @@ const App = () => {
     return (
             <div>
                 <ThemeProvider theme={lightTheme}>
-                    <TopBar appName="StudyGrid" onParametersClick={() => console.log("settings")} onLogoutClick={() => console.log('logout')} onLogoClick={() => console.log("logo")} user={{profile : {name : "John Doe"}}} />
+                    <TopBar appName="StudyGrid"
+                            onParametersClick={() => console.log("settings")}
+                            onLogoutClick={() => console.log('logout')}
+                            onLogoClick={() => console.log("logo")}
+                            user={{profile : {name : "John Doe"}}} />
+
                     {
-                        user !== null ? (<button style={{'marginLeft' : '45%', 'marginTop' : '10%'}} onClick={() => setUser(null)}>Logout ?</button>) :
+                        user !== null ?
+                            (<TopBar appName="StudyGrid"
+                                     onParametersClick={() => console.log("settings")}
+                                     onLogoutClick={() => setUser(null)}
+                                     onLogoClick={() => console.log("logo")}
+                                     user={{profile : {name : "John Doe"}}} />
+                            ) :
                             (<AuthenticationRouter userManager={userManager}
                                               signInCallbackError={null}
                                               dispatch={(e) => setUser(e.user)}
