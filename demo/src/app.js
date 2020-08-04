@@ -12,6 +12,7 @@ import TopBar from '../../src/components/TopBar'
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import AuthenticationRouter from "../../src/components/AuthenticationRouter";
 import {UserManagerMock} from "../../src/utils/UserManagerMock";
+import {logout} from "../../src/utils/AuthService";
 
 import {
     useHistory,
@@ -29,18 +30,22 @@ const App = () => {
     const location = useLocation();
 
     const [userManager, setUserManager] = useState({instance: null, error : null});
+    const [user, setUser] = useState(null);
 
     setTimeout(() => setUserManager({instance: new UserManagerMock({}), error : null}), 2000);
 
     return (
             <div>
                 <ThemeProvider theme={lightTheme}>
-                    <TopBar appName="StudyGrid" onParametersClick={() => console.log("settings")} onLogoutClick={() => console.log("logout")} onLogoClick={() => console.log("logo")} user={{profile : {name : "John Doe"}}} />
-                    <AuthenticationRouter userManager={userManager}
-                                          signInCallbackError={null}
-                                          dispatch={() => console.log('dispatch')}
-                                          history={history}
-                                          location={location}/>
+                    <TopBar appName="StudyGrid" onParametersClick={() => console.log("settings")} onLogoutClick={() => console.log('logout')} onLogoClick={() => console.log("logo")} user={{profile : {name : "John Doe"}}} />
+                    {
+                        user !== null ? (<button style={{'marginLeft' : '45%', 'marginTop' : '10%'}} onClick={() => setUser(null)}>Logout ?</button>) :
+                            (<AuthenticationRouter userManager={userManager}
+                                              signInCallbackError={null}
+                                              dispatch={(e) => setUser(e.user)}
+                                              history={history}
+                                              location={location}/>)
+                    }
                 </ThemeProvider>
             </div>
     )
