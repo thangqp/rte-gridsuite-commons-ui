@@ -10,7 +10,6 @@ import React, {useState} from 'react'
 import TopBar from '../../src/components/TopBar'
 
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
-import Login from "../../src/components/Login";
 import AuthenticationRouter from "../../src/components/AuthenticationRouter";
 import {UserManagerMock} from "../../src/utils/UserManagerMock";
 
