@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react'
+import React, {useState} from 'react'
 
 import TopBar from '../../src/components/TopBar'
 
@@ -29,16 +29,15 @@ const App = () => {
     const history = useHistory();
     const location = useLocation();
 
-    console.log(history);
-    console.log(location);
+    const [userManager, setUserManager] = useState({instance: null, error : null});
+
+    setTimeout(() => setUserManager({instance: new UserManagerMock({}), error : null}), 2000);
 
     return (
             <div>
                 <ThemeProvider theme={lightTheme}>
                     <TopBar appName="StudyGrid" onParametersClick={() => console.log("settings")} onLogoutClick={() => console.log("logout")} onLogoClick={() => console.log("logo")} user={{profile : {name : "John Doe"}}} />
-                    <Login onLoginClick={() => console.log("onLoginClick callback")} disabled={false}/>
-                    <Login onLoginClick={() => console.log("onLoginClick callback")} disabled={true}/>
-                    <AuthenticationRouter userManager={{instance: new UserManagerMock({}), error : null}}
+                    <AuthenticationRouter userManager={userManager}
                                           signInCallbackError={null}
                                           dispatch={() => console.log('dispatch')}
                                           history={history}
