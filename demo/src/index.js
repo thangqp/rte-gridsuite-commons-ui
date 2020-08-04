@@ -8,33 +8,19 @@
 import React from 'react'
 import {render} from 'react-dom'
 
-import TopBar from '../../src/components/TopBar'
+import App from "./app"
 
-import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
-import Login from "../../src/components/Login";
-
-const lightTheme = createMuiTheme({
-    palette: {
-        type: 'light',
-    }
-});
-
-const darkTheme = createMuiTheme({
-    palette: {
-        type: 'dark',
-    }
-});
+import {
+    BrowserRouter,
+} from "react-router-dom";
 
 const Demo = () => {
     return (
-        <div>
-            <ThemeProvider theme={lightTheme}>
-                    <TopBar appName="StudyGrid" onParametersClick={() => console.log("settings")} onLogoutClick={() => console.log("logout")} onLogoClick={() => console.log("logo")} user={{profile : {name : "John Doe"}}} />
-                    <Login onLoginClick={() => console.log("onLoginClick callback")} disabled={false}/>
-                    <Login onLoginClick={() => console.log("onLoginClick callback")} disabled={true}/>
-            </ThemeProvider>
-        </div>
-  )
+        <BrowserRouter basename={'/'} >
+            <App/>
+        </BrowserRouter>
+
+    )
 };
 
 render(<Demo/>, document.querySelector('#demo'));
