@@ -19,8 +19,6 @@
     "test:watch": "nwb test-react --server"
   },
   "dependencies": {
-    "react-router": "^5.1.2",
-    "react-router-dom": "^5.1.2",
     "oidc-client": "^1.10.1",
     "jwt-decode": "^2.2.0",
     "react-intl": "^3.11.0",
@@ -29,12 +27,16 @@
     "@svgr/webpack": "^5.4.0"
   },
   "peerDependencies": {
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
     "@material-ui/icons": "^4.5.1",
     "@material-ui/core": "^4.9.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
     "@material-ui/icons": "^4.5.1",
     "@material-ui/core": "^4.9.5",
     "react": "^16.13.1",
