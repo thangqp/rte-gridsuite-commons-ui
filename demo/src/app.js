@@ -16,6 +16,7 @@ import { useRouteMatch } from 'react-router';
 import { IntlProvider } from 'react-intl';
 
 import {
+    BrowserRouter,
     useHistory,
     useLocation
 } from "react-router-dom";
@@ -38,7 +39,7 @@ const lightTheme = createMuiTheme({
     }
 });
 
-const App = () => {
+const AppContent = () => {
     const history = useHistory();
     const location = useLocation();
 
@@ -86,6 +87,14 @@ const App = () => {
                     }
                 </ThemeProvider>
             </IntlProvider>)
+};
+
+const App = () => {
+    return (
+        <BrowserRouter basename={'/'} >
+            <AppContent/>
+        </BrowserRouter>
+    )
 };
 
 export default App;
