@@ -13,11 +13,24 @@ import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import AuthenticationRouter from "../../src/components/AuthenticationRouter";
 import {initializeAuthenticationDev,logout} from "../../src/utils/AuthService";
 import { useRouteMatch } from 'react-router';
+import { IntlProvider } from 'react-intl';
 
 import {
     useHistory,
     useLocation
 } from "react-router-dom";
+
+import {top_bar_en, top_bar_fr, login_fr, login_en,} from  "../../src/index"
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+
+const messages = {
+    en: {...login_en, ...top_bar_en },
+    fr: {...login_fr, ...top_bar_fr },
+};
+
+const language = navigator.language.split(/[-_]/)[0]; // language without region code
 
 const lightTheme = createMuiTheme({
     palette: {
@@ -51,8 +64,9 @@ const App = () => {
     }, []);
 
     return (
-            <div>
+            <IntlProvider locale={language} messages={messages[language]}>
                 <ThemeProvider theme={lightTheme}>
+                    <CssBaseline />
                     <TopBar appName="DemoApp"
                             onParametersClick={() => console.log("settings")}
                             onLogoutClick={() =>  logout(dispatch, userManager.instance)}
@@ -60,16 +74,18 @@ const App = () => {
                             user={user} />
                     {
                         user !== null ?
-                            (<h1 style={{'marginLeft' : '45%', 'marginTop' : '10%'}}>Connected</h1>) :
+                            (<Box mt={20}>
+                                <Typography variant="h3"  color="textPrimary" align="center">Connected</Typography>
+                            </Box>
+                        ) :
                             (<AuthenticationRouter userManager={userManager}
-                                              signInCallbackError={null}
-                                              dispatch={dispatch}
-                                              history={history}
-                                              location={location}/>)
+                                                   signInCallbackError={null}
+                                                   dispatch={dispatch}
+                                                   history={history}
+                                                   location={location}/>)
                     }
                 </ThemeProvider>
-            </div>
-    )
+            </IntlProvider>)
 };
 
 export default App;
