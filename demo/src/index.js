@@ -8,30 +8,6 @@
 import React from 'react'
 import {render} from 'react-dom'
 
-import TopBar from '../../src/components/TopBar'
+import App from "./app"
 
-import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
-
-const lightTheme = createMuiTheme({
-    palette: {
-        type: 'light',
-    }
-});
-
-const darkTheme = createMuiTheme({
-    palette: {
-        type: 'dark',
-    }
-});
-
-const Demo = () => {
-    return (
-        <div>
-            <ThemeProvider theme={lightTheme}>
-                    <TopBar appName="StudyGrid" onParametersClick={() => console.log("settings")} onLogoutClick={() => console.log("logout")} onLogoClick={() => console.log("logo")} user={{profile : {name : "John Doe"}}} />
-            </ThemeProvider>
-        </div>
-  )
-};
-
-render(<Demo/>, document.querySelector('#demo'));
+render(<App/>, document.querySelector('#demo'));

@@ -32,18 +32,6 @@ import PropTypes from "prop-types";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullScreen, {fullScreenSupported} from "react-request-fullscreen";
 
-
-import {IntlProvider} from 'react-intl';
-import messages_en from "../translations/en.json";
-import messages_fr from "../translations/fr.json";
-
-const messages = {
-    'en': messages_en,
-    'fr': messages_fr
-};
-
-const language = navigator.language.split(/[-_]/)[0];  //
-
 const useStyles = makeStyles(() => ({
     grow: {
         flexGrow: 1,
@@ -141,7 +129,6 @@ const TopBar = ({appName, onParametersClick, onLogoutClick, onLogoClick, user}) 
     }
 
     return (
-        <IntlProvider locale={language} messages={messages[language]}>
         <AppBar position="static" color="default" className={classes.appBar}>
             <FullScreen ref={fullScreenRef} onFullScreenChange={onFullScreenChange} onFullScreenError={(e) => console.debug("full screen error : " + e.message)}>
             </FullScreen>
@@ -205,7 +192,7 @@ const TopBar = ({appName, onParametersClick, onLogoutClick, onLogoClick, user}) 
                                     <SettingsIcon fontSize="small" />
                                 </ListItemIcon>
                                 <ListItemText>
-                                    <FormattedMessage id="settings"/>
+                                    <FormattedMessage id="top-bar/settings" defaultMessage={"Settings"}/>
                                 </ListItemText>
                             </StyledMenuItem>
                             {
@@ -217,13 +204,13 @@ const TopBar = ({appName, onParametersClick, onLogoutClick, onLogoClick, user}) 
                                                     <FullscreenExitIcon fontSize="small" />
                                                 </ListItemIcon>
                                                 <ListItemText>
-                                                    <FormattedMessage id="exitFullScreen"/>
+                                                    <FormattedMessage id="top-bar/exitFullScreen" defaultMessage={"Exit full screen mode"}/>
                                                 </ListItemText> </>) : (<>
                                                 <ListItemIcon>
                                                     <FullscreenIcon fontSize="small" />
                                                 </ListItemIcon>
                                                 <ListItemText>
-                                                    <FormattedMessage id="goFullScreen"/>
+                                                    <FormattedMessage id="top-bar/goFullScreen" defaultMessage={"Full screen"}/>
                                                 </ListItemText></>)
                                         }
                                     </StyledMenuItem>) : <></>
@@ -233,7 +220,7 @@ const TopBar = ({appName, onParametersClick, onLogoutClick, onLogoClick, user}) 
                                     <ExitToAppIcon fontSize="small" />
                                 </ListItemIcon>
                                 <ListItemText >
-                                    <FormattedMessage id="logout"/>
+                                    <FormattedMessage id="top-bar/logout" defaultMessage={"Logout"}/>
                                 </ListItemText>
                             </StyledMenuItem>
                         </StyledMenu>
@@ -241,7 +228,6 @@ const TopBar = ({appName, onParametersClick, onLogoutClick, onLogoClick, user}) 
                 )}
             </Toolbar>
         </AppBar>
-        </IntlProvider>
     )
 };
 
