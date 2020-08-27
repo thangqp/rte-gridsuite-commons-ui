@@ -8,6 +8,7 @@
 import React, {useRef, useState} from "react";
 
 import {FormattedMessage} from "react-intl";
+import {Link} from "react-router-dom";
 
 import AppBar from "@material-ui/core/AppBar";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -162,8 +163,21 @@ const TopBar = ({appName, appColor, onParametersClick, onLogoutClick, onLogoClic
                                     <PowsyblLogo className={classes.menuIcon}  />
                                 </ListItemIcon>
                                 <ListItemText >
-                                    <span style={{fontWeight:"bold"}}>Grid</span>
-                                    <span style={{color:appColor}}>{appName}</span>
+                                    <Link to={`/studies`}>
+                                        <span style={{fontWeight:"bold"}}>Grid</span>
+                                        <span style={{color:appColor}}>StudyApp</span>
+                                    </Link>
+                                </ListItemText>
+                            </StyledMenuItem>
+                            <StyledMenuItem onClick={onLogoClicked}>
+                                <ListItemIcon>
+                                    <PowsyblLogo className={classes.menuIcon}  />
+                                </ListItemIcon>
+                                <ListItemText >
+                                    <Link to={`/merges`}>
+                                        <span style={{fontWeight:"bold"}}>Grid</span>
+                                        <span style={{color:appColor}}>MergeApp</span>
+                                    </Link>
                                 </ListItemText>
                             </StyledMenuItem>
                         </StyledMenu>
