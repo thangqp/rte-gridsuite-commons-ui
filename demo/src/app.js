@@ -8,6 +8,7 @@
 import React, {useEffect, useState} from 'react'
 
 import TopBar from '../../src/components/TopBar'
+import { appConfig }  from '../../src/config'
 
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import AuthenticationRouter from "../../src/components/AuthenticationRouter";
@@ -72,7 +73,9 @@ const AppContent = () => {
                             onParametersClick={() => console.log("settings")}
                             onLogoutClick={() =>  logout(dispatch, userManager.instance)}
                             onLogoClick={() => console.log("logo")}
-                            user={user} />
+                            user={user}
+                            studyAppColor={ appConfig.studyAppColor }
+                            mergeAppColor={ appConfig.mergeAppColor }/>
                     {
                         user !== null ?
                             (<Box mt={20}>

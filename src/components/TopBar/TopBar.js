@@ -82,7 +82,7 @@ const StyledMenuItem = withStyles(theme => ({
     },
 }))(MenuItem);
 
-const TopBar = ({appName, appColor, onParametersClick, onLogoutClick, onLogoClick, user}) => {
+const TopBar = ({appName, appColor, studyAppColor, mergeAppColor, onParametersClick, onLogoutClick, onLogoClick, user}) => {
     const classes = useStyles();
 
     const [anchorElGeneralMenu, setAnchorElGeneralMenu] = React.useState(null);
@@ -163,9 +163,9 @@ const TopBar = ({appName, appColor, onParametersClick, onLogoutClick, onLogoClic
                                     <PowsyblLogo className={classes.menuIcon}  />
                                 </ListItemIcon>
                                 <ListItemText >
-                                    <Link to={`/studies`}>
+                                    <Link style={{textDecoration:"none"}} to={`/studies`}>
                                         <span style={{fontWeight:"bold"}}>Grid</span>
-                                        <span style={{color:appColor}}>StudyApp</span>
+                                        <span style={{color:studyAppColor}}>Study</span>
                                     </Link>
                                 </ListItemText>
                             </StyledMenuItem>
@@ -174,9 +174,9 @@ const TopBar = ({appName, appColor, onParametersClick, onLogoutClick, onLogoClic
                                     <PowsyblLogo className={classes.menuIcon}  />
                                 </ListItemIcon>
                                 <ListItemText >
-                                    <Link to={`/merges`}>
+                                    <Link style={{textDecoration:"none"}} to={`/merges`}>
                                         <span style={{fontWeight:"bold"}}>Grid</span>
-                                        <span style={{color:appColor}}>MergeApp</span>
+                                        <span style={{color:mergeAppColor}}>Merge</span>
                                     </Link>
                                 </ListItemText>
                             </StyledMenuItem>
