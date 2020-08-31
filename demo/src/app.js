@@ -74,8 +74,8 @@ const AppContent = () => {
                             onLogoutClick={() =>  logout(dispatch, userManager.instance)}
                             onLogoClick={() => console.log("logo")}
                             user={user}
-                            studyAppColor={ appConfig.studyAppColor }
-                            mergeAppColor={ appConfig.mergeAppColor }/>
+                            studyAppColor={appConfig.studyAppColor}
+                            mergeAppColor={appConfig.mergeAppColor}/>
                     {
                         user !== null ?
                             (<Box mt={20}>
