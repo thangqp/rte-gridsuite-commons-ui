@@ -82,7 +82,7 @@ const StyledMenuItem = withStyles(theme => ({
     },
 }))(MenuItem);
 
-const TopBar = ({appName, appColor, studyAppColor, mergeAppColor, onParametersClick, onLogoutClick, onLogoClick, user}) => {
+const TopBar = ({appName, appColor, mergeAppColor, studyAppColor, onParametersClick, onLogoutClick, onLogoClick, user}) => {
     const classes = useStyles();
 
     const [anchorElGeneralMenu, setAnchorElGeneralMenu] = React.useState(null);
