@@ -8,7 +8,6 @@
 import React, {useEffect, useState} from 'react'
 
 import TopBar from '../../src/components/TopBar'
-
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import AuthenticationRouter from "../../src/components/AuthenticationRouter";
 import {initializeAuthenticationDev,logout} from "../../src/utils/AuthService";
