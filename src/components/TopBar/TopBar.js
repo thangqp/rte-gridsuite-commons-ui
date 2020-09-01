@@ -82,7 +82,7 @@ const StyledMenuItem = withStyles(theme => ({
     },
 }))(MenuItem);
 
-const TopBar = ({appName, appColor, mergeAppColor, studyAppColor, onParametersClick, onLogoutClick, onLogoClick, user}) => {
+const TopBar = ({appName, appColor, onParametersClick, onLogoutClick, onLogoClick, user}) => {
     const classes = useStyles();
 
     const [anchorElGeneralMenu, setAnchorElGeneralMenu] = React.useState(null);
@@ -165,7 +165,7 @@ const TopBar = ({appName, appColor, mergeAppColor, studyAppColor, onParametersCl
                                 <ListItemText >
                                     <Link style={{textDecoration:"none"}} to={`/studies`}>
                                         <span style={{fontWeight:"bold"}}>Grid</span>
-                                        <span style={{color:studyAppColor}}>Study</span>
+                                        <span style={{color:appColor}}>Study</span>
                                     </Link>
                                 </ListItemText>
                             </StyledMenuItem>
@@ -176,7 +176,7 @@ const TopBar = ({appName, appColor, mergeAppColor, studyAppColor, onParametersCl
                                 <ListItemText >
                                     <Link style={{textDecoration:"none"}} to={`/merges`}>
                                         <span style={{fontWeight:"bold"}}>Grid</span>
-                                        <span style={{color:mergeAppColor}}>Merge</span>
+                                        <span style={{color:appColor}}>Merge</span>
                                     </Link>
                                 </ListItemText>
                             </StyledMenuItem>
