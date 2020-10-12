@@ -49,6 +49,10 @@ const useStyles = makeStyles(() => ({
         marginLeft: 18,
         cursor: 'pointer',
     },
+    link: {
+        textDecoration: 'none',
+        color: 'inherit',
+    },
 }));
 
 const StyledMenu = withStyles({
@@ -91,6 +95,7 @@ const TopBar = ({
     onLogoClick,
     user,
     children,
+    appsAndUrls,
 }) => {
     const classes = useStyles();
 
@@ -178,16 +183,34 @@ const TopBar = ({
                             open={Boolean(anchorElAppsMenu)}
                             onClose={handleCloseAppsMenu}
                         >
-                            <StyledMenuItem onClick={onLogoClicked}>
-                                <ListItemText>
-                                    <span style={{ fontWeight: 'bold' }}>
-                                        Grid
-                                    </span>
-                                    <span style={{ color: appColor }}>
-                                        {appName}
-                                    </span>
-                                </ListItemText>
-                            </StyledMenuItem>
+                            {appsAndUrls &&
+                                appsAndUrls.map((item) => (
+                                    <a href={item.url} className={classes.link}>
+                                        <StyledMenuItem onClick={onLogoClicked}>
+                                            <ListItemText>
+                                                <span
+                                                    style={{
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    Grid
+                                                </span>
+                                                <span
+                                                    style={{
+                                                        color:
+                                                            item.appColor ===
+                                                            undefined
+                                                                ? 'grey'
+                                                                : item.appColor,
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    {item.name}
+                                                </span>
+                                            </ListItemText>
+                                        </StyledMenuItem>
+                                    </a>
+                                ))}
                         </StyledMenu>
                     </div>
                 )}
