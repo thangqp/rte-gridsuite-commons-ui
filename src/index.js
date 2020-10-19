@@ -1,4 +1,5 @@
 export TopBar from './components/TopBar';
+export Popup from './components/Popup';
 export AuthenticationRouter from './components/AuthenticationRouter';
 
 export {

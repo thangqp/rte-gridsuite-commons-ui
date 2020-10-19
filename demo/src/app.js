@@ -8,6 +8,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import TopBar from '../../src/components/TopBar';
+import Popup from '../../src/components/Popup';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import AuthenticationRouter from '../../src/components/AuthenticationRouter';
@@ -43,6 +44,7 @@ const lightTheme = createMuiTheme({
 const AppContent = () => {
     const history = useHistory();
     const location = useLocation();
+    const [open, setOpen] = useState(false);
 
     const [userManager, setUserManager] = useState({
         instance: null,
@@ -112,6 +114,19 @@ const AppContent = () => {
                         >
                             Connected
                         </Typography>
+                        <Popup
+                            open={open}
+                            setOpen={setOpen}
+                            onClose={() => setOpen(false)}
+                            maxWidth={'xs'}
+                            fullWidth={'true'}
+                            popupTitle={'Popup title here'}
+                            popupContent={'Popup content here'}
+                            showPopupTitle={true}
+                            showPopupActions={true}
+                            customTextValidationBtn={'Create'}
+                            customTextCancelBtn={'Cancel'}
+                        ></Popup>
                     </Box>
                 ) : (
                     <AuthenticationRouter
