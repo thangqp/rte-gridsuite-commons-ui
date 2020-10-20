@@ -39,11 +39,9 @@ const DialogTitle = withStyles(styles)((props) => {
             disableTypography
             className={classes.root}
             {...other}
-            style={{ padding: '16px 24px' }}
+            style={{ padding: '16px 48px' }}
         >
-            <Typography variant="h6" style={{ fontWeight: 600 }}>
-                {children}
-            </Typography>
+            <Typography variant="h6">{children}</Typography>
             {onClose ? (
                 <IconButton
                     aria-label="close"
@@ -59,14 +57,15 @@ const DialogTitle = withStyles(styles)((props) => {
 
 const DialogContent = withStyles((theme) => ({
     root: {
-        padding: '16px 24px',
+        padding: '16px 48px',
     },
 }))(MuiDialogContent);
 
 const DialogActions = withStyles((theme) => ({
     root: {
-        margin: 0,
-        padding: '16px 24px',
+        margin: '10px 24px 24px 24px',
+        padding: '10px 24px 14px 24px',
+        display: 'block',
     },
 }))(MuiDialogActions);
 
@@ -81,13 +80,8 @@ const Popup = (props) => {
         props.setOpen(false);
     };
 
-    const handleClickOpenDialog = () => {
-        props.setOpen(true);
-    };
-
     return (
         <div>
-            <Button onClick={handleClickOpenDialog}>Open dialog</Button>
             <Dialog
                 open={props.open}
                 onClose={handleClose}
@@ -105,20 +99,27 @@ const Popup = (props) => {
                 <DialogContent>
                     <DialogContentText>{props.popupContent}</DialogContentText>
                 </DialogContent>
-                {props.showPopupActions && (
-                    <DialogActions>
-                        <MuiDialogButton
-                            autoFocus
-                            variant="text"
-                            onClick={handleClose}
-                        >
-                            {props.customTextCancelBtn}
-                        </MuiDialogButton>
+                <DialogActions
+                    style={{
+                        textAlign: props.showSingleBtnInLeft ? 'left' : 'right',
+                    }}
+                >
+                    <MuiDialogButton
+                        autoFocus
+                        variant={
+                            props.showSingleBtnInLeft ? 'contained' : 'text'
+                        }
+                        color={props.showSingleBtnInLeft ? 'primary' : ''}
+                        onClick={handleClose}
+                    >
+                        {props.customTextCancelBtn}
+                    </MuiDialogButton>
+                    {!props.showSingleBtn && (
                         <MuiDialogButton variant="outlined">
                             {props.customTextValidationBtn}
                         </MuiDialogButton>
-                    </DialogActions>
-                )}
+                    )}
+                </DialogActions>
             </Dialog>
         </div>
     );
@@ -126,8 +127,6 @@ const Popup = (props) => {
 
 Popup.propTypes = {
     open: PropTypes.bool.isRequired,
-    setOpen: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
     maxWidth: PropTypes.string.isRequired,
     fullWidth: PropTypes.bool.isRequired,
 };

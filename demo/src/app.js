@@ -27,6 +27,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 import PowsyblLogo from '-!@svgr/webpack!../images/powsybl_logo.svg';
+import Button from '@material-ui/core/Button';
 
 const messages = {
     en: { ...login_en, ...top_bar_en },
@@ -75,6 +76,10 @@ const AppContent = () => {
         { name: 'App2', url: '/app2' },
     ];
 
+    const handleClickOpenDialog = () => {
+        setOpen(true);
+    };
+
     useEffect(() => {
         initializeAuthenticationDev(
             dispatch,
@@ -114,18 +119,21 @@ const AppContent = () => {
                         >
                             Connected
                         </Typography>
+                        <Button onClick={handleClickOpenDialog}>
+                            Open dialog
+                        </Button>
                         <Popup
                             open={open}
                             setOpen={setOpen}
-                            onClose={() => setOpen(false)}
                             maxWidth={'xs'}
-                            fullWidth={'true'}
-                            popupTitle={'Popup title here'}
-                            popupContent={'Popup content here'}
-                            showPopupTitle={true}
-                            showPopupActions={true}
-                            customTextValidationBtn={'Create'}
-                            customTextCancelBtn={'Cancel'}
+                            fullWidth={true}
+                            popupTitle={'Popup title here'} // Add text of title here
+                            popupContent={'Popup content here'} // Add content of popup here
+                            showPopupTitle={true} // If you need to show title set it to true
+                            customTextValidationBtn={'Create'} // Customize the text of validation button
+                            customTextCancelBtn={'Cancel'} // Customize the text of cancellation button
+                            showSingleBtn={true} // Show single button action
+                            showSingleBtnInLeft={true} // Show single button in left with custom design
                         ></Popup>
                     </Box>
                 ) : (
