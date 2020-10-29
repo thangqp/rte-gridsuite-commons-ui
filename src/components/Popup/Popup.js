@@ -9,9 +9,9 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
 import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -32,10 +32,10 @@ const styles = (theme) => ({
     },
 });
 
-const DialogTitle = withStyles(styles)((props) => {
+const CustomDialogTitle = withStyles(styles)((props) => {
     const { children, classes, onClose, ...other } = props;
     return (
-        <MuiDialogTitle
+        <DialogTitle
             disableTypography
             className={classes.root}
             {...other}
@@ -51,25 +51,25 @@ const DialogTitle = withStyles(styles)((props) => {
                     <CloseIcon />
                 </IconButton>
             ) : null}
-        </MuiDialogTitle>
+        </DialogTitle>
     );
 });
 
-const DialogContent = withStyles((theme) => ({
+const CustomDialogContent = withStyles((theme) => ({
     root: {
         padding: '16px 48px',
     },
-}))(MuiDialogContent);
+}))(DialogContent);
 
-const DialogActions = withStyles((theme) => ({
+const CustomDialogActions = withStyles((theme) => ({
     root: {
         margin: '10px 24px 24px 24px',
         padding: '10px 24px 14px 24px',
         display: 'block',
     },
-}))(MuiDialogActions);
+}))(DialogActions);
 
-const MuiDialogButton = withStyles((theme) => ({
+const CustomButton = withStyles((theme) => ({
     label: {
         fontWeight: 600,
     },
@@ -81,54 +81,55 @@ const Popup = (props) => {
     };
 
     return (
-        <div>
-            <Dialog
-                open={props.open}
-                onClose={handleClose}
-                maxWidth={props.maxWidth}
-                fullWidth={props.fullWidth}
+        <Dialog
+            open={props.open}
+            onClose={handleClose}
+            maxWidth={props.maxWidth}
+            fullWidth={props.fullWidth}
+        >
+            {props.showPopupTitle && (
+                <CustomDialogTitle onClose={handleClose}>
+                    {props.popupTitle}
+                </CustomDialogTitle>
+            )}
+            <CustomDialogContent>
+                <DialogContentText>{props.popupContent}</DialogContentText>
+            </CustomDialogContent>
+            <CustomDialogActions
+                style={{
+                    textAlign: props.showSingleBtnInLeft ? 'left' : 'right',
+                }}
             >
-                {props.showPopupTitle && (
-                    <DialogTitle
-                        id="customized-dialog-title"
-                        onClose={handleClose}
-                    >
-                        {props.popupTitle}
-                    </DialogTitle>
-                )}
-                <DialogContent>
-                    <DialogContentText>{props.popupContent}</DialogContentText>
-                </DialogContent>
-                <DialogActions
-                    style={{
-                        textAlign: props.showSingleBtnInLeft ? 'left' : 'right',
-                    }}
+                <CustomButton
+                    autoFocus
+                    variant={props.showSingleBtnInLeft ? 'contained' : 'text'}
+                    color={props.showSingleBtnInLeft ? 'primary' : ''}
+                    onClick={handleClose}
                 >
-                    <MuiDialogButton
-                        autoFocus
-                        variant={
-                            props.showSingleBtnInLeft ? 'contained' : 'text'
-                        }
-                        color={props.showSingleBtnInLeft ? 'primary' : ''}
-                        onClick={handleClose}
-                    >
-                        {props.customTextCancelBtn}
-                    </MuiDialogButton>
-                    {!props.showSingleBtn && (
-                        <MuiDialogButton variant="outlined">
-                            {props.customTextValidationBtn}
-                        </MuiDialogButton>
-                    )}
-                </DialogActions>
-            </Dialog>
-        </div>
+                    {props.customTextCancelBtn}
+                </CustomButton>
+                {!props.showSingleBtn && (
+                    <CustomButton variant="outlined">
+                        {props.customTextValidationBtn}
+                    </CustomButton>
+                )}
+            </CustomDialogActions>
+        </Dialog>
     );
 };
 
 Popup.propTypes = {
     open: PropTypes.bool.isRequired,
+    setOpen: PropTypes.bool.isRequired,
     maxWidth: PropTypes.string.isRequired,
     fullWidth: PropTypes.bool.isRequired,
+    popupTitle: PropTypes.string.isRequired,
+    popupContent: PropTypes.string.isRequired,
+    showPopupTitle: PropTypes.bool.isRequired,
+    customTextValidationBtn: PropTypes.string.isRequired,
+    customTextCancelBtn: PropTypes.string.isRequired,
+    showSingleBtn: PropTypes.bool.isRequired,
+    showSingleBtnInLeft: PropTypes.bool.isRequired,
 };
 
 export default Popup;
