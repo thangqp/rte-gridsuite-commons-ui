@@ -8,8 +8,13 @@
 import React, { useEffect, useState } from 'react';
 
 import TopBar from '../../src/components/TopBar';
+import SnackbarProvider from '../../src/components/SnackbarProvider';
 
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import {
+    createMuiTheme,
+    makeStyles,
+    ThemeProvider,
+} from '@material-ui/core/styles';
 import AuthenticationRouter from '../../src/components/AuthenticationRouter';
 import {
     initializeAuthenticationDev,
@@ -19,11 +24,13 @@ import { useRouteMatch } from 'react-router';
 import { IntlProvider } from 'react-intl';
 
 import { BrowserRouter, useHistory, useLocation } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 
 import { top_bar_en, top_bar_fr, login_fr, login_en } from '../../src/index';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 
 import PowsyblLogo from '-!@svgr/webpack!../images/powsybl_logo.svg';
 
@@ -39,6 +46,35 @@ const lightTheme = createMuiTheme({
         type: 'light',
     },
 });
+
+const useStyles = makeStyles((theme) => ({
+    success: {
+        backgroundColor: '#43a047',
+    },
+    error: {
+        backgroundColor: '#d32f2f',
+    },
+    warning: {
+        backgroundColor: '#ffa000',
+    },
+}));
+
+const MyButton = (props) => {
+    const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar();
+    return (
+        <Button
+            variant="contained"
+            className={classes[props.variant]}
+            style={{ float: 'left', color: '#fff', margin: '5px' }}
+            onClick={() => {
+                enqueueSnackbar(props.message, { variant: props.variant });
+            }}
+        >
+            {props.variant}
+        </Button>
+    );
+};
 
 const AppContent = () => {
     const history = useHistory();
@@ -69,6 +105,15 @@ const AppContent = () => {
         { name: 'App2', url: '/app2' },
     ];
 
+    const buttons = [
+        {
+            variant: 'success',
+            message: 'Successfully done the operation.',
+            id: 'button1',
+        },
+        { variant: 'error', message: 'Something went wrong.', id: 'button2' },
+    ];
+
     useEffect(() => {
         initializeAuthenticationDev(
             dispatch,
@@ -88,36 +133,43 @@ const AppContent = () => {
     return (
         <IntlProvider locale={language} messages={messages[language]}>
             <ThemeProvider theme={lightTheme}>
-                <CssBaseline />
-                <TopBar
-                    appName="Demo"
-                    appColor="#808080"
-                    appLogo=<PowsyblLogo />
-                    onParametersClick={() => console.log('settings')}
-                    onLogoutClick={() => logout(dispatch, userManager.instance)}
-                    onLogoClick={() => console.log('logo')}
-                    user={user}
-                    appsAndUrls={apps}
-                />
-                {user !== null ? (
-                    <Box mt={20}>
-                        <Typography
-                            variant="h3"
-                            color="textPrimary"
-                            align="center"
-                        >
-                            Connected
-                        </Typography>
-                    </Box>
-                ) : (
-                    <AuthenticationRouter
-                        userManager={userManager}
-                        signInCallbackError={null}
-                        dispatch={dispatch}
-                        history={history}
-                        location={location}
+                <SnackbarProvider hideIconVariant={false}>
+                    <CssBaseline />
+                    <TopBar
+                        appName="Demo"
+                        appColor="#808080"
+                        appLogo=<PowsyblLogo />
+                        onParametersClick={() => console.log('settings')}
+                        onLogoutClick={() =>
+                            logout(dispatch, userManager.instance)
+                        }
+                        onLogoClick={() => console.log('logo')}
+                        user={user}
+                        appsAndUrls={apps}
                     />
-                )}
+                    {user !== null ? (
+                        <Box mt={20}>
+                            <Typography
+                                variant="h3"
+                                color="textPrimary"
+                                align="center"
+                            >
+                                Connected
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <AuthenticationRouter
+                            userManager={userManager}
+                            signInCallbackError={null}
+                            dispatch={dispatch}
+                            history={history}
+                            location={location}
+                        />
+                    )}
+                    {buttons.map((button) => (
+                        <MyButton {...button} key={button.id} />
+                    ))}
+                </SnackbarProvider>
             </ThemeProvider>
         </IntlProvider>
     );
