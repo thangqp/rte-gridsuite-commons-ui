@@ -146,6 +146,9 @@ const AppContent = () => {
                         onLogoClick={() => console.log('logo')}
                         user={user}
                         appsAndUrls={apps}
+                        openPopupConfigurationWorkflows={() =>
+                            console.log('Open popup')
+                        }
                     />
                     {user !== null ? (
                         <Box mt={20}>

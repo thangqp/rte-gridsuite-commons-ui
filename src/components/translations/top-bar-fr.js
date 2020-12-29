@@ -3,6 +3,7 @@ const top_bar_fr = {
     'top-bar/logout': 'Se déconnecter',
     'top-bar/goFullScreen': 'Plein écran',
     'top-bar/exitFullScreen': 'Quitter mode plein écran',
+    'top-bar/configurationWorkflows': 'Configuration workflows',
 };
 
 export default top_bar_fr;

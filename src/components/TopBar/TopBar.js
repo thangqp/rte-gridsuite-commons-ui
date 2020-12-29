@@ -96,6 +96,7 @@ const TopBar = ({
     user,
     children,
     appsAndUrls,
+    openPopupConfigurationWorkflows,
 }) => {
     const classes = useStyles();
 
@@ -138,6 +139,10 @@ const TopBar = ({
         fullScreenRef.current.fullScreen();
     }
 
+    const handleClickConfigurationWorkflows = () => {
+        openPopupConfigurationWorkflows();
+    };
+
     return (
         <AppBar position="static" color="default" className={classes.appBar}>
             <FullScreen
@@ -163,6 +168,17 @@ const TopBar = ({
                 <div className={classes.grow} />
                 {user && (
                     <div>
+                        {appName === 'Merge' && (
+                            <Button
+                                onClick={handleClickConfigurationWorkflows}
+                                style={{ fontWeight: 'bold' }}
+                            >
+                                <FormattedMessage
+                                    id="top-bar/configurationWorkflows"
+                                    defaultMessage={'Configuration workflows'}
+                                />
+                            </Button>
+                        )}
                         <Button
                             aria-controls="apps-menu"
                             aria-haspopup="true"
