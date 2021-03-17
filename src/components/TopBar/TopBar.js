@@ -647,6 +647,14 @@ const TopBar = ({
 
 TopBar.propTypes = {
     onParametersClick: PropTypes.func,
+    onLogoutClick: PropTypes.func,
+    onLogoClick: PropTypes.func,
+    appName: PropTypes.string,
+    appColor: PropTypes.string,
+    appLogo: PropTypes.object,
+    user: PropTypes.object,
+    children: PropTypes.array,
+    appsAndUrls: PropTypes.array,
     onThemeClick: PropTypes.func,
     theme: PropTypes.string,
     onAboutClick: PropTypes.func,
