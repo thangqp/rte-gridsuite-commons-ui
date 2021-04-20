@@ -34,14 +34,17 @@ import Button from '@material-ui/core/Button';
 
 import PowsyblLogo from '-!@svgr/webpack!../images/powsybl_logo.svg';
 
-import { LIGHT_THEME } from '../../src/components/TopBar/TopBar';
+import {
+    LIGHT_THEME,
+    LANG_SYSTEM,
+    LANG_ENGLISH,
+    LANG_FRENCH,
+} from '../../src/components/TopBar/TopBar';
 
 const messages = {
     en: { ...login_en, ...top_bar_en },
     fr: { ...login_fr, ...top_bar_fr },
 };
-
-const language = navigator.language.split(/[-_]/)[0]; // language without region code
 
 const lightTheme = createMuiTheme({
     palette: {
@@ -106,6 +109,10 @@ const AppContent = () => {
 
     const [equipmentLabelling, setEquipmentLabelling] = useState(false);
 
+    const [language, setLanguage] = useState(LANG_ENGLISH);
+
+    const [computedLanguage, setComputedLanguage] = useState(LANG_ENGLISH);
+
     // Can't use lazy initializer because useRouteMatch is a hook
     const [initialMatchSilentRenewCallbackUrl] = useState(
         useRouteMatch({
@@ -126,6 +133,20 @@ const AppContent = () => {
 
     const handleEquipmentLabellingClick = (labelling) => {
         setEquipmentLabelling(labelling);
+    };
+
+    const handleLanguageClick = (pickedLanguage) => {
+        setLanguage(pickedLanguage);
+        if (pickedLanguage === LANG_SYSTEM) {
+            const sysLanguage = navigator.language.split(/[-_]/)[0];
+            setComputedLanguage(
+                [LANG_FRENCH, LANG_ENGLISH].includes(sysLanguage)
+                    ? sysLanguage
+                    : LANG_ENGLISH
+            );
+        } else {
+            setComputedLanguage(pickedLanguage);
+        }
     };
 
     const apps = [
@@ -159,7 +180,10 @@ const AppContent = () => {
     }, [initialMatchSilentRenewCallbackUrl]);
 
     return (
-        <IntlProvider locale={language} messages={messages[language]}>
+        <IntlProvider
+            locale={computedLanguage}
+            messages={messages[computedLanguage]}
+        >
             <ThemeProvider theme={getMuiTheme(theme)}>
                 <SnackbarProvider hideIconVariant={false}>
                     <CssBaseline />
@@ -179,6 +203,8 @@ const AppContent = () => {
                             handleEquipmentLabellingClick
                         }
                         equipmentLabelling={equipmentLabelling}
+                        onLanguageClick={handleLanguageClick}
+                        language={language}
                         user={user}
                         appsAndUrls={apps}
                     >
