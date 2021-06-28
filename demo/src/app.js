@@ -14,6 +14,7 @@ import {
     createMuiTheme,
     makeStyles,
     ThemeProvider,
+    withStyles,
 } from '@material-ui/core/styles';
 import AuthenticationRouter from '../../src/components/AuthenticationRouter';
 import {
@@ -40,6 +41,8 @@ import {
     LANG_ENGLISH,
     LANG_FRENCH,
 } from '../../src/components/TopBar/TopBar';
+import MuiVirtualizedTable from '../../src/components/MuiVirtualizedTable';
+import { DEFAULT_CELL_PADDING } from '../../src/components/MuiVirtualizedTable/MuiVirtualizedTable';
 
 const messages = {
     en: { ...login_en, ...top_bar_en },
@@ -77,6 +80,53 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: '#ffa000',
     },
 }));
+
+const styles = (theme) => ({
+    flexContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        boxSizing: 'border-box',
+    },
+    table: {
+        // temporary right-to-left patch, waiting for
+        // https://github.com/bvaughn/react-virtualized/issues/454
+        '& .ReactVirtualized__Table__headerRow': {
+            flip: false,
+            paddingRight:
+                theme.direction === 'rtl' ? '0 !important' : undefined,
+        },
+    },
+    tableRow: {
+        cursor: 'pointer',
+    },
+    tableRowHover: {
+        '&:hover': {
+            backgroundColor: theme.palette.grey[200],
+        },
+    },
+    tableCell: {
+        flex: 1,
+        padding: DEFAULT_CELL_PADDING + 'px',
+    },
+    noClick: {
+        cursor: 'initial',
+    },
+    tableCellColor: {
+        color: 'blue',
+    },
+    header: {
+        backgroundColor: 'lightblue',
+        fontWeight: 'bold',
+    },
+    rowBackgroundDark: {
+        backgroundColor: '#81BEF7',
+    },
+    rowBackgroundLight: {
+        backgroundColor: '#EFEFFB',
+    },
+});
+
+const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
 
 const MyButton = (props) => {
     const classes = useStyles();
@@ -163,6 +213,13 @@ const AppContent = () => {
         { variant: 'error', message: 'Something went wrong.', id: 'button2' },
     ];
 
+    const rows = [
+        { key1: 'row1_val1', key2: 'row1_val2', key3: 'row1_val3' },
+        { key1: 'row2_val1', key2: 'row2_val2', key3: 'row2_val3' },
+        { key1: 'row3_val1', key2: 'row3_val2', key3: 'row3_val3' },
+        { key1: 'row4_val1', key2: 'row4_val2', key3: 'row4_val3' },
+    ];
+
     useEffect(() => {
         initializeAuthenticationDev(
             dispatch,
@@ -215,15 +272,39 @@ const AppContent = () => {
                         <div>baz</div>
                     </TopBar>
                     {user !== null ? (
-                        <Box mt={20}>
-                            <Typography
-                                variant="h3"
-                                color="textPrimary"
-                                align="center"
-                            >
-                                Connected
-                            </Typography>
-                        </Box>
+                        <div>
+                            <Box mt={20}>
+                                <Typography
+                                    variant="h3"
+                                    color="textPrimary"
+                                    align="center"
+                                >
+                                    Connected
+                                </Typography>
+                            </Box>
+                            <hr />
+                            <Box style={{ minHeight: '200px' }}>
+                                <VirtualizedTable
+                                    rows={rows}
+                                    sortable={true}
+                                    columns={[
+                                        {
+                                            label: 'header1',
+                                            dataKey: 'key1',
+                                        },
+                                        {
+                                            label: 'header2',
+                                            dataKey: 'key2',
+                                        },
+                                        {
+                                            label: 'header3',
+                                            dataKey: 'key3',
+                                        },
+                                    ]}
+                                />
+                            </Box>
+                            <hr />
+                        </div>
                     ) : (
                         <AuthenticationRouter
                             userManager={userManager}
