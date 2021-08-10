@@ -378,8 +378,8 @@ class MuiVirtualizedTable extends React.PureComponent {
             let sortedRow = this.props.rows[index];
             this.props.columns.forEach((col) => {
                 if (
-                    this.props.ExportCSVDataKeys !== undefined &&
-                    this.props.ExportCSVDataKeys.find(
+                    this.props.exportCSVDataKeys !== undefined &&
+                    this.props.exportCSVDataKeys.find(
                         (el) => el === col.dataKey
                     )
                 ) {
@@ -392,12 +392,12 @@ class MuiVirtualizedTable extends React.PureComponent {
         return Promise.resolve(csvData);
     };
 
-    csvHeaders = memoize((columns, selectedDataKey) => {
+    csvHeaders = memoize((columns, exportCSVDataKeys) => {
         let tempHeaders = [];
         columns.forEach((col) => {
             if (
-                selectedDataKey !== undefined &&
-                selectedDataKey.find((el) => el === col.dataKey)
+                exportCSVDataKeys !== undefined &&
+                exportCSVDataKeys.find((el) => el === col.dataKey)
             ) {
                 tempHeaders.push({
                     displayName: col.label,
@@ -442,7 +442,7 @@ class MuiVirtualizedTable extends React.PureComponent {
         );
         const csvHeaders = this.csvHeaders(
             this.props.columns,
-            this.props.ExportCSVDataKeys
+            this.props.exportCSVDataKeys
         );
         return (
             <div
@@ -549,7 +549,7 @@ MuiVirtualizedTable.propTypes = {
         })
     ).isRequired,
     enableExportCSV: PropTypes.bool,
-    ExportCSVDataKeys: PropTypes.array,
+    exportCSVDataKeys: PropTypes.array,
     sortable: PropTypes.bool,
     headerHeight: PropTypes.number,
     onRowClick: PropTypes.func,
