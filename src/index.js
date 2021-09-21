@@ -1,3 +1,4 @@
+export TreeViewFinder from './components/TreeViewFinder';
 export TopBar from './components/TopBar';
 export SnackbarProvider from './components/SnackbarProvider';
 export AuthenticationRouter from './components/AuthenticationRouter';
@@ -40,3 +41,5 @@ export top_bar_en from './components/translations/top-bar-en';
 export top_bar_fr from './components/translations/top-bar-fr';
 export table_en from './components/translations/table-en';
 export table_fr from './components/translations/table-fr';
+export treeview_finder_en from './components/translations/treeview-finder-en';
+export treeview_finder_fr from './components/translations/treeview-finder-fr';

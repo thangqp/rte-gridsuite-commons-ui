@@ -37,6 +37,8 @@ import {
     login_en,
     table_en,
     table_fr,
+    treeview_finder_en,
+    treeview_finder_fr,
 } from '../../src/index';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
@@ -50,10 +52,30 @@ import MuiVirtualizedTable from '../../src/components/MuiVirtualizedTable';
 import { LOGS_JSON } from './constants';
 
 import ReportViewerDialog from '../../src/components/ReportViewerDialog';
+import TreeViewFinder from '../../src/components/TreeViewFinder';
+import TreeViewFinderConfig from './TreeViewFinderConfig';
+import {
+    testDataTree,
+    testDataList,
+    fetchInfiniteTestDataTree,
+    fetchInfiniteTestDataList,
+} from './testData';
 
 const messages = {
-    en: { ...report_viewer_en, ...login_en, ...top_bar_en, ...table_en },
-    fr: { ...report_viewer_fr, ...login_fr, ...top_bar_fr, ...table_fr },
+    en: {
+        ...report_viewer_en,
+        ...login_en,
+        ...top_bar_en,
+        ...table_en,
+        ...treeview_finder_en,
+    },
+    fr: {
+        ...report_viewer_fr,
+        ...login_fr,
+        ...top_bar_fr,
+        ...table_fr,
+        ...treeview_finder_fr,
+    },
 };
 
 const lightTheme = createTheme({
@@ -133,7 +155,21 @@ const styles = (theme) => ({
     },
 });
 
+const TreeViewFinderCustomStyles = (theme) => ({
+    icon: {
+        width: '32px',
+        height: '32px',
+    },
+    labelIcon: {
+        backgroundColor: 'green',
+        marginRight: theme.spacing(1),
+    },
+});
+
 const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
+const CustomTreeViewFinder = withStyles(TreeViewFinderCustomStyles)(
+    TreeViewFinder
+);
 
 const MyButton = (props) => {
     const classes = useStyles();
@@ -171,6 +207,12 @@ const AppContent = () => {
     const [computedLanguage, setComputedLanguage] = useState(LANG_ENGLISH);
 
     const [openReportViewer, setOpenReportViewer] = React.useState(false);
+    const [openTreeViewFinderDialog, setOpenTreeViewFinderDialog] =
+        React.useState(false);
+    const [
+        openTreeViewFinderDialogCustomDialog,
+        setOpenTreeViewFinderDialogCustomDialog,
+    ] = React.useState(false);
 
     // Can't use lazy initializer because useRouteMatch is a hook
     const [initialMatchSilentRenewCallbackUrl] = useState(
@@ -179,6 +221,36 @@ const AppContent = () => {
             exact: true,
         })
     );
+
+    // TreeViewFinder data
+    const [nodesTree, setNodesTree] = useState(testDataTree);
+    const [nodesList, setNodesList] = useState(testDataList);
+
+    const countNodes = (nodesList) => {
+        return nodesList
+            .map((node) => {
+                if (node.children && node.children.length > 0)
+                    return countNodes(node.children);
+                else return 1;
+            })
+            .reduce((a, b) => {
+                return a + b;
+            }, 0);
+    };
+
+    // TreeViewFinder Controlled parameters
+    const [dynamicData, setDynamicData] = useState(false);
+    const [dataFormat, setDataFormat] = useState('Tree');
+    const [multiselect, setMultiselect] = useState(false);
+    const [onlyLeaves, setOnlyLeaves] = useState(true);
+
+    // TreeViewFinder data update callbacks
+    const updateInfiniteTestDataTreeCallback = (nodeId) => {
+        setNodesTree(fetchInfiniteTestDataTree(nodeId));
+    };
+    const updateInfiniteTestDataListCallback = (nodeId) => {
+        setNodesList(fetchInfiniteTestDataList(nodeId));
+    };
 
     const dispatch = (e) => {
         if (e.type === 'USER') {
@@ -342,6 +414,104 @@ const AppContent = () => {
                         onClose={() => setOpenReportViewer(false)}
                         jsonReport={LOGS_JSON}
                     />
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                        }}
+                    >
+                        <TreeViewFinderConfig
+                            dynamicData={dynamicData}
+                            dataFormat={dataFormat}
+                            multiselect={multiselect}
+                            onlyLeaves={onlyLeaves}
+                            onDynamicDataChange={(event) =>
+                                setDynamicData(event.target.value === 'dynamic')
+                            }
+                            onDataFormatChange={(event) =>
+                                setDataFormat(event.target.value)
+                            }
+                            onSelectionTypeChange={(event) =>
+                                setMultiselect(
+                                    event.target.value === 'multiselect'
+                                )
+                            }
+                            onOnlyLeavesChange={(event) =>
+                                setOnlyLeaves(event.target.checked)
+                            }
+                        />
+                        <Button
+                            variant="contained"
+                            style={{ float: 'left', margin: '5px' }}
+                            onClick={() => setOpenTreeViewFinderDialog(true)}
+                        >
+                            Open TreeViewFinder ...
+                        </Button>
+                        <TreeViewFinder
+                            open={openTreeViewFinderDialog}
+                            onClose={(nodes) => {
+                                setOpenTreeViewFinderDialog(false);
+                                console.log('Elements chosen : ', nodes);
+                            }}
+                            data={dataFormat === 'Tree' ? nodesTree : nodesList}
+                            multiselect={multiselect}
+                            onTreeBrowse={
+                                dynamicData
+                                    ? dataFormat === 'Tree'
+                                        ? updateInfiniteTestDataTreeCallback
+                                        : updateInfiniteTestDataListCallback
+                                    : undefined
+                            }
+                            onlyLeaves={onlyLeaves}
+                            // Customisation props to pass the counter in the title
+                            title={
+                                'Number of nodes : ' +
+                                countNodes(
+                                    dataFormat === 'Tree'
+                                        ? nodesTree
+                                        : nodesList
+                                )
+                            }
+                        />
+                        <Button
+                            variant="contained"
+                            style={{ float: 'left', margin: '5px' }}
+                            color="primary"
+                            onClick={() =>
+                                setOpenTreeViewFinderDialogCustomDialog(true)
+                            }
+                        >
+                            Open Custom TreeViewFinder ...
+                        </Button>
+                        <CustomTreeViewFinder
+                            open={openTreeViewFinderDialogCustomDialog}
+                            onClose={(nodes) => {
+                                setOpenTreeViewFinderDialogCustomDialog(false);
+                                console.log('Elements chosen : ', nodes);
+                            }}
+                            data={dataFormat === 'Tree' ? nodesTree : nodesList}
+                            multiselect={multiselect}
+                            onTreeBrowse={
+                                dynamicData
+                                    ? dataFormat === 'Tree'
+                                        ? updateInfiniteTestDataTreeCallback
+                                        : updateInfiniteTestDataListCallback
+                                    : undefined
+                            }
+                            onlyLeaves={onlyLeaves}
+                            // Customisation props
+                            title={
+                                'Custom Title TreeViewFinder, Number of nodes : ' +
+                                countNodes(
+                                    dataFormat === 'Tree'
+                                        ? nodesTree
+                                        : nodesList
+                                )
+                            }
+                            validationButtonText={'Move To this location'}
+                        />
+                    </div>
                 </SnackbarProvider>
             </ThemeProvider>
         </IntlProvider>
