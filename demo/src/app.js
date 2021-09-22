@@ -22,10 +22,9 @@ import {
     initializeAuthenticationDev,
     logout,
 } from '../../src';
-import { useRouteMatch } from 'react-router';
 import { IntlProvider } from 'react-intl';
 
-import { BrowserRouter, useHistory, useLocation } from 'react-router-dom';
+import { BrowserRouter, useNavigate, useLocation } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 import {
@@ -189,7 +188,7 @@ const MyButton = (props) => {
 };
 
 const AppContent = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
 
     const [userManager, setUserManager] = useState({
@@ -216,10 +215,7 @@ const AppContent = () => {
 
     // Can't use lazy initializer because useRouteMatch is a hook
     const [initialMatchSilentRenewCallbackUrl] = useState(
-        useRouteMatch({
-            path: '/silent-renew-callback',
-            exact: true,
-        })
+        location.pathname === '/silent-renew-callback'
     );
 
     // TreeViewFinder data
@@ -304,7 +300,7 @@ const AppContent = () => {
     useEffect(() => {
         initializeAuthenticationDev(
             dispatch,
-            initialMatchSilentRenewCallbackUrl != null
+            initialMatchSilentRenewCallbackUrl
         )
             .then((userManager) => {
                 setUserManager({ instance: userManager, error: null });
@@ -394,7 +390,7 @@ const AppContent = () => {
                             userManager={userManager}
                             signInCallbackError={null}
                             dispatch={dispatch}
-                            history={history}
+                            navigate={navigate}
                             location={location}
                         />
                     )}
