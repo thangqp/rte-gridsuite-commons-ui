@@ -43,7 +43,7 @@ const AuthenticationRouter = ({
             )}
             <Routes>
                 <Route
-                    path="/sign-in-callback"
+                    path="./sign-in-callback"
                     element={
                         <SignInCallbackHandler
                             userManager={userManager.instance}
@@ -52,7 +52,7 @@ const AuthenticationRouter = ({
                     }
                 />
                 <Route
-                    path="/silent-renew-callback"
+                    path="./silent-renew-callback"
                     element={
                         <SilentRenewCallbackHandler
                             userManager={userManager.instance}
@@ -62,7 +62,7 @@ const AuthenticationRouter = ({
                         />
                     }
                 />
-                <Route path="/logout-callback" element={<Navigate to="/" />} />
+                <Route path="./logout-callback" element={<Navigate to="./" />} />
                 <Route path={"*"}
                     element={
                         userManager.error === null && (
