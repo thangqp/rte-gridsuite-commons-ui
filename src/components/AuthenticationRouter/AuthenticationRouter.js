@@ -62,8 +62,12 @@ const AuthenticationRouter = ({
                         />
                     }
                 />
-                <Route path="./logout-callback" element={<Navigate to="./" />} />
-                <Route path={"*"}
+                <Route
+                    path="./logout-callback"
+                    element={<Navigate to="./" />}
+                />
+                <Route
+                    path={'*'}
                     element={
                         userManager.error === null && (
                             <Login
