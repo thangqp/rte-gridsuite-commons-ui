@@ -39,6 +39,8 @@ import {
     table_fr,
     treeview_finder_en,
     treeview_finder_fr,
+    equipment_search_en,
+    equipment_search_fr,
 } from '../../src/index';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
@@ -68,6 +70,7 @@ const messages = {
         ...top_bar_en,
         ...table_en,
         ...treeview_finder_en,
+        ...equipment_search_en,
     },
     fr: {
         ...report_viewer_fr,
@@ -75,6 +78,7 @@ const messages = {
         ...top_bar_fr,
         ...table_fr,
         ...treeview_finder_fr,
+        ...equipment_search_fr,
     },
 };
 

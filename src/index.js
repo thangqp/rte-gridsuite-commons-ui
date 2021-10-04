@@ -43,3 +43,5 @@ export table_en from './components/translations/table-en';
 export table_fr from './components/translations/table-fr';
 export treeview_finder_en from './components/translations/treeview-finder-en';
 export treeview_finder_fr from './components/translations/treeview-finder-fr';
+export equipment_search_en from './components/translations/equipment-search-en';
+export equipment_search_fr from './components/translations/equipment-search-fr';

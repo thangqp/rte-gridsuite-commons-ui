@@ -5,14 +5,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
 import AppBar from '@material-ui/core/AppBar';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { darken, makeStyles, withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -20,11 +20,10 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
-import { darken, withStyles } from '@material-ui/core/styles';
-
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import AppsIcon from '@material-ui/icons/Apps';
+import SearchIcon from '@material-ui/icons/Search';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
@@ -45,6 +44,7 @@ import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import MenuList from '@material-ui/core/MenuList';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import EquipmentSearchDialog from '../EquipmentSearchDialog';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -192,6 +192,12 @@ const TopBar = ({
     const fullScreenRef = useRef(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isMenuOpen, setMenuOpen] = useState(false);
+    const [isDialogSearchOpen, setDialogSearchOpen] = useState(false);
+
+    const handleClickEquipmentSearch = (event) => {
+        setDialogSearchOpen(true);
+    };
+
     const handleToggleSettingsMenu = () => {
         setAnchorElSettingsMenu(true);
         setMenuOpen(true);
@@ -201,6 +207,7 @@ const TopBar = ({
         setAnchorElSettingsMenu(false);
         setMenuOpen(false);
     };
+
     const handleClickAppsMenu = (event) => {
         setAnchorElAppsMenu(event.currentTarget);
     };
@@ -260,6 +267,15 @@ const TopBar = ({
         }
     };
 
+    useEffect(() => {
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                setDialogSearchOpen(user != null);
+            }
+        });
+    }, [user]);
+
     return (
         <AppBar position="static" color="default" className={classes.appBar}>
             <FullScreen
@@ -282,6 +298,17 @@ const TopBar = ({
                     <span style={{ color: appColor }}>{appName}</span>
                 </Typography>
                 <div className={classes.grow}>{children}</div>
+                <EquipmentSearchDialog
+                    open={isDialogSearchOpen}
+                    onClose={() => setDialogSearchOpen(false)}
+                />
+                {user && (
+                    <div>
+                        <Button onClick={handleClickEquipmentSearch}>
+                            <SearchIcon />
+                        </Button>
+                    </div>
+                )}
                 {user && (
                     <div>
                         <Button
