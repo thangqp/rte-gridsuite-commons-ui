@@ -15,7 +15,272 @@ import AcUnitIcon from '@material-ui/icons/AcUnit';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import FiberNewIcon from '@material-ui/icons/FiberNew';
 
-var PokemonTree = [
+export const LOGS_JSON = {
+    taskKey: 'Test',
+    defaultName: 'Test',
+    taskValues: {},
+    subReporters: [
+        {
+            taskKey: 'loadflow',
+            defaultName: 'loadflow',
+            taskValues: {},
+            subReporters: [
+                {
+                    taskKey: 'loadFlow',
+                    defaultName: 'Load flow on network ${networkId}',
+                    taskValues: {
+                        networkId: {
+                            value: 'test',
+                            type: 'UNTYPED',
+                        },
+                    },
+                    subReporters: [
+                        {
+                            taskKey: 'createLfNetwork',
+                            defaultName: 'Create network ${networkNum}',
+                            taskValues: {
+                                networkNum: {
+                                    value: 0,
+                                    type: 'UNTYPED',
+                                },
+                            },
+                            subReporters: [],
+                            reports: [],
+                        },
+                        {
+                            taskKey: 'postLoading',
+                            defaultName:
+                              'Post loading process on network CC${numNetworkCc} SC${numNetworkSc}',
+                            taskValues: {
+                                numNetworkCc: {
+                                    value: 0,
+                                    type: 'UNTYPED',
+                                },
+                                numNetworkSc: {
+                                    value: 0,
+                                    type: 'UNTYPED',
+                                },
+                            },
+                            subReporters: [],
+                            reports: [
+                                {
+                                    reportKey: 'networkSize',
+                                    defaultMessage:
+                                      'Network CC${numNetworkCc} SC${numNetworkSc} has ${nbBuses} buses (voltage remote control: ${nbRemoteControllerBuses} controllers, ${nbRemoteControlledBuses} controlled) and ${nbBranches} branches',
+                                    values: {
+                                        nbBranches: {
+                                            value: 3,
+                                            type: 'UNTYPED',
+                                        },
+                                        nbRemoteControlledBuses: {
+                                            value: 0,
+                                            type: 'UNTYPED',
+                                        },
+                                        nbRemoteControllerBuses: {
+                                            value: 0,
+                                            type: 'UNTYPED',
+                                        },
+                                        nbBuses: {
+                                            value: 3,
+                                            type: 'UNTYPED',
+                                        },
+                                        numNetworkCc: {
+                                            value: 0,
+                                            type: 'UNTYPED',
+                                        },
+                                        numNetworkSc: {
+                                            value: 0,
+                                            type: 'UNTYPED',
+                                        },
+                                    },
+                                },
+                                {
+                                    reportKey: 'networkBalance',
+                                    defaultMessage:
+                                      'Network CC${numNetworkCc} SC${numNetworkSc} balance: active generation=${activeGeneration} MW, active load=${activeLoad} MW, reactive generation=${reactiveGeneration} MVar, reactive load=${reactiveLoad} MVar',
+                                    values: {
+                                        reactiveLoad: {
+                                            value: 18.0,
+                                            type: 'UNTYPED',
+                                        },
+                                        activeLoad: {
+                                            value: 180.0,
+                                            type: 'UNTYPED',
+                                        },
+                                        numNetworkCc: {
+                                            value: 0,
+                                            type: 'UNTYPED',
+                                        },
+                                        numNetworkSc: {
+                                            value: 0,
+                                            type: 'UNTYPED',
+                                        },
+                                        activeGeneration: {
+                                            value: 200.0,
+                                            type: 'UNTYPED',
+                                        },
+                                        reactiveGeneration: {
+                                            value: 0.0,
+                                            type: 'UNTYPED',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                        {
+                            taskKey: 'OuterLoop',
+                            defaultName: 'Outer loop ${outerLoopType}',
+                            taskValues: {
+                                outerLoopType: {
+                                    value: 'Distributed slack on generation',
+                                    type: 'UNTYPED',
+                                },
+                            },
+                            subReporters: [],
+                            reports: [
+                                {
+                                    reportKey: 'mismatchDistributionSuccess',
+                                    defaultMessage:
+                                      'Iteration ${iteration}: slack bus active power (${initialMismatch} MW) distributed in ${nbIterations} iterations',
+                                    values: {
+                                        reportSeverity: {
+                                            value: 'ERROR',
+                                            type: 'INFO_LOGLEVEL',
+                                        },
+                                        nbIterations: {
+                                            value: 1,
+                                            type: 'UNTYPED',
+                                        },
+                                        iteration: {
+                                            value: 0,
+                                            type: 'UNTYPED',
+                                        },
+                                        initialMismatch: {
+                                            value: -19.98634545729172,
+                                            type: 'Mismatch',
+                                        },
+                                    },
+                                },
+                                {
+                                    reportKey: 'NoMismatchDistribution',
+                                    defaultMessage:
+                                      'Iteration ${iteration}: already balanced',
+                                    values: {
+                                        reportSeverity: {
+                                            value: 'FATAL',
+                                            type: 'INFO_LOGLEVEL',
+                                        },
+                                        iteration: {
+                                            value: 1,
+                                            type: 'UNTYPED',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                        {
+                            taskKey: 'OuterLoop',
+                            defaultName: 'Outer loop ${outerLoopType}',
+                            taskValues: {
+                                outerLoopType: {
+                                    value: 'Reactive limits',
+                                    type: 'UNTYPED',
+                                },
+                            },
+                            subReporters: [],
+                            reports: [],
+                        },
+                        {
+                            taskKey: 'OuterLoop',
+                            defaultName: 'Outer loop ${outerLoopType}',
+                            taskValues: {
+                                outerLoopType: {
+                                    value: 'Distributed slack on generation',
+                                    type: 'UNTYPED',
+                                },
+                            },
+                            subReporters: [],
+                            reports: [
+                                {
+                                    reportKey: 'NoMismatchDistribution',
+                                    defaultMessage:
+                                      'Iteration ${iteration}: already balanced',
+                                    values: {
+                                        reportSeverity: {
+                                            value: 'WARN',
+                                            type: 'INFO_LOGLEVEL',
+                                        },
+                                        iteration: {
+                                            value: 1,
+                                            type: 'UNTYPED',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                        {
+                            taskKey: 'OuterLoop',
+                            defaultName: 'Outer loop ${outerLoopType}',
+                            taskValues: {
+                                outerLoopType: {
+                                    value: 'Reactive limits',
+                                    type: 'UNTYPED',
+                                },
+                            },
+                            subReporters: [],
+                            reports: [],
+                        },
+                    ],
+                    reports: [],
+                },
+            ],
+            reports: [],
+        },
+    ],
+    reports: [],
+};
+
+const NETWORK_UUID = '00000000-1111-2222-3333-444444444444';
+const EQUIPMENTS = [
+    {
+        networkUuid: NETWORK_UUID,
+        equipmentId: 'ident1',
+        equipmentName: 'name1',
+        equipmentType: 'LOAD',
+    },
+    {
+        networkUuid: NETWORK_UUID,
+        equipmentId: 'ident2',
+        equipmentName: 'name2',
+        equipmentType: 'GENERATOR',
+    },
+    {
+        networkUuid: NETWORK_UUID,
+        equipmentId: 'ident3',
+        equipmentName: 'name3',
+        equipmentType: 'BREAKER',
+    },
+    {
+        networkUuid: NETWORK_UUID,
+        equipmentId: 'ident4',
+        equipmentName: 'name4',
+        equipmentType: 'HVDC',
+    },
+    {
+        networkUuid: NETWORK_UUID,
+        equipmentId: 'ident5',
+        equipmentName: 'name5',
+        equipmentType: 'SUBSTATION',
+    },
+    {
+        networkUuid: NETWORK_UUID,
+        equipmentId: 'ident6',
+        equipmentName: 'name6',
+        equipmentType: 'VOLTAGE_LEVEL',
+    },
+];
+
+let PokemonTree = [
     {
         id: 'D1',
         name: 'Team',
@@ -108,7 +373,7 @@ var PokemonTree = [
     },
 ];
 
-var PokemonList = [
+let PokemonList = [
     {
         id: '1',
         name: 'Pikachu',
@@ -129,7 +394,7 @@ var PokemonList = [
     { id: '6', name: 'Machoc', type: 'Combat', power: '64' },
 ];
 
-var IDCounter = 100; // Start at 100 to avoid conflicts for demo
+let IDCounter = 100; // Start at 100 to avoid conflicts for demo
 function fetchInfinitePokemonList() {
     IDCounter++;
     PokemonList = [
@@ -164,6 +429,21 @@ function fetchInfinitePokemonTree(nodeId) {
     PokemonTree = PokemonTreeCopy;
     return PokemonTree;
 }
+
+export const searchEquipments = (searchTerm) => {
+    if (searchTerm) {
+        console.log('SEARCH TERM : ', searchTerm);
+        let equipments = EQUIPMENTS.filter(
+            (equipment) =>
+                equipment.equipmentId.includes(searchTerm) ||
+                equipment.equipmentName.includes(searchTerm)
+        );
+        console.log('EQUIPMENTS FOUND : ', equipments);
+        return equipments;
+    } else {
+        return [];
+    }
+};
 
 export {
     PokemonTree as testDataTree,

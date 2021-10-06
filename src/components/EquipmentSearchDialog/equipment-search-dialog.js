@@ -38,18 +38,18 @@ const useStyles = makeStyles({
 const EquipmentSearchDialog = (props) => {
     const classes = useStyles();
 
-    const { open, onClose } = props;
+    const {
+        open,
+        onClose,
+        onEquipmentsSearchTermChange,
+        onEquipmentSearchValidation,
+        equipments,
+    } = props;
 
     const [selectedEquipment, setSelectedEquipment] = useState(null);
 
     const handleSelectionChange = (equipmentId) => {
         setSelectedEquipment(equipmentId);
-    };
-
-    const searchEquipment = () => {
-        if (selectedEquipment != null) {
-            console.log('SEARCH : ', selectedEquipment);
-        }
     };
 
     useEffect(() => {
@@ -70,12 +70,18 @@ const EquipmentSearchDialog = (props) => {
             <DialogTitle className={classes.title} />
             <DialogContent dividers={false} className={classes.content}>
                 <EquipmentSearchBar
+                    onSearchTermChange={onEquipmentsSearchTermChange}
                     onSelectionChange={handleSelectionChange}
-                    onSelectionValidation={searchEquipment}
+                    onSelectionValidation={() =>
+                        onEquipmentSearchValidation(selectedEquipment)
+                    }
+                    equipmentsFound={equipments}
                 />
                 <Button
                     className={classes.searchButton}
-                    onClick={() => searchEquipment()}
+                    onClick={() =>
+                        onEquipmentSearchValidation(selectedEquipment)
+                    }
                     disabled={selectedEquipment == null}
                 >
                     <SearchIcon className={classes.searchIcon} />
@@ -88,6 +94,9 @@ const EquipmentSearchDialog = (props) => {
 EquipmentSearchDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
+    onEquipmentsSearchTermChange: PropTypes.func.isRequired,
+    onEquipmentSearchValidation: PropTypes.func.isRequired,
+    equipments: PropTypes.array.isRequired,
 };
 
 export default EquipmentSearchDialog;

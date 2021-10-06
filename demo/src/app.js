@@ -51,7 +51,6 @@ import PowsyblLogo from '-!@svgr/webpack!../images/powsybl_logo.svg';
 
 import { LIGHT_THEME, LANG_SYSTEM, LANG_ENGLISH, LANG_FRENCH } from '../../src';
 import MuiVirtualizedTable from '../../src/components/MuiVirtualizedTable';
-import { LOGS_JSON } from './constants';
 
 import ReportViewerDialog from '../../src/components/ReportViewerDialog';
 import TreeViewFinder from '../../src/components/TreeViewFinder';
@@ -61,7 +60,11 @@ import {
     testDataList,
     fetchInfiniteTestDataTree,
     fetchInfiniteTestDataList,
+    searchEquipments,
+    LOGS_JSON,
 } from './testData';
+
+import { frFR, enUS } from '@material-ui/core/locale';
 
 const messages = {
     en: {
@@ -82,23 +85,26 @@ const messages = {
     },
 };
 
-const lightTheme = createTheme({
-    palette: {
-        type: 'light',
-    },
-});
-
-const darkTheme = createTheme({
-    palette: {
-        type: 'dark',
-    },
-});
-
-const getMuiTheme = (theme) => {
+const getMuiTheme = (theme, computedLanguage) => {
+    let locale = computedLanguage === LANG_FRENCH ? frFR : enUS;
     if (theme === LIGHT_THEME) {
-        return lightTheme;
+        return createTheme(
+            {
+                palette: {
+                    type: 'light',
+                },
+            },
+            locale
+        );
     } else {
-        return darkTheme;
+        return createTheme(
+            {
+                palette: {
+                    type: 'light',
+                },
+            },
+            locale
+        );
     }
 };
 
@@ -256,6 +262,17 @@ const AppContent = () => {
         setNodesList(fetchInfiniteTestDataList(nodeId));
     };
 
+    // Equipments search bar
+    const [equipmentsFound, setEquipmentsFound] = useState([]);
+    const searchMatchingEquipments = (searchTerm) => {
+        setEquipmentsFound(searchEquipments(searchTerm));
+    };
+    const displayEquipment = (equipment) => {
+        if (equipment != null) {
+            alert(`Equipment ${equipment.equipmentName} found !`);
+        }
+    };
+
     const dispatch = (e) => {
         if (e.type === 'USER') {
             setUser(e.user);
@@ -326,7 +343,7 @@ const AppContent = () => {
             locale={computedLanguage}
             messages={messages[computedLanguage]}
         >
-            <ThemeProvider theme={getMuiTheme(theme)}>
+            <ThemeProvider theme={getMuiTheme(theme, computedLanguage)}>
                 <SnackbarProvider hideIconVariant={false}>
                     <CssBaseline />
                     <TopBar
@@ -345,6 +362,9 @@ const AppContent = () => {
                             handleEquipmentLabellingClick
                         }
                         equipmentLabelling={equipmentLabelling}
+                        onEquipmentsSearchTermChange={searchMatchingEquipments}
+                        onEquipmentSearchValidation={displayEquipment}
+                        equipmentsFound={equipmentsFound}
                         onLanguageClick={handleLanguageClick}
                         language={language}
                         user={user}

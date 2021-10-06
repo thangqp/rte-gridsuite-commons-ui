@@ -180,6 +180,9 @@ const TopBar = ({
     theme,
     onEquipmentLabellingClick,
     equipmentLabelling,
+    onEquipmentsSearchTermChange,
+    onEquipmentSearchValidation,
+    equipmentsFound,
     onLanguageClick,
     language,
 }) => {
@@ -301,6 +304,12 @@ const TopBar = ({
                 <EquipmentSearchDialog
                     open={isDialogSearchOpen}
                     onClose={() => setDialogSearchOpen(false)}
+                    onEquipmentsSearchTermChange={onEquipmentsSearchTermChange}
+                    onEquipmentSearchValidation={(equipment) => {
+                        setDialogSearchOpen(false);
+                        onEquipmentSearchValidation(equipment);
+                    }}
+                    equipments={equipmentsFound}
                 />
                 {user && (
                     <div>
@@ -766,6 +775,8 @@ TopBar.propTypes = {
     onAboutClick: PropTypes.func,
     onEquipmentLabellingClick: PropTypes.func,
     equipmentLabelling: PropTypes.bool,
+    onEquipmentsSearchTermChange: PropTypes.func.isRequired,
+    onEquipmentSearchValidation: PropTypes.func.isRequired,
     onLanguageClick: PropTypes.func.isRequired,
     language: PropTypes.string.isRequired,
 };
