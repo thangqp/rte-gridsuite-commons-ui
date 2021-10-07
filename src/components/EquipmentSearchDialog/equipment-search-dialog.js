@@ -21,10 +21,8 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'end',
-        paddingTop: '0px',
-        paddingBottom: '10px',
+        padding: '20px',
         paddingRight: '0px',
-        paddingLeft: '5px',
     },
     searchButton: {
         padding: '0px',
@@ -44,6 +42,7 @@ const EquipmentSearchDialog = (props) => {
         onEquipmentsSearchTermChange,
         onEquipmentSearchValidation,
         equipments,
+        equipmentLabelling,
     } = props;
 
     const [selectedEquipment, setSelectedEquipment] = useState(null);
@@ -76,6 +75,7 @@ const EquipmentSearchDialog = (props) => {
                         onEquipmentSearchValidation(selectedEquipment)
                     }
                     equipmentsFound={equipments}
+                    equipmentLabelling={equipmentLabelling}
                 />
                 <Button
                     className={classes.searchButton}
@@ -97,6 +97,7 @@ EquipmentSearchDialog.propTypes = {
     onEquipmentsSearchTermChange: PropTypes.func.isRequired,
     onEquipmentSearchValidation: PropTypes.func.isRequired,
     equipments: PropTypes.array.isRequired,
+    equipmentLabelling: PropTypes.bool.isRequired,
 };
 
 export default EquipmentSearchDialog;

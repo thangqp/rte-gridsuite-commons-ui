@@ -22,6 +22,7 @@ const EquipmentSearchBar = (props) => {
         onSelectionChange,
         onSelectionValidation,
         equipmentsFound,
+        equipmentLabelling,
     } = props;
 
     const [equipments, setEquipments] = useState([]);
@@ -31,11 +32,10 @@ const EquipmentSearchBar = (props) => {
     const [loading, setLoading] = useState(false);
 
     const handleSearchTermChange = (term) => {
-        let searchTerm = term.trim();
-        if (searchTerm.length >= TERM_MIN_SIZE_BEFORE_SEARCH) {
-            console.log('INPUT = ', searchTerm);
+        if (term.length >= TERM_MIN_SIZE_BEFORE_SEARCH) {
+            console.log('INPUT = ', term);
             setLoading(true);
-            onSearchTermChange(searchTerm);
+            onSearchTermChange(term);
         } else {
             setEquipments([]);
         }
@@ -62,7 +62,9 @@ const EquipmentSearchBar = (props) => {
             onInputChange={(event, value) => handleSearchTermChange(value)}
             onChange={(event, newValue) => onSelectionChange(newValue)}
             getOptionLabel={(equipment) =>
-                `${equipment.equipmentType} id: ${equipment.equipmentId} name: ${equipment.equipmentName}`
+                equipmentLabelling
+                    ? `${equipment.equipmentType} name: ${equipment.equipmentName}`
+                    : `${equipment.equipmentType} id: ${equipment.equipmentId}`
             }
             options={equipments}
             loading={loading}
@@ -90,6 +92,7 @@ EquipmentSearchBar.propTypes = {
     onSelectionChange: PropTypes.func.isRequired,
     onSelectionValidation: PropTypes.func.isRequired,
     equipmentsFound: PropTypes.array.isRequired,
+    equipmentLabelling: PropTypes.bool.isRequired,
 };
 
 export default EquipmentSearchBar;

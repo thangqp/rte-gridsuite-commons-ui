@@ -185,6 +185,7 @@ const TopBar = ({
     equipmentsFound,
     onLanguageClick,
     language,
+    studyUuid,
 }) => {
     const classes = useStyles();
     const anchorRef = React.useRef(null);
@@ -271,13 +272,15 @@ const TopBar = ({
     };
 
     useEffect(() => {
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'f') {
-                e.preventDefault();
-                setDialogSearchOpen(user != null);
-            }
-        });
-    }, [user]);
+        if (user && studyUuid) {
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    setDialogSearchOpen(true);
+                }
+            });
+        }
+    }, [user, studyUuid]);
 
     return (
         <AppBar position="static" color="default" className={classes.appBar}>
@@ -310,8 +313,9 @@ const TopBar = ({
                         onEquipmentSearchValidation(equipment);
                     }}
                     equipments={equipmentsFound}
+                    equipmentLabelling={equipmentLabelling}
                 />
-                {user && (
+                {user && studyUuid && (
                     <div>
                         <Button onClick={handleClickEquipmentSearch}>
                             <SearchIcon />

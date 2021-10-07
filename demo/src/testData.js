@@ -50,7 +50,7 @@ export const LOGS_JSON = {
                         {
                             taskKey: 'postLoading',
                             defaultName:
-                              'Post loading process on network CC${numNetworkCc} SC${numNetworkSc}',
+                                'Post loading process on network CC${numNetworkCc} SC${numNetworkSc}',
                             taskValues: {
                                 numNetworkCc: {
                                     value: 0,
@@ -66,7 +66,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'networkSize',
                                     defaultMessage:
-                                      'Network CC${numNetworkCc} SC${numNetworkSc} has ${nbBuses} buses (voltage remote control: ${nbRemoteControllerBuses} controllers, ${nbRemoteControlledBuses} controlled) and ${nbBranches} branches',
+                                        'Network CC${numNetworkCc} SC${numNetworkSc} has ${nbBuses} buses (voltage remote control: ${nbRemoteControllerBuses} controllers, ${nbRemoteControlledBuses} controlled) and ${nbBranches} branches',
                                     values: {
                                         nbBranches: {
                                             value: 3,
@@ -97,7 +97,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'networkBalance',
                                     defaultMessage:
-                                      'Network CC${numNetworkCc} SC${numNetworkSc} balance: active generation=${activeGeneration} MW, active load=${activeLoad} MW, reactive generation=${reactiveGeneration} MVar, reactive load=${reactiveLoad} MVar',
+                                        'Network CC${numNetworkCc} SC${numNetworkSc} balance: active generation=${activeGeneration} MW, active load=${activeLoad} MW, reactive generation=${reactiveGeneration} MVar, reactive load=${reactiveLoad} MVar',
                                     values: {
                                         reactiveLoad: {
                                             value: 18.0,
@@ -141,7 +141,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'mismatchDistributionSuccess',
                                     defaultMessage:
-                                      'Iteration ${iteration}: slack bus active power (${initialMismatch} MW) distributed in ${nbIterations} iterations',
+                                        'Iteration ${iteration}: slack bus active power (${initialMismatch} MW) distributed in ${nbIterations} iterations',
                                     values: {
                                         reportSeverity: {
                                             value: 'ERROR',
@@ -164,7 +164,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'NoMismatchDistribution',
                                     defaultMessage:
-                                      'Iteration ${iteration}: already balanced',
+                                        'Iteration ${iteration}: already balanced',
                                     values: {
                                         reportSeverity: {
                                             value: 'FATAL',
@@ -204,7 +204,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'NoMismatchDistribution',
                                     defaultMessage:
-                                      'Iteration ${iteration}: already balanced',
+                                        'Iteration ${iteration}: already balanced',
                                     values: {
                                         reportSeverity: {
                                             value: 'WARN',
@@ -240,6 +240,7 @@ export const LOGS_JSON = {
     reports: [],
 };
 
+export const STUDY_UUID = '00000000-1111-2222-3333-444444444444';
 const NETWORK_UUID = '00000000-1111-2222-3333-444444444444';
 const EQUIPMENTS = [
     {
@@ -430,14 +431,17 @@ function fetchInfinitePokemonTree(nodeId) {
     return PokemonTree;
 }
 
-export const searchEquipments = (searchTerm) => {
+export const searchEquipments = (searchTerm, equipmentLabelling) => {
     if (searchTerm) {
+        console.log('equipmentLabelling : ', equipmentLabelling);
         console.log('SEARCH TERM : ', searchTerm);
-        let equipments = EQUIPMENTS.filter(
-            (equipment) =>
-                equipment.equipmentId.includes(searchTerm) ||
-                equipment.equipmentName.includes(searchTerm)
-        );
+        let equipments = equipmentLabelling
+            ? EQUIPMENTS.filter((equipment) =>
+                  equipment.equipmentName.includes(searchTerm)
+              )
+            : EQUIPMENTS.filter((equipment) =>
+                  equipment.equipmentId.includes(searchTerm)
+              );
         console.log('EQUIPMENTS FOUND : ', equipments);
         return equipments;
     } else {

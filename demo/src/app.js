@@ -62,6 +62,7 @@ import {
     fetchInfiniteTestDataList,
     searchEquipments,
     LOGS_JSON,
+    STUDY_UUID,
 } from './testData';
 
 import { frFR, enUS } from '@material-ui/core/locale';
@@ -265,7 +266,7 @@ const AppContent = () => {
     // Equipments search bar
     const [equipmentsFound, setEquipmentsFound] = useState([]);
     const searchMatchingEquipments = (searchTerm) => {
-        setEquipmentsFound(searchEquipments(searchTerm));
+        setEquipmentsFound(searchEquipments(searchTerm, equipmentLabelling));
     };
     const displayEquipment = (equipment) => {
         if (equipment != null) {
@@ -369,6 +370,7 @@ const AppContent = () => {
                         language={language}
                         user={user}
                         appsAndUrls={apps}
+                        studyUuid={STUDY_UUID}
                     >
                         <div style={{ paddingLeft: 10, paddingRight: 10 }}>
                             foobar-bazfoobar
