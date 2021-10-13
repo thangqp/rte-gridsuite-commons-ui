@@ -372,6 +372,12 @@ let PokemonTree = [
             },
         ],
     },
+    {
+        id: 'D3',
+        name: 'Empty Collect',
+        icon: <FolderOpenIcon />,
+        children: [],
+    },
 ];
 
 let PokemonList = [
