@@ -5,12 +5,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import { Dialog, DialogContent, DialogTitle } from '@material-ui/core';
 import EquipmentSearchBar from './equipment-search-bar';
-import SearchIcon from '@material-ui/icons/Search';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles({
@@ -23,13 +21,6 @@ const useStyles = makeStyles({
         alignItems: 'end',
         padding: '20px',
         paddingRight: '0px',
-    },
-    searchButton: {
-        padding: '0px',
-    },
-    searchIcon: {
-        cursor: 'pointer',
-        disabled: 'true',
     },
 });
 
@@ -45,18 +36,6 @@ const EquipmentSearchDialog = (props) => {
         equipmentLabelling,
     } = props;
 
-    const [selectedEquipment, setSelectedEquipment] = useState(null);
-
-    const handleSelectionChange = (equipmentId) => {
-        setSelectedEquipment(equipmentId);
-    };
-
-    useEffect(() => {
-        if (!open) {
-            setSelectedEquipment(null);
-        }
-    }, [open]);
-
     return (
         <Dialog
             open={open}
@@ -67,25 +46,13 @@ const EquipmentSearchDialog = (props) => {
             maxWidth="sm"
         >
             <DialogTitle className={classes.title} />
-            <DialogContent dividers={false} className={classes.content}>
+            <DialogContent dividers={false}>
                 <EquipmentSearchBar
                     onSearchTermChange={onEquipmentsSearchTermChange}
-                    onSelectionChange={handleSelectionChange}
-                    onSelectionValidation={() =>
-                        onEquipmentSearchValidation(selectedEquipment)
-                    }
+                    onSelectionChange={onEquipmentSearchValidation}
                     equipmentsFound={equipments}
                     equipmentLabelling={equipmentLabelling}
                 />
-                <Button
-                    className={classes.searchButton}
-                    onClick={() =>
-                        onEquipmentSearchValidation(selectedEquipment)
-                    }
-                    disabled={selectedEquipment == null}
-                >
-                    <SearchIcon className={classes.searchIcon} />
-                </Button>
             </DialogContent>
         </Dialog>
     );

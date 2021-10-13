@@ -11,16 +11,42 @@ import { Autocomplete } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
+import { makeStyles } from '@material-ui/core/styles';
+import SearchIcon from '@material-ui/icons/Search';
 
 const TERM_MIN_SIZE_BEFORE_SEARCH = 3;
+const TAG_MAX_SIZE = '100px';
+
+const useStyles = makeStyles({
+    equipmentOption: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '20px',
+        width: '100%',
+    },
+    equipmentTag: {
+        width: TAG_MAX_SIZE,
+        borderRadius: '10px',
+        padding: '4px',
+        margin: '0px',
+        marginLeft: '10px',
+        fontSize: 'x-small',
+        textAlign: 'center',
+        background: 'lightblue',
+    },
+    equipmentLabel: {
+        padding: '0px',
+        margin: '0px',
+    },
+});
 
 const EquipmentSearchBar = (props) => {
     const intl = useIntl();
+    const classes = useStyles();
 
     const {
         onSearchTermChange,
         onSelectionChange,
-        onSelectionValidation,
         equipmentsFound,
         equipmentLabelling,
     } = props;
@@ -50,6 +76,7 @@ const EquipmentSearchBar = (props) => {
     return (
         <Autocomplete
             id="equipment-search"
+            forcePopupIcon={false}
             open={expanded}
             onOpen={() => {
                 setExpanded(true);
@@ -63,24 +90,42 @@ const EquipmentSearchBar = (props) => {
             onChange={(event, newValue) => onSelectionChange(newValue)}
             getOptionLabel={(equipment) =>
                 equipmentLabelling
-                    ? `${equipment.equipmentType} name: ${equipment.equipmentName}`
-                    : `${equipment.equipmentType} id: ${equipment.equipmentId}`
+                    ? `${equipment.equipmentName}`
+                    : `${equipment.equipmentId}`
             }
             options={equipments}
             loading={loading}
             autoHighlight={true}
+            renderOption={(equipment) => {
+                return (
+                    <span className={classes.equipmentOption}>
+                        <span className={classes.equipmentTag}>
+                            {equipment.equipmentType}
+                        </span>
+                        <span className={classes.equipmentLabel}>
+                            {equipmentLabelling
+                                ? `${equipment.equipmentName}`
+                                : `${equipment.equipmentId}`}
+                        </span>
+                    </span>
+                );
+            }}
             renderInput={(params) => (
                 <TextField
                     autoFocus={true}
-                    onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                            onSelectionValidation();
-                        }
-                    }}
                     {...params}
                     label={intl.formatMessage({
                         id: 'equipment_search/label',
                     })}
+                    InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                            <React.Fragment>
+                                <SearchIcon color="disabled" />
+                                {params.InputProps.startAdornment}
+                            </React.Fragment>
+                        ),
+                    }}
                 />
             )}
         />
@@ -90,7 +135,6 @@ const EquipmentSearchBar = (props) => {
 EquipmentSearchBar.propTypes = {
     onSearchTermChange: PropTypes.func.isRequired,
     onSelectionChange: PropTypes.func.isRequired,
-    onSelectionValidation: PropTypes.func.isRequired,
     equipmentsFound: PropTypes.array.isRequired,
     equipmentLabelling: PropTypes.bool.isRequired,
 };
