@@ -23,22 +23,29 @@ const useStyles = makeStyles({
         flexDirection: 'row',
         gap: '20px',
         width: '100%',
+        margin: '0px',
+        padding: '0px',
+        alignItems: 'center',
     },
     equipmentTag: {
         width: TAG_MAX_SIZE,
         borderRadius: '10px',
         padding: '4px',
-        margin: '0px',
-        marginLeft: '10px',
         fontSize: 'x-small',
         textAlign: 'center',
         background: 'lightblue',
     },
-    equipmentLabel: {
-        padding: '0px',
-        margin: '0px',
+    equipmentVl: {
+        fontStyle: 'italic',
     },
 });
+
+const MULTI_VLS_OPTIONS_FOR_EQUIPMENT_TYPES = new Set([
+    'HVDC',
+    'LINE',
+    'TWO_WINDINGS_TRANSFORMER',
+    'THREE_WINDINGS_TRANSFORMER',
+]);
 
 const EquipmentSearchBar = (props) => {
     const intl = useIntl();
@@ -59,7 +66,6 @@ const EquipmentSearchBar = (props) => {
 
     const handleSearchTermChange = (term) => {
         if (term.length >= TERM_MIN_SIZE_BEFORE_SEARCH) {
-            console.log('INPUT = ', term);
             setLoading(true);
             onSearchTermChange(term);
         } else {
@@ -68,10 +74,28 @@ const EquipmentSearchBar = (props) => {
     };
 
     useEffect(() => {
-        console.log('OPTIONS : ', equipmentsFound);
         setLoading(false);
         setEquipments(equipmentsFound);
     }, [equipmentsFound]);
+
+    const createOptions = (equipmentsInfos) => {
+        return equipmentsInfos.flatMap((e) =>
+            e.type === 'SUBSTATION'
+                ? {
+                      type: e.type,
+                      id: e.id,
+                      name: e.name,
+                  }
+                : e.voltageLevelsIds.map((vlid) => {
+                      return {
+                          type: e.type,
+                          id: e.id,
+                          name: e.name,
+                          voltageLevelId: vlid,
+                      };
+                  })
+        );
+    };
 
     return (
         <Autocomplete
@@ -89,25 +113,33 @@ const EquipmentSearchBar = (props) => {
             onInputChange={(event, value) => handleSearchTermChange(value)}
             onChange={(event, newValue) => onSelectionChange(newValue)}
             getOptionLabel={(equipment) =>
-                equipmentLabelling
-                    ? `${equipment.equipmentName}`
-                    : `${equipment.equipmentId}`
+                equipmentLabelling ? `${equipment.name}` : `${equipment.id}`
             }
-            options={equipments}
+            options={createOptions(equipments)}
             loading={loading}
             autoHighlight={true}
             renderOption={(equipment) => {
                 return (
-                    <span className={classes.equipmentOption}>
+                    <div className={classes.equipmentOption}>
                         <span className={classes.equipmentTag}>
-                            {equipment.equipmentType}
+                            {equipment.type}
                         </span>
-                        <span className={classes.equipmentLabel}>
+                        <span>
                             {equipmentLabelling
-                                ? `${equipment.equipmentName}`
-                                : `${equipment.equipmentId}`}
+                                ? `${equipment.name}`
+                                : `${equipment.id}`}
                         </span>
-                    </span>
+                        {MULTI_VLS_OPTIONS_FOR_EQUIPMENT_TYPES.has(
+                            equipment.type
+                        ) && (
+                            <div>
+                                <span>&#8594;</span>
+                                <span className={classes.equipmentVl}>
+                                    {equipment.voltageLevelId}
+                                </span>
+                            </div>
+                        )}
+                    </div>
                 );
             }}
             renderInput={(params) => (

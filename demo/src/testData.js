@@ -27,6 +27,7 @@ export const LOGS_JSON = {
             subReporters: [
                 {
                     taskKey: 'loadFlow',
+                    // eslint-disable-next-line no-template-curly-in-string
                     defaultName: 'Load flow on network ${networkId}',
                     taskValues: {
                         networkId: {
@@ -37,6 +38,7 @@ export const LOGS_JSON = {
                     subReporters: [
                         {
                             taskKey: 'createLfNetwork',
+                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Create network ${networkNum}',
                             taskValues: {
                                 networkNum: {
@@ -50,6 +52,7 @@ export const LOGS_JSON = {
                         {
                             taskKey: 'postLoading',
                             defaultName:
+                                // eslint-disable-next-line no-template-curly-in-string
                                 'Post loading process on network CC${numNetworkCc} SC${numNetworkSc}',
                             taskValues: {
                                 numNetworkCc: {
@@ -66,6 +69,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'networkSize',
                                     defaultMessage:
+                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Network CC${numNetworkCc} SC${numNetworkSc} has ${nbBuses} buses (voltage remote control: ${nbRemoteControllerBuses} controllers, ${nbRemoteControlledBuses} controlled) and ${nbBranches} branches',
                                     values: {
                                         nbBranches: {
@@ -97,6 +101,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'networkBalance',
                                     defaultMessage:
+                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Network CC${numNetworkCc} SC${numNetworkSc} balance: active generation=${activeGeneration} MW, active load=${activeLoad} MW, reactive generation=${reactiveGeneration} MVar, reactive load=${reactiveLoad} MVar',
                                     values: {
                                         reactiveLoad: {
@@ -129,6 +134,7 @@ export const LOGS_JSON = {
                         },
                         {
                             taskKey: 'OuterLoop',
+                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Outer loop ${outerLoopType}',
                             taskValues: {
                                 outerLoopType: {
@@ -141,6 +147,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'mismatchDistributionSuccess',
                                     defaultMessage:
+                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Iteration ${iteration}: slack bus active power (${initialMismatch} MW) distributed in ${nbIterations} iterations',
                                     values: {
                                         reportSeverity: {
@@ -164,6 +171,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'NoMismatchDistribution',
                                     defaultMessage:
+                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Iteration ${iteration}: already balanced',
                                     values: {
                                         reportSeverity: {
@@ -180,6 +188,7 @@ export const LOGS_JSON = {
                         },
                         {
                             taskKey: 'OuterLoop',
+                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Outer loop ${outerLoopType}',
                             taskValues: {
                                 outerLoopType: {
@@ -192,6 +201,7 @@ export const LOGS_JSON = {
                         },
                         {
                             taskKey: 'OuterLoop',
+                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Outer loop ${outerLoopType}',
                             taskValues: {
                                 outerLoopType: {
@@ -204,6 +214,7 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'NoMismatchDistribution',
                                     defaultMessage:
+                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Iteration ${iteration}: already balanced',
                                     values: {
                                         reportSeverity: {
@@ -220,6 +231,7 @@ export const LOGS_JSON = {
                         },
                         {
                             taskKey: 'OuterLoop',
+                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Outer loop ${outerLoopType}',
                             taskValues: {
                                 outerLoopType: {
@@ -244,40 +256,46 @@ export const STUDY_UUID = '00000000-1111-2222-3333-444444444444';
 const NETWORK_UUID = '00000000-1111-2222-3333-444444444444';
 const EQUIPMENTS = [
     {
+        id: 'ident1',
+        name: 'name1',
+        type: 'LOAD',
+        voltageLevelsIds: ['vl1'],
         networkUuid: NETWORK_UUID,
-        equipmentId: 'ident1',
-        equipmentName: 'name1',
-        equipmentType: 'LOAD',
     },
     {
+        id: 'ident2',
+        name: 'name2',
+        type: 'GENERATOR',
+        voltageLevelsIds: ['vl2'],
         networkUuid: NETWORK_UUID,
-        equipmentId: 'ident2',
-        equipmentName: 'name2',
-        equipmentType: 'GENERATOR',
     },
     {
+        id: 'ident3',
+        name: 'name3',
+        type: 'BREAKER',
+        voltageLevelsIds: ['vl3'],
         networkUuid: NETWORK_UUID,
-        equipmentId: 'ident3',
-        equipmentName: 'name3',
-        equipmentType: 'BREAKER',
     },
     {
+        id: 'ident4',
+        name: 'name4',
+        type: 'HVDC',
+        voltageLevelsIds: ['vl41', 'vl42'],
         networkUuid: NETWORK_UUID,
-        equipmentId: 'ident4',
-        equipmentName: 'name4',
-        equipmentType: 'HVDC',
     },
     {
+        id: 'ident5',
+        name: 'name5',
+        type: 'SUBSTATION',
+        voltageLevelsIds: ['vl51', 'vl52'],
         networkUuid: NETWORK_UUID,
-        equipmentId: 'ident5',
-        equipmentName: 'name5',
-        equipmentType: 'SUBSTATION',
     },
     {
+        id: 'ident6',
+        name: 'name6',
+        type: 'VOLTAGE_LEVEL',
+        voltageLevelsIds: ['vl6'],
         networkUuid: NETWORK_UUID,
-        equipmentId: 'ident6',
-        equipmentName: 'name6',
-        equipmentType: 'VOLTAGE_LEVEL',
     },
 ];
 
@@ -439,14 +457,12 @@ function fetchInfinitePokemonTree(nodeId) {
 
 export const searchEquipments = (searchTerm, equipmentLabelling) => {
     if (searchTerm) {
-        console.log('equipmentLabelling : ', equipmentLabelling);
-        console.log('SEARCH TERM : ', searchTerm);
         let equipments = equipmentLabelling
             ? EQUIPMENTS.filter((equipment) =>
-                  equipment.equipmentName.includes(searchTerm)
+                  equipment.name.includes(searchTerm)
               )
             : EQUIPMENTS.filter((equipment) =>
-                  equipment.equipmentId.includes(searchTerm)
+                  equipment.id.includes(searchTerm)
               );
         console.log('EQUIPMENTS FOUND : ', equipments);
         return equipments;

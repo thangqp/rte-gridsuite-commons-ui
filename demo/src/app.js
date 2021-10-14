@@ -270,7 +270,13 @@ const AppContent = () => {
     };
     const displayEquipment = (equipment) => {
         if (equipment != null) {
-            alert(`Equipment ${equipment.equipmentName} found !`);
+            equipmentLabelling
+                ? alert(
+                      `Equipment ${equipment.name} (${equipment.voltageLevelId}) found !`
+                  )
+                : alert(
+                      `Equipment ${equipment.id} (${equipment.voltageLevelId}) found !`
+                  );
         }
     };
 
