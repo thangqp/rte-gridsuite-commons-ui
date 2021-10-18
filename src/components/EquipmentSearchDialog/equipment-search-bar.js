@@ -14,6 +14,7 @@ import { useIntl } from 'react-intl';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import clsx from 'clsx';
+import { EQUIPMENT_TYPE, getTagForEquipmentType } from '../../utils/ElementType';
 
 const TERM_MIN_SIZE_BEFORE_SEARCH = 3;
 const TYPE_TAG_MAX_SIZE = '120px';
@@ -46,11 +47,6 @@ const useStyles = makeStyles({
         fontStyle: 'italic',
     },
 });
-
-const DO_NOT_DISPLAY_VL_FOR_EQUIPMENTS_TYPES = new Set([
-    'SUBSTATION',
-    'VOLTAGE_LEVEL',
-]);
 
 const EquipmentSearchBar = (props) => {
     const intl = useIntl();
@@ -137,7 +133,7 @@ const EquipmentSearchBar = (props) => {
                                 classes.equipmentTypeTag
                             )}
                         >
-                            {equipment.type}
+                            {getTagForEquipmentType(equipment.type, intl)}
                         </span>
                         <div className={classes.equipmentOption}>
                             <span>
@@ -146,18 +142,18 @@ const EquipmentSearchBar = (props) => {
                                     : `${equipment.id}`}
                             </span>
 
-                            {!DO_NOT_DISPLAY_VL_FOR_EQUIPMENTS_TYPES.has(
-                                equipment.type
-                            ) && (
-                                <span
-                                    className={clsx(
-                                        classes.equipmentTag,
-                                        classes.equipmentVlTag
-                                    )}
-                                >
-                                    {equipment.voltageLevelId}
-                                </span>
-                            )}
+                            {equipment.type !== EQUIPMENT_TYPE.SUBSTATION &&
+                                equipment.type !==
+                                    EQUIPMENT_TYPE.VOLTAGE_LEVEL && (
+                                    <span
+                                        className={clsx(
+                                            classes.equipmentTag,
+                                            classes.equipmentVlTag
+                                        )}
+                                    >
+                                        {equipment.voltageLevelId}
+                                    </span>
+                                )}
                         </div>
                     </div>
                 );

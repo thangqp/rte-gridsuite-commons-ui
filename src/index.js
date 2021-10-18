@@ -6,6 +6,8 @@ export MuiVirtualizedTable from './components/MuiVirtualizedTable';
 export ReportViewer from './components/ReportViewer';
 export ReportViewerDialog from './components/ReportViewerDialog';
 
+export { EQUIPMENT_TYPE } from './utils/ElementType';
+
 export {
     initializeAuthenticationDev,
     initializeAuthenticationProd,
