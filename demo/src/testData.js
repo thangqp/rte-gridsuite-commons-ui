@@ -259,7 +259,7 @@ const EQUIPMENTS = [
         id: 'ident1',
         name: 'name1',
         type: 'LOAD',
-        voltageLevelsIds: ['voltlv1'],
+        voltageLevelsIds: ['POSTEP7'],
         networkUuid: NETWORK_UUID,
     },
     {
@@ -270,8 +270,8 @@ const EQUIPMENTS = [
         networkUuid: NETWORK_UUID,
     },
     {
-        id: 'ident3',
-        name: 'name3',
+        id: 'ident3 with spaces',
+        name: 'name3 with spaces',
         type: 'BREAKER',
         voltageLevelsIds: ['vl3'],
         networkUuid: NETWORK_UUID,
@@ -295,6 +295,27 @@ const EQUIPMENTS = [
         name: 'name6',
         type: 'VOLTAGE_LEVEL',
         voltageLevelsIds: ['vl6'],
+        networkUuid: NETWORK_UUID,
+    },
+    {
+        id: 'ident7',
+        name: 'name7',
+        type: 'LINE',
+        voltageLevelsIds: ['vl71', 'vl72'],
+        networkUuid: NETWORK_UUID,
+    },
+    {
+        id: 'ident8',
+        name: 'name8',
+        type: 'TWO_WINDINGS_TRANSFORMER',
+        voltageLevelsIds: ['vl81', 'vl82'],
+        networkUuid: NETWORK_UUID,
+    },
+    {
+        id: 'ident9',
+        name: 'name9',
+        type: 'THREE_WINDINGS_TRANSFORMER',
+        voltageLevelsIds: ['vl91', 'vl92'],
         networkUuid: NETWORK_UUID,
     },
 ];

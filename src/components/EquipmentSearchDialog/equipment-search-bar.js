@@ -6,19 +6,24 @@
  */
 
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Autocomplete } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
+import parse from 'autosuggest-highlight/parse';
+import match from 'autosuggest-highlight/match';
 import clsx from 'clsx';
-import { EQUIPMENT_TYPE, getTagForEquipmentType } from '../../utils/ElementType';
+import {
+    EQUIPMENT_TYPE,
+    getTagForEquipmentType,
+} from '../../utils/ElementType';
 
 const TERM_MIN_SIZE_BEFORE_SEARCH = 3;
 const TYPE_TAG_MAX_SIZE = '120px';
-const VL_TAG_MAX_SIZE = '80px';
+const VL_TAG_MAX_SIZE = '65px';
 
 const useStyles = makeStyles({
     equipmentOption: {
@@ -79,26 +84,28 @@ const EquipmentSearchBar = (props) => {
         }
     };
 
-    const createOptions = (equipmentsInfos) => {
-        return equipmentsInfos.flatMap((e) =>
-            e.type === 'SUBSTATION'
-                ? [
-                      {
-                          type: e.type,
-                          id: e.id,
-                          name: e.name,
-                      },
-                  ]
-                : e.voltageLevelsIds.map((vli) => {
-                      return {
-                          type: e.type,
-                          id: e.id,
-                          name: e.name,
-                          voltageLevelId: vli,
-                      };
-                  })
-        );
-    };
+    const createOptions = useCallback(
+        (equipmentsInfos) => {
+            return equipmentsInfos.flatMap((e) => {
+                let label = equipmentLabelling ? e.name : e.id;
+                return e.type === 'SUBSTATION'
+                    ? [
+                          {
+                              type: e.type,
+                              label: label,
+                          },
+                      ]
+                    : e.voltageLevelsIds.map((vli) => {
+                          return {
+                              type: e.type,
+                              label: label,
+                              voltageLevelId: vli,
+                          };
+                      });
+            });
+        },
+        [equipmentLabelling]
+    );
 
     return (
         <Autocomplete
@@ -115,16 +122,16 @@ const EquipmentSearchBar = (props) => {
             fullWidth
             onInputChange={(event, value) => handleSearchTermChange(value)}
             onChange={(event, newValue) => onSelectionChange(newValue)}
-            getOptionLabel={(equipment) =>
-                equipmentLabelling ? `${equipment.name}` : `${equipment.id}`
-            }
+            getOptionLabel={(option) => option.label}
             getOptionSelected={(option, value) =>
                 JSON.stringify(option) === JSON.stringify(value)
             }
             options={createOptions(equipments)}
             loading={loading}
             autoHighlight={true}
-            renderOption={(equipment) => {
+            renderOption={(option, { inputValue }) => {
+                let matches = match(option.label, inputValue);
+                let parts = parse(option.label, matches);
                 return (
                     <div className={classes.equipmentOption}>
                         <span
@@ -133,17 +140,25 @@ const EquipmentSearchBar = (props) => {
                                 classes.equipmentTypeTag
                             )}
                         >
-                            {getTagForEquipmentType(equipment.type, intl)}
+                            {getTagForEquipmentType(option.type, intl)}
                         </span>
                         <div className={classes.equipmentOption}>
                             <span>
-                                {equipmentLabelling
-                                    ? `${equipment.name}`
-                                    : `${equipment.id}`}
+                                {parts.map((part, index) => (
+                                    <span
+                                        key={index}
+                                        style={{
+                                            fontWeight: part.highlight
+                                                ? 'bold'
+                                                : 'inherit',
+                                        }}
+                                    >
+                                        {part.text}
+                                    </span>
+                                ))}
                             </span>
-
-                            {equipment.type !== EQUIPMENT_TYPE.SUBSTATION &&
-                                equipment.type !==
+                            {option.type !== EQUIPMENT_TYPE.SUBSTATION &&
+                                option.type !==
                                     EQUIPMENT_TYPE.VOLTAGE_LEVEL && (
                                     <span
                                         className={clsx(
@@ -151,7 +166,7 @@ const EquipmentSearchBar = (props) => {
                                             classes.equipmentVlTag
                                         )}
                                     >
-                                        {equipment.voltageLevelId}
+                                        {option.voltageLevelId}
                                     </span>
                                 )}
                         </div>

@@ -20,7 +20,7 @@ export const elementType = {
     FILTERS_CONTINGENCY_LIST: 'FILTERS_CONTINGENCY_LIST',
 };
 
-// Must be the same as the back
+// Must be the same as the back (Powsybl)
 export const EQUIPMENT_TYPE = {
     BREAKER: 'BREAKER',
     DISCONNECTOR: 'DISCONNECTOR',
