@@ -13,9 +13,11 @@ import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
+import clsx from 'clsx';
 
 const TERM_MIN_SIZE_BEFORE_SEARCH = 3;
-const TAG_MAX_SIZE = '100px';
+const TYPE_TAG_MAX_SIZE = '120px';
+const VL_TAG_MAX_SIZE = '80px';
 
 const useStyles = makeStyles({
     equipmentOption: {
@@ -26,25 +28,28 @@ const useStyles = makeStyles({
         margin: '0px',
         padding: '0px',
         alignItems: 'center',
+        justifyContent: 'space-between',
     },
     equipmentTag: {
-        width: TAG_MAX_SIZE,
         borderRadius: '10px',
         padding: '4px',
         fontSize: 'x-small',
         textAlign: 'center',
+    },
+    equipmentTypeTag: {
+        width: TYPE_TAG_MAX_SIZE,
         background: 'lightblue',
     },
-    equipmentVl: {
+    equipmentVlTag: {
+        width: VL_TAG_MAX_SIZE,
+        background: 'lightgray',
         fontStyle: 'italic',
     },
 });
 
-const MULTI_VLS_OPTIONS_FOR_EQUIPMENT_TYPES = new Set([
-    'HVDC',
-    'LINE',
-    'TWO_WINDINGS_TRANSFORMER',
-    'THREE_WINDINGS_TRANSFORMER',
+const DO_NOT_DISPLAY_VL_FOR_EQUIPMENTS_TYPES = new Set([
+    'SUBSTATION',
+    'VOLTAGE_LEVEL',
 ]);
 
 const EquipmentSearchBar = (props) => {
@@ -64,6 +69,11 @@ const EquipmentSearchBar = (props) => {
 
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        setLoading(false);
+        setEquipments(equipmentsFound);
+    }, [equipmentsFound]);
+
     const handleSearchTermChange = (term) => {
         if (term.length >= TERM_MIN_SIZE_BEFORE_SEARCH) {
             setLoading(true);
@@ -73,25 +83,22 @@ const EquipmentSearchBar = (props) => {
         }
     };
 
-    useEffect(() => {
-        setLoading(false);
-        setEquipments(equipmentsFound);
-    }, [equipmentsFound]);
-
     const createOptions = (equipmentsInfos) => {
         return equipmentsInfos.flatMap((e) =>
             e.type === 'SUBSTATION'
-                ? {
-                      type: e.type,
-                      id: e.id,
-                      name: e.name,
-                  }
-                : e.voltageLevelsIds.map((vlid) => {
+                ? [
+                      {
+                          type: e.type,
+                          id: e.id,
+                          name: e.name,
+                      },
+                  ]
+                : e.voltageLevelsIds.map((vli) => {
                       return {
                           type: e.type,
                           id: e.id,
                           name: e.name,
-                          voltageLevelId: vlid,
+                          voltageLevelId: vli,
                       };
                   })
         );
@@ -115,30 +122,43 @@ const EquipmentSearchBar = (props) => {
             getOptionLabel={(equipment) =>
                 equipmentLabelling ? `${equipment.name}` : `${equipment.id}`
             }
+            getOptionSelected={(option, value) =>
+                JSON.stringify(option) === JSON.stringify(value)
+            }
             options={createOptions(equipments)}
             loading={loading}
             autoHighlight={true}
             renderOption={(equipment) => {
                 return (
                     <div className={classes.equipmentOption}>
-                        <span className={classes.equipmentTag}>
+                        <span
+                            className={clsx(
+                                classes.equipmentTag,
+                                classes.equipmentTypeTag
+                            )}
+                        >
                             {equipment.type}
                         </span>
-                        <span>
-                            {equipmentLabelling
-                                ? `${equipment.name}`
-                                : `${equipment.id}`}
-                        </span>
-                        {MULTI_VLS_OPTIONS_FOR_EQUIPMENT_TYPES.has(
-                            equipment.type
-                        ) && (
-                            <div>
-                                <span>&#8594;</span>
-                                <span className={classes.equipmentVl}>
+                        <div className={classes.equipmentOption}>
+                            <span>
+                                {equipmentLabelling
+                                    ? `${equipment.name}`
+                                    : `${equipment.id}`}
+                            </span>
+
+                            {!DO_NOT_DISPLAY_VL_FOR_EQUIPMENTS_TYPES.has(
+                                equipment.type
+                            ) && (
+                                <span
+                                    className={clsx(
+                                        classes.equipmentTag,
+                                        classes.equipmentVlTag
+                                    )}
+                                >
                                     {equipment.voltageLevelId}
                                 </span>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
                 );
             }}

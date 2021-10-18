@@ -259,7 +259,7 @@ const EQUIPMENTS = [
         id: 'ident1',
         name: 'name1',
         type: 'LOAD',
-        voltageLevelsIds: ['vl1'],
+        voltageLevelsIds: ['voltlv1'],
         networkUuid: NETWORK_UUID,
     },
     {
@@ -457,15 +457,13 @@ function fetchInfinitePokemonTree(nodeId) {
 
 export const searchEquipments = (searchTerm, equipmentLabelling) => {
     if (searchTerm) {
-        let equipments = equipmentLabelling
+        return equipmentLabelling
             ? EQUIPMENTS.filter((equipment) =>
                   equipment.name.includes(searchTerm)
               )
             : EQUIPMENTS.filter((equipment) =>
                   equipment.id.includes(searchTerm)
               );
-        console.log('EQUIPMENTS FOUND : ', equipments);
-        return equipments;
     } else {
         return [];
     }
