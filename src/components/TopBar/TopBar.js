@@ -44,7 +44,10 @@ import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import MenuList from '@material-ui/core/MenuList';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import clsx from 'clsx';
+
 import EquipmentSearchDialog from '../EquipmentSearchDialog';
+
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -55,7 +58,6 @@ const useStyles = makeStyles((theme) => ({
         flexShrink: 0,
         width: 48,
         height: 48,
-        cursor: 'pointer',
         marginBottom: 8,
     },
     menuIcon: {
@@ -64,6 +66,8 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         marginLeft: 18,
+    },
+    clickable: {
         cursor: 'pointer',
     },
     link: {
@@ -292,12 +296,19 @@ const TopBar = ({
                 }
             />
             <Toolbar>
-                <div className={classes.logo} onClick={onLogoClick}>
+                <div
+                    className={clsx(classes.logo, {
+                        [classes.clickable]: onLogoClick,
+                    })}
+                    onClick={onLogoClick}
+                >
                     {appLogo}
                 </div>
                 <Typography
                     variant="h4"
-                    className={classes.title}
+                    className={clsx(classes.title, {
+                        [classes.clickable]: onLogoClick,
+                    })}
                     onClick={onLogoClick}
                 >
                     <span style={{ fontWeight: 'bold' }}>Grid</span>
