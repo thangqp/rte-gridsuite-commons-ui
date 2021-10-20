@@ -48,7 +48,6 @@ import clsx from 'clsx';
 
 import EquipmentSearchDialog from '../EquipmentSearchDialog';
 
-
 const useStyles = makeStyles((theme) => ({
     grow: {
         flexGrow: 1,
