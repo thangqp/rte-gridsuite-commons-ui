@@ -785,6 +785,8 @@ TopBar.propTypes = {
     equipmentLabelling: PropTypes.bool,
     onEquipmentsSearchTermChange: PropTypes.func.isRequired,
     onEquipmentSearchValidation: PropTypes.func.isRequired,
+    equipmentsFound: PropTypes.object.isRequired,
+    studyUuid: PropTypes.string.isRequired,
     onLanguageClick: PropTypes.func.isRequired,
     language: PropTypes.string.isRequired,
 };

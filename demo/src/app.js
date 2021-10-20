@@ -19,7 +19,12 @@ import {
 import AuthenticationRouter from '../../src/components/AuthenticationRouter';
 import {
     DEFAULT_CELL_PADDING,
+    EQUIPMENT_TYPE,
     initializeAuthenticationDev,
+    LANG_ENGLISH,
+    LANG_FRENCH,
+    LANG_SYSTEM,
+    LIGHT_THEME,
     logout,
 } from '../../src';
 import { useRouteMatch } from 'react-router';
@@ -29,18 +34,18 @@ import { BrowserRouter, useHistory, useLocation } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 import {
-    report_viewer_en,
-    report_viewer_fr,
-    top_bar_en,
-    top_bar_fr,
-    login_fr,
-    login_en,
-    table_en,
-    table_fr,
-    treeview_finder_en,
-    treeview_finder_fr,
     equipment_search_en,
     equipment_search_fr,
+    login_en,
+    login_fr,
+    report_viewer_en,
+    report_viewer_fr,
+    table_en,
+    table_fr,
+    top_bar_en,
+    top_bar_fr,
+    treeview_finder_en,
+    treeview_finder_fr,
 } from '../../src/index';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
@@ -48,24 +53,24 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
 import PowsyblLogo from '-!@svgr/webpack!../images/powsybl_logo.svg';
-
-import { LIGHT_THEME, LANG_SYSTEM, LANG_ENGLISH, LANG_FRENCH } from '../../src';
 import MuiVirtualizedTable from '../../src/components/MuiVirtualizedTable';
 
 import ReportViewerDialog from '../../src/components/ReportViewerDialog';
 import TreeViewFinder from '../../src/components/TreeViewFinder';
 import TreeViewFinderConfig from './TreeViewFinderConfig';
-import {
-    testDataTree,
-    testDataList,
-    fetchInfiniteTestDataTree,
-    fetchInfiniteTestDataList,
-    searchEquipments,
-    LOGS_JSON,
-    STUDY_UUID,
-} from './testData';
 
-import { frFR, enUS } from '@material-ui/core/locale';
+import {
+    fetchInfiniteTestDataList,
+    fetchInfiniteTestDataTree,
+    testDataList,
+    testDataTree,
+} from '../data/TreeViewFinder';
+
+import { LOGS_JSON } from '../data/ReportViewer';
+
+import { searchEquipments, STUDY_UUID } from '../data/EquipmentSearchBar';
+
+import { enUS, frFR } from '@material-ui/core/locale';
 
 const messages = {
     en: {
@@ -270,12 +275,10 @@ const AppContent = () => {
     };
     const displayEquipment = (equipment) => {
         if (equipment != null) {
-            equipmentLabelling
-                ? alert(
-                      `Equipment ${equipment.name} (${equipment.voltageLevelId}) found !`
-                  )
+            equipment.type === EQUIPMENT_TYPE.SUBSTATION
+                ? alert(`Equipment ${equipment.label} found !`)
                 : alert(
-                      `Equipment ${equipment.id} (${equipment.voltageLevelId}) found !`
+                      `Equipment ${equipment.label} (${equipment.voltageLevelId}) found !`
                   );
         }
     };

@@ -40,13 +40,12 @@ const EquipmentSearchDialog = (props) => {
         <Dialog
             open={open}
             onClose={onClose}
-            fullScreen={false}
             aria-labelledby="dialog-title-search"
             fullWidth={true}
             maxWidth="sm"
         >
             <DialogTitle className={classes.title} />
-            <DialogContent dividers={false}>
+            <DialogContent>
                 <EquipmentSearchBar
                     onSearchTermChange={onEquipmentsSearchTermChange}
                     onSelectionChange={onEquipmentSearchValidation}
