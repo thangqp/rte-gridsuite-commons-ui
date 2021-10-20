@@ -70,8 +70,6 @@ import { LOGS_JSON } from '../data/ReportViewer';
 
 import { searchEquipments, STUDY_UUID } from '../data/EquipmentSearchBar';
 
-import { enUS, frFR } from '@material-ui/core/locale';
-
 const messages = {
     en: {
         ...report_viewer_en,
@@ -91,26 +89,23 @@ const messages = {
     },
 };
 
-const getMuiTheme = (theme, computedLanguage) => {
-    let locale = computedLanguage === LANG_FRENCH ? frFR : enUS;
+const lightTheme = createTheme({
+    palette: {
+        type: 'light',
+    },
+});
+
+const darkTheme = createTheme({
+    palette: {
+        type: 'dark',
+    },
+});
+
+const getMuiTheme = (theme) => {
     if (theme === LIGHT_THEME) {
-        return createTheme(
-            {
-                palette: {
-                    type: 'light',
-                },
-            },
-            locale
-        );
+        return lightTheme;
     } else {
-        return createTheme(
-            {
-                palette: {
-                    type: 'light',
-                },
-            },
-            locale
-        );
+        return darkTheme;
     }
 };
 
@@ -353,7 +348,7 @@ const AppContent = () => {
             locale={computedLanguage}
             messages={messages[computedLanguage]}
         >
-            <ThemeProvider theme={getMuiTheme(theme, computedLanguage)}>
+            <ThemeProvider theme={getMuiTheme(theme)}>
                 <SnackbarProvider hideIconVariant={false}>
                     <CssBaseline />
                     <TopBar
