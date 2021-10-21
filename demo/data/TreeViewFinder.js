@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021, RTE (http://www.rte-france.com)
+ * Copyright (c) 2020, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -15,7 +15,7 @@ import AcUnitIcon from '@material-ui/icons/AcUnit';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import FiberNewIcon from '@material-ui/icons/FiberNew';
 
-let PokemonTree = [
+var PokemonTree = [
     {
         id: 'D1',
         name: 'Team',
@@ -114,7 +114,7 @@ let PokemonTree = [
     },
 ];
 
-let PokemonList = [
+var PokemonList = [
     {
         id: '1',
         name: 'Pikachu',
@@ -135,7 +135,7 @@ let PokemonList = [
     { id: '6', name: 'Machoc', type: 'Combat', power: '64' },
 ];
 
-let IDCounter = 100; // Start at 100 to avoid conflicts for demo
+var IDCounter = 100; // Start at 100 to avoid conflicts for demo
 function fetchInfinitePokemonList() {
     IDCounter++;
     PokemonList = [

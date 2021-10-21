@@ -17,7 +17,6 @@ export const LOGS_JSON = {
             subReporters: [
                 {
                     taskKey: 'loadFlow',
-                    // eslint-disable-next-line no-template-curly-in-string
                     defaultName: 'Load flow on network ${networkId}',
                     taskValues: {
                         networkId: {
@@ -28,7 +27,6 @@ export const LOGS_JSON = {
                     subReporters: [
                         {
                             taskKey: 'createLfNetwork',
-                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Create network ${networkNum}',
                             taskValues: {
                                 networkNum: {
@@ -42,7 +40,6 @@ export const LOGS_JSON = {
                         {
                             taskKey: 'postLoading',
                             defaultName:
-                                // eslint-disable-next-line no-template-curly-in-string
                                 'Post loading process on network CC${numNetworkCc} SC${numNetworkSc}',
                             taskValues: {
                                 numNetworkCc: {
@@ -59,7 +56,6 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'networkSize',
                                     defaultMessage:
-                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Network CC${numNetworkCc} SC${numNetworkSc} has ${nbBuses} buses (voltage remote control: ${nbRemoteControllerBuses} controllers, ${nbRemoteControlledBuses} controlled) and ${nbBranches} branches',
                                     values: {
                                         nbBranches: {
@@ -91,7 +87,6 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'networkBalance',
                                     defaultMessage:
-                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Network CC${numNetworkCc} SC${numNetworkSc} balance: active generation=${activeGeneration} MW, active load=${activeLoad} MW, reactive generation=${reactiveGeneration} MVar, reactive load=${reactiveLoad} MVar',
                                     values: {
                                         reactiveLoad: {
@@ -124,7 +119,6 @@ export const LOGS_JSON = {
                         },
                         {
                             taskKey: 'OuterLoop',
-                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Outer loop ${outerLoopType}',
                             taskValues: {
                                 outerLoopType: {
@@ -137,7 +131,6 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'mismatchDistributionSuccess',
                                     defaultMessage:
-                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Iteration ${iteration}: slack bus active power (${initialMismatch} MW) distributed in ${nbIterations} iterations',
                                     values: {
                                         reportSeverity: {
@@ -161,7 +154,6 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'NoMismatchDistribution',
                                     defaultMessage:
-                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Iteration ${iteration}: already balanced',
                                     values: {
                                         reportSeverity: {
@@ -178,7 +170,6 @@ export const LOGS_JSON = {
                         },
                         {
                             taskKey: 'OuterLoop',
-                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Outer loop ${outerLoopType}',
                             taskValues: {
                                 outerLoopType: {
@@ -191,7 +182,6 @@ export const LOGS_JSON = {
                         },
                         {
                             taskKey: 'OuterLoop',
-                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Outer loop ${outerLoopType}',
                             taskValues: {
                                 outerLoopType: {
@@ -204,7 +194,6 @@ export const LOGS_JSON = {
                                 {
                                     reportKey: 'NoMismatchDistribution',
                                     defaultMessage:
-                                        // eslint-disable-next-line no-template-curly-in-string
                                         'Iteration ${iteration}: already balanced',
                                     values: {
                                         reportSeverity: {
@@ -221,7 +210,6 @@ export const LOGS_JSON = {
                         },
                         {
                             taskKey: 'OuterLoop',
-                            // eslint-disable-next-line no-template-curly-in-string
                             defaultName: 'Outer loop ${outerLoopType}',
                             taskValues: {
                                 outerLoopType: {
