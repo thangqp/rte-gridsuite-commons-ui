@@ -46,7 +46,7 @@ import MenuList from '@material-ui/core/MenuList';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import clsx from 'clsx';
 
-import EquipmentSearchDialog from '../EquipmentSearchDialog';
+import ElementSearchDialog from '../ElementSearchDialog';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -183,12 +183,14 @@ const TopBar = ({
     theme,
     onEquipmentLabellingClick,
     equipmentLabelling,
-    onEquipmentsSearchTermChange,
-    onEquipmentSearchValidation,
-    equipmentsFound,
+    withElementsSearch,
+    searchingLabel,
+    onElementsSearchTermChange,
+    onElementSearchValidation,
+    elementsFound,
+    elementsRendered,
     onLanguageClick,
     language,
-    studyUuid,
 }) => {
     const classes = useStyles();
     const anchorRef = React.useRef(null);
@@ -275,7 +277,7 @@ const TopBar = ({
     };
 
     useEffect(() => {
-        if (user && studyUuid) {
+        if (user && withElementsSearch) {
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey && e.key === 'f') {
                     e.preventDefault();
@@ -283,7 +285,7 @@ const TopBar = ({
                 }
             });
         }
-    }, [user, studyUuid]);
+    }, [user, withElementsSearch]);
 
     return (
         <AppBar position="static" color="default" className={classes.appBar}>
@@ -314,18 +316,19 @@ const TopBar = ({
                     <span style={{ color: appColor }}>{appName}</span>
                 </Typography>
                 <div className={classes.grow}>{children}</div>
-                <EquipmentSearchDialog
+                <ElementSearchDialog
                     open={isDialogSearchOpen}
                     onClose={() => setDialogSearchOpen(false)}
-                    onEquipmentsSearchTermChange={onEquipmentsSearchTermChange}
-                    onEquipmentSearchValidation={(equipment) => {
+                    searchingLabel={searchingLabel}
+                    onElementsSearchTermChange={onElementsSearchTermChange}
+                    onElementSearchValidation={(equipment) => {
                         setDialogSearchOpen(false);
-                        onEquipmentSearchValidation(equipment);
+                        onElementSearchValidation(equipment);
                     }}
-                    equipments={equipmentsFound}
-                    equipmentLabelling={equipmentLabelling}
+                    elements={elementsFound}
+                    renderElements={elementsRendered}
                 />
-                {user && studyUuid && (
+                {user && withElementsSearch && (
                     <div>
                         <Button onClick={handleClickEquipmentSearch}>
                             <SearchIcon />
@@ -793,10 +796,11 @@ TopBar.propTypes = {
     onAboutClick: PropTypes.func,
     onEquipmentLabellingClick: PropTypes.func,
     equipmentLabelling: PropTypes.bool,
-    onEquipmentsSearchTermChange: PropTypes.func.isRequired,
-    onEquipmentSearchValidation: PropTypes.func.isRequired,
-    equipmentsFound: PropTypes.array.isRequired,
-    studyUuid: PropTypes.string.isRequired,
+    withElementsSearch: PropTypes.bool.isRequired,
+    searchingLabel: PropTypes.string,
+    onElementsSearchTermChange: PropTypes.func,
+    onElementSearchValidation: PropTypes.func,
+    elementsFound: PropTypes.array,
     onLanguageClick: PropTypes.func.isRequired,
     language: PropTypes.string.isRequired,
 };

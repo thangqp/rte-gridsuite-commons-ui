@@ -41,7 +41,7 @@ export const EQUIPMENT_TYPE = {
     VOLTAGE_LEVEL: 'VOLTAGE_LEVEL',
 };
 
-export const getTagForEquipmentType = (type, intl) => {
+export const getTagLabelForEquipmentType = (type, intl) => {
     switch (type) {
         case EQUIPMENT_TYPE.BREAKER:
         case EQUIPMENT_TYPE.DISCONNECTOR:
@@ -97,6 +97,29 @@ export const getTagForEquipmentType = (type, intl) => {
         default:
             throw new Error(`Unknown equipment type : ${type}`);
     }
+};
+
+export const getEquipmentsOptionsForSearchBar = (
+    equipmentsInfos,
+    equipmentLabelling
+) => {
+    return equipmentsInfos.flatMap((e) => {
+        let label = equipmentLabelling ? e.name : e.id;
+        return e.type === 'SUBSTATION'
+            ? [
+                  {
+                      type: e.type,
+                      label: label,
+                  },
+              ]
+            : e.voltageLevelsIds.map((vli) => {
+                  return {
+                      type: e.type,
+                      label: label,
+                      voltageLevelId: vli,
+                  };
+              });
+    });
 };
 
 export function getFileIcon(type, theme) {

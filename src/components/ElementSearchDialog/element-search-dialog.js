@@ -8,7 +8,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Dialog, DialogContent, DialogTitle } from '@material-ui/core';
-import EquipmentSearchBar from './equipment-search-bar';
+import ElementSearchBar from './element-search-bar';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles({
@@ -24,16 +24,17 @@ const useStyles = makeStyles({
     },
 });
 
-const EquipmentSearchDialog = (props) => {
+const ElementSearchDialog = (props) => {
     const classes = useStyles();
 
     const {
         open,
         onClose,
-        onEquipmentsSearchTermChange,
-        onEquipmentSearchValidation,
-        equipments,
-        equipmentLabelling,
+        searchingLabel,
+        onElementsSearchTermChange,
+        onElementSearchValidation,
+        elements,
+        renderElements,
     } = props;
 
     return (
@@ -46,24 +47,25 @@ const EquipmentSearchDialog = (props) => {
         >
             <DialogTitle className={classes.title} />
             <DialogContent>
-                <EquipmentSearchBar
-                    onSearchTermChange={onEquipmentsSearchTermChange}
-                    onSelectionChange={onEquipmentSearchValidation}
-                    equipmentsFound={equipments}
-                    equipmentLabelling={equipmentLabelling}
+                <ElementSearchBar
+                    searchingLabel={searchingLabel}
+                    onSearchTermChange={onElementsSearchTermChange}
+                    onSelectionChange={onElementSearchValidation}
+                    elementsFound={elements}
+                    renderElements={renderElements}
                 />
             </DialogContent>
         </Dialog>
     );
 };
 
-EquipmentSearchDialog.propTypes = {
+ElementSearchDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    onEquipmentsSearchTermChange: PropTypes.func.isRequired,
-    onEquipmentSearchValidation: PropTypes.func.isRequired,
-    equipments: PropTypes.array.isRequired,
-    equipmentLabelling: PropTypes.bool.isRequired,
+    onElementsSearchTermChange: PropTypes.func.isRequired,
+    onElementSearchValidation: PropTypes.func.isRequired,
+    elements: PropTypes.array.isRequired,
+    renderElements: PropTypes.func.isRequired,
 };
 
-export default EquipmentSearchDialog;
+export default ElementSearchDialog;

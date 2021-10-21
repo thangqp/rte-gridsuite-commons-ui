@@ -5,7 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-export const STUDY_UUID = '00000000-1111-2222-3333-444444444444';
+export const TYPE_TAG_MAX_SIZE = '120px';
+export const VL_TAG_MAX_SIZE = '65px';
 
 const NETWORK_UUID = '00000000-1111-2222-3333-444444444444';
 const EQUIPMENTS = [
