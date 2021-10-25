@@ -42,7 +42,7 @@ const ElementSearchDialog = (props) => {
         onSearchTermChange,
         onSelectionChange,
         elementsFound, // [{ label: aLabel, id: anId }, ...]
-        renderElements,
+        renderElement,
     } = props;
 
     const [elements, setElements] = useState([]);
@@ -98,7 +98,7 @@ const ElementSearchDialog = (props) => {
                     options={elements}
                     loading={loading}
                     autoHighlight={true}
-                    renderOption={renderElements}
+                    renderOption={renderElement}
                     renderInput={(params) => (
                         <TextField
                             autoFocus={true}
@@ -127,7 +127,7 @@ ElementSearchDialog.propTypes = {
     onSearchTermChange: PropTypes.func.isRequired,
     onSelectionChange: PropTypes.func.isRequired,
     elementsFound: PropTypes.array.isRequired,
-    renderElements: PropTypes.func.isRequired,
+    renderElement: PropTypes.func.isRequired,
 };
 
 export default ElementSearchDialog;

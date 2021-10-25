@@ -311,9 +311,9 @@ const AppContent = ({ language, onLanguageClick }) => {
                   );
         }
     };
-    const renderElements = (option, { inputValue }) => {
-        let matches = match(option.label, inputValue);
-        let parts = parse(option.label, matches);
+    const renderElement = (element, { inputValue }) => {
+        let matches = match(element.label, inputValue);
+        let parts = parse(element.label, matches);
         return (
             <div className={classes.equipmentOption}>
                 <span
@@ -322,7 +322,7 @@ const AppContent = ({ language, onLanguageClick }) => {
                         classes.equipmentTypeTag
                     )}
                 >
-                    {getTagLabelForEquipmentType(option.type, intl)}
+                    {getTagLabelForEquipmentType(element.type, intl)}
                 </span>
                 <div className={classes.equipmentOption}>
                     <span>
@@ -339,15 +339,15 @@ const AppContent = ({ language, onLanguageClick }) => {
                             </span>
                         ))}
                     </span>
-                    {option.type !== EQUIPMENT_TYPE.SUBSTATION &&
-                        option.type !== EQUIPMENT_TYPE.VOLTAGE_LEVEL && (
+                    {element.type !== EQUIPMENT_TYPE.SUBSTATION &&
+                        element.type !== EQUIPMENT_TYPE.VOLTAGE_LEVEL && (
                             <span
                                 className={clsx(
                                     classes.equipmentTag,
                                     classes.equipmentVlTag
                                 )}
                             >
-                                {option.voltageLevelId}
+                                {element.voltageLevelId}
                             </span>
                         )}
                 </div>
@@ -370,8 +370,14 @@ const AppContent = ({ language, onLanguageClick }) => {
     };
 
     const apps = [
-        { name: 'App1', url: '/app1', appColor: 'red' },
+        {
+            name: 'App1',
+            url: '/app1',
+            appColor: 'red',
+            hiddenInAppsMenu: false,
+        },
         { name: 'App2', url: '/app2' },
+        { name: 'App3', url: '/app3', hiddenInAppsMenu: true },
     ];
 
     const buttons = [
@@ -432,7 +438,7 @@ const AppContent = ({ language, onLanguageClick }) => {
                         equipmentsFound,
                         equipmentLabelling
                     )}
-                    elementsRendered={renderElements}
+                    renderElement={renderElement}
                     onLanguageClick={onLanguageClick}
                     language={language}
                     user={user}

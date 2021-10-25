@@ -26,7 +26,7 @@ afterEach(() => {
 });
 
 const apps = [
-    { name: 'App1', url: '/app1', appColor: 'blue' },
+    { name: 'App1', url: '/app1', appColor: 'blue', hiddenInAppsMenu: false },
     { name: 'App2', url: '/app2' },
 ];
 

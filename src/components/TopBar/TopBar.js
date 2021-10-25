@@ -188,7 +188,7 @@ const TopBar = ({
     onSearchTermChange,
     onSelectionChange,
     elementsFound,
-    elementsRendered,
+    renderElement,
     onLanguageClick,
     language,
 }) => {
@@ -326,7 +326,7 @@ const TopBar = ({
                         onSelectionChange(element);
                     }}
                     elementsFound={elementsFound}
-                    renderElements={elementsRendered}
+                    renderElement={renderElement}
                 />
                 {user && withElementsSearch && (
                     <div>
@@ -353,41 +353,43 @@ const TopBar = ({
                             onClose={handleCloseAppsMenu}
                         >
                             {appsAndUrls &&
-                                appsAndUrls.map((item) => (
-                                    <a
-                                        key={item.name}
-                                        href={item.url}
-                                        className={classes.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <StyledMenuItem
-                                            onClick={handleCloseAppsMenu}
+                                appsAndUrls
+                                    .filter((item) => !item.hiddenInAppsMenu)
+                                    .map((item) => (
+                                        <a
+                                            key={item.name}
+                                            href={item.url}
+                                            className={classes.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                         >
-                                            <ListItemText>
-                                                <span
-                                                    style={{
-                                                        fontWeight: 'bold',
-                                                    }}
-                                                >
-                                                    Grid
-                                                </span>
-                                                <span
-                                                    style={{
-                                                        color:
-                                                            item.appColor ===
-                                                            undefined
-                                                                ? 'grey'
-                                                                : item.appColor,
-                                                        fontWeight: 'bold',
-                                                    }}
-                                                >
-                                                    {item.name}
-                                                </span>
-                                            </ListItemText>
-                                        </StyledMenuItem>
-                                    </a>
-                                ))}
+                                            <StyledMenuItem
+                                                onClick={handleCloseAppsMenu}
+                                            >
+                                                <ListItemText>
+                                                    <span
+                                                        style={{
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
+                                                        Grid
+                                                    </span>
+                                                    <span
+                                                        style={{
+                                                            color:
+                                                                item.appColor ===
+                                                                undefined
+                                                                    ? 'grey'
+                                                                    : item.appColor,
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
+                                                        {item.name}
+                                                    </span>
+                                                </ListItemText>
+                                            </StyledMenuItem>
+                                        </a>
+                                    ))}
                         </StyledMenu>
                     </div>
                 )}
