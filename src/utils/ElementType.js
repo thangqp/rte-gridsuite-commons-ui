@@ -99,7 +99,7 @@ export const getTagLabelForEquipmentType = (type, intl) => {
     }
 };
 
-export const getEquipmentsOptionsForSearchBar = (
+export const getEquipmentsInfosForSearchBar = (
     equipmentsInfos,
     equipmentLabelling
 ) => {
@@ -109,14 +109,16 @@ export const getEquipmentsOptionsForSearchBar = (
             return e.type === 'SUBSTATION'
                 ? [
                       {
-                          type: e.type,
                           label: label,
+                          id: e.id,
+                          type: e.type,
                       },
                   ]
                 : e.voltageLevelsIds.map((vli) => {
                       return {
-                          type: e.type,
                           label: label,
+                          id: e.id,
+                          type: e.type,
                           voltageLevelId: vli,
                       };
                   });

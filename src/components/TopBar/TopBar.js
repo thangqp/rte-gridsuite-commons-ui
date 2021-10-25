@@ -185,8 +185,8 @@ const TopBar = ({
     equipmentLabelling,
     withElementsSearch,
     searchingLabel,
-    onElementsSearchTermChange,
-    onElementSearchValidation,
+    onSearchTermChange,
+    onSelectionChange,
     elementsFound,
     elementsRendered,
     onLanguageClick,
@@ -203,7 +203,7 @@ const TopBar = ({
     const [isMenuOpen, setMenuOpen] = useState(false);
     const [isDialogSearchOpen, setDialogSearchOpen] = useState(false);
 
-    const handleClickEquipmentSearch = (event) => {
+    const handleClickElementSearch = () => {
         setDialogSearchOpen(true);
     };
 
@@ -320,17 +320,17 @@ const TopBar = ({
                     open={isDialogSearchOpen}
                     onClose={() => setDialogSearchOpen(false)}
                     searchingLabel={searchingLabel}
-                    onElementsSearchTermChange={onElementsSearchTermChange}
-                    onElementSearchValidation={(equipment) => {
+                    onSearchTermChange={onSearchTermChange}
+                    onSelectionChange={(element) => {
                         setDialogSearchOpen(false);
-                        onElementSearchValidation(equipment);
+                        onSelectionChange(element);
                     }}
-                    elements={elementsFound}
+                    elementsFound={elementsFound}
                     renderElements={elementsRendered}
                 />
                 {user && withElementsSearch && (
                     <div>
-                        <Button onClick={handleClickEquipmentSearch}>
+                        <Button onClick={handleClickElementSearch}>
                             <SearchIcon />
                         </Button>
                     </div>
@@ -798,8 +798,8 @@ TopBar.propTypes = {
     equipmentLabelling: PropTypes.bool,
     withElementsSearch: PropTypes.bool.isRequired,
     searchingLabel: PropTypes.string,
-    onElementsSearchTermChange: PropTypes.func,
-    onElementSearchValidation: PropTypes.func,
+    onSearchTermChange: PropTypes.func,
+    onSelectionChange: PropTypes.func,
     elementsFound: PropTypes.array,
     onLanguageClick: PropTypes.func.isRequired,
     language: PropTypes.string.isRequired,

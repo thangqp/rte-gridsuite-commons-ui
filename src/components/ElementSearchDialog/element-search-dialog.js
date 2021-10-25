@@ -5,11 +5,19 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Dialog, DialogContent, DialogTitle } from '@material-ui/core';
-import ElementSearchBar from './element-search-bar';
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    TextField,
+} from '@material-ui/core';
 import PropTypes from 'prop-types';
+import { Autocomplete } from '@material-ui/lab';
+import SearchIcon from '@material-ui/icons/Search';
+
+const TERM_MIN_SIZE_BEFORE_SEARCH = 3;
 
 const useStyles = makeStyles({
     title: {
@@ -31,11 +39,31 @@ const ElementSearchDialog = (props) => {
         open,
         onClose,
         searchingLabel,
-        onElementsSearchTermChange,
-        onElementSearchValidation,
-        elements,
+        onSearchTermChange,
+        onSelectionChange,
+        elementsFound, // [{ label: aLabel, id: anId }, ...]
         renderElements,
     } = props;
+
+    const [elements, setElements] = useState([]);
+
+    const [expanded, setExpanded] = useState(false);
+
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setLoading(false);
+        setElements(elementsFound);
+    }, [elementsFound]);
+
+    const handleSearchTermChange = (term) => {
+        if (term.length >= TERM_MIN_SIZE_BEFORE_SEARCH) {
+            setLoading(true);
+            onSearchTermChange(term);
+        } else {
+            setElements([]);
+        }
+    };
 
     return (
         <Dialog
@@ -47,12 +75,46 @@ const ElementSearchDialog = (props) => {
         >
             <DialogTitle className={classes.title} />
             <DialogContent>
-                <ElementSearchBar
-                    searchingLabel={searchingLabel}
-                    onSearchTermChange={onElementsSearchTermChange}
-                    onSelectionChange={onElementSearchValidation}
-                    elementsFound={elements}
-                    renderElements={renderElements}
+                <Autocomplete
+                    id="element-search"
+                    forcePopupIcon={false}
+                    open={expanded}
+                    onOpen={() => {
+                        setExpanded(true);
+                        setElements([]);
+                    }}
+                    onClose={() => {
+                        setExpanded(false);
+                    }}
+                    fullWidth
+                    onInputChange={(event, value) =>
+                        handleSearchTermChange(value)
+                    }
+                    onChange={(event, newValue) => onSelectionChange(newValue)}
+                    getOptionLabel={(option) => option.label}
+                    getOptionSelected={(option, value) =>
+                        option.id === value.id
+                    }
+                    options={elements}
+                    loading={loading}
+                    autoHighlight={true}
+                    renderOption={renderElements}
+                    renderInput={(params) => (
+                        <TextField
+                            autoFocus={true}
+                            {...params}
+                            label={searchingLabel}
+                            InputProps={{
+                                ...params.InputProps,
+                                startAdornment: (
+                                    <React.Fragment>
+                                        <SearchIcon color="disabled" />
+                                        {params.InputProps.startAdornment}
+                                    </React.Fragment>
+                                ),
+                            }}
+                        />
+                    )}
                 />
             </DialogContent>
         </Dialog>
@@ -62,9 +124,9 @@ const ElementSearchDialog = (props) => {
 ElementSearchDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    onElementsSearchTermChange: PropTypes.func.isRequired,
-    onElementSearchValidation: PropTypes.func.isRequired,
-    elements: PropTypes.array.isRequired,
+    onSearchTermChange: PropTypes.func.isRequired,
+    onSelectionChange: PropTypes.func.isRequired,
+    elementsFound: PropTypes.array.isRequired,
     renderElements: PropTypes.func.isRequired,
 };
 

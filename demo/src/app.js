@@ -78,7 +78,7 @@ import parse from 'autosuggest-highlight/parse';
 import clsx from 'clsx';
 import {
     getTagLabelForEquipmentType,
-    getEquipmentsOptionsForSearchBar,
+    getEquipmentsInfosForSearchBar,
 } from '../../src';
 
 const messages = {
@@ -426,9 +426,9 @@ const AppContent = ({ language, onLanguageClick }) => {
                     searchingLabel={intl.formatMessage({
                         id: 'equipment_search/label',
                     })}
-                    onElementsSearchTermChange={searchMatchingEquipments}
-                    onElementSearchValidation={displayEquipment}
-                    elementsFound={getEquipmentsOptionsForSearchBar(
+                    onSearchTermChange={searchMatchingEquipments}
+                    onSelectionChange={displayEquipment}
+                    elementsFound={getEquipmentsInfosForSearchBar(
                         equipmentsFound,
                         equipmentLabelling
                     )}

@@ -9,7 +9,7 @@ export ReportViewerDialog from './components/ReportViewerDialog';
 export {
     EQUIPMENT_TYPE,
     getTagLabelForEquipmentType,
-    getEquipmentsOptionsForSearchBar,
+    getEquipmentsInfosForSearchBar,
 } from './utils/ElementType';
 
 export {
