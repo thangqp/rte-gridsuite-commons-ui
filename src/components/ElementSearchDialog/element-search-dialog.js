@@ -16,6 +16,7 @@ import {
 import PropTypes from 'prop-types';
 import { Autocomplete } from '@material-ui/lab';
 import SearchIcon from '@material-ui/icons/Search';
+import { useIntl } from "react-intl";
 
 const TERM_MIN_SIZE_BEFORE_SEARCH = 3;
 
@@ -34,6 +35,7 @@ const useStyles = makeStyles({
 
 const ElementSearchDialog = (props) => {
     const classes = useStyles();
+    const intl = useIntl();
 
     const {
         open,
@@ -60,8 +62,10 @@ const ElementSearchDialog = (props) => {
         if (term.length >= TERM_MIN_SIZE_BEFORE_SEARCH) {
             setLoading(true);
             onSearchTermChange(term);
+            setExpanded(true);
         } else {
             setElements([]);
+            setExpanded(false);
         }
     };
 
@@ -80,7 +84,6 @@ const ElementSearchDialog = (props) => {
                     forcePopupIcon={false}
                     open={expanded}
                     onOpen={() => {
-                        setExpanded(true);
                         setElements([]);
                     }}
                     onClose={() => {
@@ -98,6 +101,9 @@ const ElementSearchDialog = (props) => {
                     options={elements}
                     loading={loading}
                     autoHighlight={true}
+                    noOptionsText={intl.formatMessage({
+                        id: 'element_search/noResult',
+                    })}
                     renderOption={renderElement}
                     renderInput={(params) => (
                         <TextField

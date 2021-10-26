@@ -34,6 +34,8 @@ import { BrowserRouter, useHistory, useLocation } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 import {
+    element_search_en,
+    element_search_fr,
     equipment_search_en,
     equipment_search_fr,
     login_en,
@@ -88,6 +90,7 @@ const messages = {
         ...top_bar_en,
         ...table_en,
         ...treeview_finder_en,
+        ...element_search_en,
         ...equipment_search_en,
     },
     fr: {
@@ -96,6 +99,7 @@ const messages = {
         ...top_bar_fr,
         ...table_fr,
         ...treeview_finder_fr,
+        ...element_search_fr,
         ...equipment_search_fr,
     },
 };
