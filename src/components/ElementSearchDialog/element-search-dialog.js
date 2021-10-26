@@ -16,7 +16,7 @@ import {
 import PropTypes from 'prop-types';
 import { Autocomplete } from '@material-ui/lab';
 import SearchIcon from '@material-ui/icons/Search';
-import { useIntl } from "react-intl";
+import { useIntl } from 'react-intl';
 
 const TERM_MIN_SIZE_BEFORE_SEARCH = 3;
 
@@ -26,7 +26,6 @@ const useStyles = makeStyles({
     },
     content: {
         display: 'flex',
-        flexDirection: 'row',
         alignItems: 'end',
         padding: '20px',
         paddingRight: '0px',
@@ -75,7 +74,6 @@ const ElementSearchDialog = (props) => {
             onClose={onClose}
             aria-labelledby="dialog-title-search"
             fullWidth={true}
-            maxWidth="sm"
         >
             <DialogTitle className={classes.title} />
             <DialogContent>
@@ -109,7 +107,12 @@ const ElementSearchDialog = (props) => {
                         <TextField
                             autoFocus={true}
                             {...params}
-                            label={searchingLabel}
+                            label={
+                                searchingLabel ||
+                                intl.formatMessage({
+                                    id: 'element_search/noResult',
+                                })
+                            }
                             InputProps={{
                                 ...params.InputProps,
                                 startAdornment: (
@@ -130,6 +133,7 @@ const ElementSearchDialog = (props) => {
 ElementSearchDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
+    searchingLabel: PropTypes.string,
     onSearchTermChange: PropTypes.func.isRequired,
     onSelectionChange: PropTypes.func.isRequired,
     elementsFound: PropTypes.array.isRequired,

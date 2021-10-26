@@ -8,9 +8,10 @@ export ReportViewerDialog from './components/ReportViewerDialog';
 
 export {
     EQUIPMENT_TYPE,
-    getTagLabelForEquipmentType,
-    getEquipmentsInfosForSearchBar,
-} from './utils/ElementType';
+    renderEquipmentForSearchBar,
+    equipmentStyles,
+    sortEquipments,
+} from './utils/EquipmentType';
 
 export {
     initializeAuthenticationDev,

@@ -316,24 +316,26 @@ const TopBar = ({
                     <span style={{ color: appColor }}>{appName}</span>
                 </Typography>
                 <div className={classes.grow}>{children}</div>
-                <ElementSearchDialog
-                    open={isDialogSearchOpen}
-                    onClose={() => setDialogSearchOpen(false)}
-                    searchingLabel={searchingLabel}
-                    onSearchTermChange={onSearchTermChange}
-                    onSelectionChange={(element) => {
-                        setDialogSearchOpen(false);
-                        onSelectionChange(element);
-                    }}
-                    elementsFound={elementsFound}
-                    renderElement={renderElement}
-                />
                 {user && withElementsSearch && (
-                    <div>
-                        <Button onClick={handleClickElementSearch}>
-                            <SearchIcon />
-                        </Button>
-                    </div>
+                    <React.Fragment>
+                        <ElementSearchDialog
+                            open={isDialogSearchOpen}
+                            onClose={() => setDialogSearchOpen(false)}
+                            searchingLabel={searchingLabel}
+                            onSearchTermChange={onSearchTermChange}
+                            onSelectionChange={(element) => {
+                                setDialogSearchOpen(false);
+                                onSelectionChange(element);
+                            }}
+                            elementsFound={elementsFound}
+                            renderElement={renderElement}
+                        />
+                        <div>
+                            <Button onClick={handleClickElementSearch}>
+                                <SearchIcon />
+                            </Button>
+                        </div>
+                    </React.Fragment>
                 )}
                 {user && (
                     <div>
@@ -798,7 +800,7 @@ TopBar.propTypes = {
     onAboutClick: PropTypes.func,
     onEquipmentLabellingClick: PropTypes.func,
     equipmentLabelling: PropTypes.bool,
-    withElementsSearch: PropTypes.bool.isRequired,
+    withElementsSearch: PropTypes.bool,
     searchingLabel: PropTypes.string,
     onSearchTermChange: PropTypes.func,
     onSelectionChange: PropTypes.func,

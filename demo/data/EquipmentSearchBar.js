@@ -5,8 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-export const TYPE_TAG_MAX_SIZE = '120px';
-export const VL_TAG_MAX_SIZE = '65px';
+import { sortEquipments } from '../../src';
 
 const NETWORK_UUID = '00000000-1111-2222-3333-444444444444';
 const EQUIPMENTS = [
@@ -91,13 +90,35 @@ const EQUIPMENTS = [
 
 export const searchEquipments = (searchTerm, equipmentLabelling) => {
     if (searchTerm) {
-        return equipmentLabelling
-            ? EQUIPMENTS.filter((equipment) =>
-                  equipment.name.includes(searchTerm)
-              )
-            : EQUIPMENTS.filter((equipment) =>
-                  equipment.id.includes(searchTerm)
-              );
+        return (
+            equipmentLabelling
+                ? EQUIPMENTS.filter((equipment) =>
+                      equipment.name.includes(searchTerm)
+                  )
+                : EQUIPMENTS.filter((equipment) =>
+                      equipment.id.includes(searchTerm)
+                  )
+        )
+            .flatMap((e) => {
+                let label = equipmentLabelling ? e.name : e.id;
+                return e.type === 'SUBSTATION'
+                    ? [
+                          {
+                              label: label,
+                              id: e.id,
+                              type: e.type,
+                          },
+                      ]
+                    : e.voltageLevelsIds.map((vli) => {
+                          return {
+                              label: label,
+                              id: e.id,
+                              type: e.type,
+                              voltageLevelId: vli,
+                          };
+                      });
+            })
+            .sort(sortEquipments);
     } else {
         return [];
     }

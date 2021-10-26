@@ -20,6 +20,7 @@ import AuthenticationRouter from '../../src/components/AuthenticationRouter';
 import {
     DEFAULT_CELL_PADDING,
     EQUIPMENT_TYPE,
+    equipmentStyles,
     initializeAuthenticationDev,
     LANG_ENGLISH,
     LANG_FRENCH,
@@ -70,18 +71,8 @@ import {
 
 import { LOGS_JSON } from '../data/ReportViewer';
 
-import {
-    searchEquipments,
-    TYPE_TAG_MAX_SIZE,
-    VL_TAG_MAX_SIZE,
-} from '../data/EquipmentSearchBar';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
-import clsx from 'clsx';
-import {
-    getTagLabelForEquipmentType,
-    getEquipmentsInfosForSearchBar,
-} from '../../src';
+import { searchEquipments } from '../data/EquipmentSearchBar';
+import { renderEquipmentForSearchBar } from '../../src/utils/EquipmentType';
 
 const messages = {
     en: {
@@ -134,32 +125,9 @@ const useStyles = makeStyles((theme) => ({
     warning: {
         backgroundColor: '#ffa000',
     },
-    equipmentOption: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '20px',
-        width: '100%',
-        margin: '0px',
-        padding: '0px',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    equipmentTag: {
-        borderRadius: '10px',
-        padding: '4px',
-        fontSize: 'x-small',
-        textAlign: 'center',
-    },
-    equipmentTypeTag: {
-        width: TYPE_TAG_MAX_SIZE,
-        background: 'lightblue',
-    },
-    equipmentVlTag: {
-        width: VL_TAG_MAX_SIZE,
-        background: 'lightgray',
-        fontStyle: 'italic',
-    },
 }));
+
+const useEquipmentStyles = makeStyles(equipmentStyles);
 
 const styles = (theme) => ({
     flexContainer: {
@@ -243,7 +211,7 @@ const AppContent = ({ language, onLanguageClick }) => {
     const history = useHistory();
     const location = useLocation();
     const intl = useIntl();
-    const classes = useStyles();
+    const equipmentClasses = useEquipmentStyles();
 
     const [userManager, setUserManager] = useState({
         instance: null,
@@ -308,55 +276,12 @@ const AppContent = ({ language, onLanguageClick }) => {
     };
     const displayEquipment = (equipment) => {
         if (equipment != null) {
-            equipment.type === EQUIPMENT_TYPE.SUBSTATION
+            equipment.type === EQUIPMENT_TYPE.SUBSTATION.name
                 ? alert(`Equipment ${equipment.label} found !`)
                 : alert(
                       `Equipment ${equipment.label} (${equipment.voltageLevelId}) found !`
                   );
         }
-    };
-    const renderElement = (element, { inputValue }) => {
-        let matches = match(element.label, inputValue);
-        let parts = parse(element.label, matches);
-        return (
-            <div className={classes.equipmentOption}>
-                <span
-                    className={clsx(
-                        classes.equipmentTag,
-                        classes.equipmentTypeTag
-                    )}
-                >
-                    {getTagLabelForEquipmentType(element.type, intl)}
-                </span>
-                <div className={classes.equipmentOption}>
-                    <span>
-                        {parts.map((part, index) => (
-                            <span
-                                key={index}
-                                style={{
-                                    fontWeight: part.highlight
-                                        ? 'bold'
-                                        : 'inherit',
-                                }}
-                            >
-                                {part.text}
-                            </span>
-                        ))}
-                    </span>
-                    {element.type !== EQUIPMENT_TYPE.SUBSTATION &&
-                        element.type !== EQUIPMENT_TYPE.VOLTAGE_LEVEL && (
-                            <span
-                                className={clsx(
-                                    classes.equipmentTag,
-                                    classes.equipmentVlTag
-                                )}
-                            >
-                                {element.voltageLevelId}
-                            </span>
-                        )}
-                </div>
-            </div>
-        );
     };
 
     const dispatch = (e) => {
@@ -438,11 +363,11 @@ const AppContent = ({ language, onLanguageClick }) => {
                     })}
                     onSearchTermChange={searchMatchingEquipments}
                     onSelectionChange={displayEquipment}
-                    elementsFound={getEquipmentsInfosForSearchBar(
-                        equipmentsFound,
-                        equipmentLabelling
+                    elementsFound={equipmentsFound}
+                    renderElement={renderEquipmentForSearchBar(
+                        equipmentClasses,
+                        intl
                     )}
-                    renderElement={renderElement}
                     onLanguageClick={onLanguageClick}
                     language={language}
                     user={user}
