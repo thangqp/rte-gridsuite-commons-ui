@@ -7,6 +7,13 @@ export ReportViewer from './components/ReportViewer';
 export ReportViewerDialog from './components/ReportViewerDialog';
 
 export {
+    EQUIPMENT_TYPE,
+    renderEquipmentForSearchBar,
+    equipmentStyles,
+    sortEquipments,
+} from './utils/EquipmentType';
+
+export {
     initializeAuthenticationDev,
     initializeAuthenticationProd,
     logout,
@@ -43,3 +50,7 @@ export table_en from './components/translations/table-en';
 export table_fr from './components/translations/table-fr';
 export treeview_finder_en from './components/translations/treeview-finder-en';
 export treeview_finder_fr from './components/translations/treeview-finder-fr';
+export element_search_en from './components/translations/element-search-en';
+export element_search_fr from './components/translations/element-search-fr';
+export equipment_search_en from './components/translations/equipment-search-en';
+export equipment_search_fr from './components/translations/equipment-search-fr';

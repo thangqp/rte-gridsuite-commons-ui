@@ -1,0 +1,19 @@
+const equipment_search_en = {
+    'equipment_search/label': 'Search an equipment',
+    'equipment_search/switchTag': 'SWITCH',
+    'equipment_search/busbarSectionTag': 'BBS',
+    'equipment_search/lineTag': 'LINE',
+    'equipment_search/2wtTag': '2W TRANSFO',
+    'equipment_search/3wtTag': '3W TRANSFO',
+    'equipment_search/generatorTag': 'GENERATOR',
+    'equipment_search/batteryTag': 'BATTERY',
+    'equipment_search/loadTag': 'LOAD',
+    'equipment_search/shuntTag': 'SHUNT',
+    'equipment_search/svcTag': 'SVC',
+    'equipment_search/hvdcLinkTag': 'HVDC LINK',
+    'equipment_search/hvdcStationTag': 'HVDC STATION',
+    'equipment_search/voltageLevelTag': 'VOLTAGE LEVEL',
+    'equipment_search/substationTag': 'SUBSTATION',
+};
+
+export default equipment_search_en;

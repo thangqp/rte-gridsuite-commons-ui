@@ -19,24 +19,34 @@ import {
 import AuthenticationRouter from '../../src/components/AuthenticationRouter';
 import {
     DEFAULT_CELL_PADDING,
+    EQUIPMENT_TYPE,
+    equipmentStyles,
     initializeAuthenticationDev,
+    LANG_ENGLISH,
+    LANG_FRENCH,
+    LANG_SYSTEM,
+    LIGHT_THEME,
     logout,
 } from '../../src';
 import { useRouteMatch } from 'react-router';
-import { IntlProvider } from 'react-intl';
+import { IntlProvider, useIntl } from 'react-intl';
 
 import { BrowserRouter, useHistory, useLocation } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 import {
+    element_search_en,
+    element_search_fr,
+    equipment_search_en,
+    equipment_search_fr,
+    login_en,
+    login_fr,
     report_viewer_en,
     report_viewer_fr,
-    top_bar_en,
-    top_bar_fr,
-    login_fr,
-    login_en,
     table_en,
     table_fr,
+    top_bar_en,
+    top_bar_fr,
     treeview_finder_en,
     treeview_finder_fr,
 } from '../../src/index';
@@ -46,20 +56,23 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
 import PowsyblLogo from '-!@svgr/webpack!../images/powsybl_logo.svg';
-
-import { LIGHT_THEME, LANG_SYSTEM, LANG_ENGLISH, LANG_FRENCH } from '../../src';
 import MuiVirtualizedTable from '../../src/components/MuiVirtualizedTable';
-import { LOGS_JSON } from './constants';
 
 import ReportViewerDialog from '../../src/components/ReportViewerDialog';
 import TreeViewFinder from '../../src/components/TreeViewFinder';
 import TreeViewFinderConfig from './TreeViewFinderConfig';
+
 import {
-    testDataTree,
-    testDataList,
-    fetchInfiniteTestDataTree,
     fetchInfiniteTestDataList,
-} from './testData';
+    fetchInfiniteTestDataTree,
+    testDataList,
+    testDataTree,
+} from '../data/TreeViewFinder';
+
+import { LOGS_JSON } from '../data/ReportViewer';
+
+import { searchEquipments } from '../data/EquipmentSearchBar';
+import { renderEquipmentForSearchBar } from '../../src/utils/EquipmentType';
 
 const messages = {
     en: {
@@ -68,6 +81,8 @@ const messages = {
         ...top_bar_en,
         ...table_en,
         ...treeview_finder_en,
+        ...element_search_en,
+        ...equipment_search_en,
     },
     fr: {
         ...report_viewer_fr,
@@ -75,6 +90,8 @@ const messages = {
         ...top_bar_fr,
         ...table_fr,
         ...treeview_finder_fr,
+        ...element_search_fr,
+        ...equipment_search_fr,
     },
 };
 
@@ -109,6 +126,8 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: '#ffa000',
     },
 }));
+
+const useEquipmentStyles = makeStyles(equipmentStyles);
 
 const styles = (theme) => ({
     flexContainer: {
@@ -188,9 +207,11 @@ const MyButton = (props) => {
     );
 };
 
-const AppContent = () => {
+const AppContent = ({ language, onLanguageClick }) => {
     const history = useHistory();
     const location = useLocation();
+    const intl = useIntl();
+    const equipmentClasses = useEquipmentStyles();
 
     const [userManager, setUserManager] = useState({
         instance: null,
@@ -201,10 +222,6 @@ const AppContent = () => {
     const [theme, setTheme] = useState(LIGHT_THEME);
 
     const [equipmentLabelling, setEquipmentLabelling] = useState(false);
-
-    const [language, setLanguage] = useState(LANG_ENGLISH);
-
-    const [computedLanguage, setComputedLanguage] = useState(LANG_ENGLISH);
 
     const [openReportViewer, setOpenReportViewer] = React.useState(false);
     const [openTreeViewFinderDialog, setOpenTreeViewFinderDialog] =
@@ -252,6 +269,21 @@ const AppContent = () => {
         setNodesList(fetchInfiniteTestDataList(nodeId));
     };
 
+    // Equipments search bar
+    const [equipmentsFound, setEquipmentsFound] = useState([]);
+    const searchMatchingEquipments = (searchTerm) => {
+        setEquipmentsFound(searchEquipments(searchTerm, equipmentLabelling));
+    };
+    const displayEquipment = (equipment) => {
+        if (equipment != null) {
+            equipment.type === EQUIPMENT_TYPE.SUBSTATION.name
+                ? alert(`Equipment ${equipment.label} found !`)
+                : alert(
+                      `Equipment ${equipment.label} (${equipment.voltageLevelId}) found !`
+                  );
+        }
+    };
+
     const dispatch = (e) => {
         if (e.type === 'USER') {
             setUser(e.user);
@@ -264,20 +296,6 @@ const AppContent = () => {
 
     const handleEquipmentLabellingClick = (labelling) => {
         setEquipmentLabelling(labelling);
-    };
-
-    const handleLanguageClick = (pickedLanguage) => {
-        setLanguage(pickedLanguage);
-        if (pickedLanguage === LANG_SYSTEM) {
-            const sysLanguage = navigator.language.split(/[-_]/)[0];
-            setComputedLanguage(
-                [LANG_FRENCH, LANG_ENGLISH].includes(sysLanguage)
-                    ? sysLanguage
-                    : LANG_ENGLISH
-            );
-        } else {
-            setComputedLanguage(pickedLanguage);
-        }
     };
 
     const apps = [
@@ -324,210 +342,231 @@ const AppContent = () => {
     }, [initialMatchSilentRenewCallbackUrl]);
 
     return (
-        <IntlProvider
-            locale={computedLanguage}
-            messages={messages[computedLanguage]}
-        >
-            <ThemeProvider theme={getMuiTheme(theme)}>
-                <SnackbarProvider hideIconVariant={false}>
-                    <CssBaseline />
-                    <TopBar
-                        appName="Demo"
-                        appColor="#808080"
-                        appLogo={<PowsyblLogo />}
-                        onParametersClick={() => console.log('settings')}
-                        onLogoutClick={() =>
-                            logout(dispatch, userManager.instance)
-                        }
-                        onLogoClick={() => console.log('logo')}
-                        onThemeClick={handleThemeClick}
-                        theme={theme}
-                        onAboutClick={() => console.log('about')}
-                        onEquipmentLabellingClick={
-                            handleEquipmentLabellingClick
-                        }
-                        equipmentLabelling={equipmentLabelling}
-                        onLanguageClick={handleLanguageClick}
-                        language={language}
-                        user={user}
-                        appsAndUrls={apps}
-                    >
-                        <div style={{ paddingLeft: 10, paddingRight: 10 }}>
-                            foobar-bazfoobar
-                        </div>
-                        <div style={{ flexGrow: 1 }} />
-                        <div>baz</div>
-                    </TopBar>
-                    {user !== null ? (
-                        <div>
-                            <Box mt={20}>
-                                <Typography
-                                    variant="h3"
-                                    color="textPrimary"
-                                    align="center"
-                                >
-                                    Connected
-                                </Typography>
-                            </Box>
-                            <hr />
-                            <Box style={{ height: '200px' }}>
-                                <VirtualizedTable
-                                    name="Demo Virtualized Table"
-                                    rows={rows}
-                                    sortable={true}
-                                    columns={[
-                                        {
-                                            label: 'header1',
-                                            dataKey: 'key1',
-                                        },
-                                        {
-                                            label: 'header2',
-                                            dataKey: 'key2',
-                                        },
-                                        {
-                                            label: 'header3 and some text',
-                                            dataKey: 'key3',
-                                        },
-                                    ]}
-                                    enableExportCSV={true}
-                                    exportCSVDataKeys={['key2', 'key3']}
-                                />
-                            </Box>
-                            <hr />
-                        </div>
-                    ) : (
-                        <AuthenticationRouter
-                            userManager={userManager}
-                            signInCallbackError={null}
-                            dispatch={dispatch}
-                            history={history}
-                            location={location}
-                        />
+        <ThemeProvider theme={getMuiTheme(theme)}>
+            <SnackbarProvider hideIconVariant={false}>
+                <CssBaseline />
+                <TopBar
+                    appName="Demo"
+                    appColor="#808080"
+                    appLogo={<PowsyblLogo />}
+                    onParametersClick={() => console.log('settings')}
+                    onLogoutClick={() => logout(dispatch, userManager.instance)}
+                    onLogoClick={() => console.log('logo')}
+                    onThemeClick={handleThemeClick}
+                    theme={theme}
+                    onAboutClick={() => console.log('about')}
+                    onEquipmentLabellingClick={handleEquipmentLabellingClick}
+                    equipmentLabelling={equipmentLabelling}
+                    withElementsSearch={true}
+                    searchingLabel={intl.formatMessage({
+                        id: 'equipment_search/label',
+                    })}
+                    onSearchTermChange={searchMatchingEquipments}
+                    onSelectionChange={displayEquipment}
+                    elementsFound={equipmentsFound}
+                    renderElement={renderEquipmentForSearchBar(
+                        equipmentClasses,
+                        intl
                     )}
-                    {buttons.map((button) => (
-                        <MyButton {...button} key={button.id} />
-                    ))}
+                    onLanguageClick={onLanguageClick}
+                    language={language}
+                    user={user}
+                    appsAndUrls={apps}
+                >
+                    <div style={{ paddingLeft: 10, paddingRight: 10 }}>
+                        foobar-bazfoobar
+                    </div>
+                    <div style={{ flexGrow: 1 }} />
+                    <div>baz</div>
+                </TopBar>
+                {user !== null ? (
+                    <div>
+                        <Box mt={20}>
+                            <Typography
+                                variant="h3"
+                                color="textPrimary"
+                                align="center"
+                            >
+                                Connected
+                            </Typography>
+                        </Box>
+                        <hr />
+                        <Box style={{ height: '200px' }}>
+                            <VirtualizedTable
+                                name="Demo Virtualized Table"
+                                rows={rows}
+                                sortable={true}
+                                columns={[
+                                    {
+                                        label: 'header1',
+                                        dataKey: 'key1',
+                                    },
+                                    {
+                                        label: 'header2',
+                                        dataKey: 'key2',
+                                    },
+                                    {
+                                        label: 'header3 and some text',
+                                        dataKey: 'key3',
+                                    },
+                                ]}
+                                enableExportCSV={true}
+                                exportCSVDataKeys={['key2', 'key3']}
+                            />
+                        </Box>
+                        <hr />
+                    </div>
+                ) : (
+                    <AuthenticationRouter
+                        userManager={userManager}
+                        signInCallbackError={null}
+                        dispatch={dispatch}
+                        history={history}
+                        location={location}
+                    />
+                )}
+                {buttons.map((button) => (
+                    <MyButton {...button} key={button.id} />
+                ))}
+                <Button
+                    variant="contained"
+                    style={{ float: 'left', margin: '5px' }}
+                    onClick={() => setOpenReportViewer(true)}
+                >
+                    Logs
+                </Button>
+                <ReportViewerDialog
+                    title={'Logs test'}
+                    open={openReportViewer}
+                    onClose={() => setOpenReportViewer(false)}
+                    jsonReport={LOGS_JSON}
+                />
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                    }}
+                >
+                    <TreeViewFinderConfig
+                        dynamicData={dynamicData}
+                        dataFormat={dataFormat}
+                        multiselect={multiselect}
+                        onlyLeaves={onlyLeaves}
+                        onDynamicDataChange={(event) =>
+                            setDynamicData(event.target.value === 'dynamic')
+                        }
+                        onDataFormatChange={(event) =>
+                            setDataFormat(event.target.value)
+                        }
+                        onSelectionTypeChange={(event) =>
+                            setMultiselect(event.target.value === 'multiselect')
+                        }
+                        onOnlyLeavesChange={(event) =>
+                            setOnlyLeaves(event.target.checked)
+                        }
+                    />
                     <Button
                         variant="contained"
                         style={{ float: 'left', margin: '5px' }}
-                        onClick={() => setOpenReportViewer(true)}
+                        onClick={() => setOpenTreeViewFinderDialog(true)}
                     >
-                        Logs
+                        Open TreeViewFinder ...
                     </Button>
-                    <ReportViewerDialog
-                        title={'Logs test'}
-                        open={openReportViewer}
-                        onClose={() => setOpenReportViewer(false)}
-                        jsonReport={LOGS_JSON}
-                    />
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
+                    <TreeViewFinder
+                        open={openTreeViewFinderDialog}
+                        onClose={(nodes) => {
+                            setOpenTreeViewFinderDialog(false);
+                            console.log('Elements chosen : ', nodes);
                         }}
+                        data={dataFormat === 'Tree' ? nodesTree : nodesList}
+                        multiselect={multiselect}
+                        onTreeBrowse={
+                            dynamicData
+                                ? dataFormat === 'Tree'
+                                    ? updateInfiniteTestDataTreeCallback
+                                    : updateInfiniteTestDataListCallback
+                                : undefined
+                        }
+                        onlyLeaves={onlyLeaves}
+                        // Customisation props to pass the counter in the title
+                        title={
+                            'Number of nodes : ' +
+                            countNodes(
+                                dataFormat === 'Tree' ? nodesTree : nodesList
+                            )
+                        }
+                    />
+                    <Button
+                        variant="contained"
+                        style={{ float: 'left', margin: '5px' }}
+                        color="primary"
+                        onClick={() =>
+                            setOpenTreeViewFinderDialogCustomDialog(true)
+                        }
                     >
-                        <TreeViewFinderConfig
-                            dynamicData={dynamicData}
-                            dataFormat={dataFormat}
-                            multiselect={multiselect}
-                            onlyLeaves={onlyLeaves}
-                            onDynamicDataChange={(event) =>
-                                setDynamicData(event.target.value === 'dynamic')
-                            }
-                            onDataFormatChange={(event) =>
-                                setDataFormat(event.target.value)
-                            }
-                            onSelectionTypeChange={(event) =>
-                                setMultiselect(
-                                    event.target.value === 'multiselect'
-                                )
-                            }
-                            onOnlyLeavesChange={(event) =>
-                                setOnlyLeaves(event.target.checked)
-                            }
-                        />
-                        <Button
-                            variant="contained"
-                            style={{ float: 'left', margin: '5px' }}
-                            onClick={() => setOpenTreeViewFinderDialog(true)}
-                        >
-                            Open TreeViewFinder ...
-                        </Button>
-                        <TreeViewFinder
-                            open={openTreeViewFinderDialog}
-                            onClose={(nodes) => {
-                                setOpenTreeViewFinderDialog(false);
-                                console.log('Elements chosen : ', nodes);
-                            }}
-                            data={dataFormat === 'Tree' ? nodesTree : nodesList}
-                            multiselect={multiselect}
-                            onTreeBrowse={
-                                dynamicData
-                                    ? dataFormat === 'Tree'
-                                        ? updateInfiniteTestDataTreeCallback
-                                        : updateInfiniteTestDataListCallback
-                                    : undefined
-                            }
-                            onlyLeaves={onlyLeaves}
-                            // Customisation props to pass the counter in the title
-                            title={
-                                'Number of nodes : ' +
-                                countNodes(
-                                    dataFormat === 'Tree'
-                                        ? nodesTree
-                                        : nodesList
-                                )
-                            }
-                        />
-                        <Button
-                            variant="contained"
-                            style={{ float: 'left', margin: '5px' }}
-                            color="primary"
-                            onClick={() =>
-                                setOpenTreeViewFinderDialogCustomDialog(true)
-                            }
-                        >
-                            Open Custom TreeViewFinder ...
-                        </Button>
-                        <CustomTreeViewFinder
-                            open={openTreeViewFinderDialogCustomDialog}
-                            onClose={(nodes) => {
-                                setOpenTreeViewFinderDialogCustomDialog(false);
-                                console.log('Elements chosen : ', nodes);
-                            }}
-                            data={dataFormat === 'Tree' ? nodesTree : nodesList}
-                            multiselect={multiselect}
-                            onTreeBrowse={
-                                dynamicData
-                                    ? dataFormat === 'Tree'
-                                        ? updateInfiniteTestDataTreeCallback
-                                        : updateInfiniteTestDataListCallback
-                                    : undefined
-                            }
-                            onlyLeaves={onlyLeaves}
-                            // Customisation props
-                            title={
-                                'Custom Title TreeViewFinder, Number of nodes : ' +
-                                countNodes(
-                                    dataFormat === 'Tree'
-                                        ? nodesTree
-                                        : nodesList
-                                )
-                            }
-                            validationButtonText={'Move To this location'}
-                        />
-                    </div>
-                </SnackbarProvider>
-            </ThemeProvider>
-        </IntlProvider>
+                        Open Custom TreeViewFinder ...
+                    </Button>
+                    <CustomTreeViewFinder
+                        open={openTreeViewFinderDialogCustomDialog}
+                        onClose={(nodes) => {
+                            setOpenTreeViewFinderDialogCustomDialog(false);
+                            console.log('Elements chosen : ', nodes);
+                        }}
+                        data={dataFormat === 'Tree' ? nodesTree : nodesList}
+                        multiselect={multiselect}
+                        onTreeBrowse={
+                            dynamicData
+                                ? dataFormat === 'Tree'
+                                    ? updateInfiniteTestDataTreeCallback
+                                    : updateInfiniteTestDataListCallback
+                                : undefined
+                        }
+                        onlyLeaves={onlyLeaves}
+                        // Customisation props
+                        title={
+                            'Custom Title TreeViewFinder, Number of nodes : ' +
+                            countNodes(
+                                dataFormat === 'Tree' ? nodesTree : nodesList
+                            )
+                        }
+                        validationButtonText={'Move To this location'}
+                    />
+                </div>
+            </SnackbarProvider>
+        </ThemeProvider>
     );
 };
 
 const App = () => {
+    const [computedLanguage, setComputedLanguage] = useState(LANG_ENGLISH);
+    const [language, setLanguage] = useState(LANG_ENGLISH);
+
+    const handleLanguageClick = (pickedLanguage) => {
+        setLanguage(pickedLanguage);
+        if (pickedLanguage === LANG_SYSTEM) {
+            const sysLanguage = navigator.language.split(/[-_]/)[0];
+            setComputedLanguage(
+                [LANG_FRENCH, LANG_ENGLISH].includes(sysLanguage)
+                    ? sysLanguage
+                    : LANG_ENGLISH
+            );
+        } else {
+            setComputedLanguage(pickedLanguage);
+        }
+    };
+
     return (
         <BrowserRouter basename={'/'}>
-            <AppContent />
+            <IntlProvider
+                locale={computedLanguage}
+                messages={messages[computedLanguage]}
+            >
+                <AppContent
+                    language={language}
+                    onLanguageClick={handleLanguageClick}
+                />
+            </IntlProvider>
         </BrowserRouter>
     );
 };

@@ -9,7 +9,6 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import PanToolIcon from '@material-ui/icons/PanTool';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import FilterIcon from '@material-ui/icons/Filter';
-import React from 'react';
 
 export const elementType = {
     DIRECTORY: 'DIRECTORY',

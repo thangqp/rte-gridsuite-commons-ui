@@ -5,14 +5,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
 import AppBar from '@material-ui/core/AppBar';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { darken, makeStyles, withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -20,11 +20,10 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
-import { darken, withStyles } from '@material-ui/core/styles';
-
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import AppsIcon from '@material-ui/icons/Apps';
+import SearchIcon from '@material-ui/icons/Search';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
@@ -46,6 +45,8 @@ import Paper from '@material-ui/core/Paper';
 import MenuList from '@material-ui/core/MenuList';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import clsx from 'clsx';
+
+import ElementSearchDialog from '../ElementSearchDialog';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -182,6 +183,12 @@ const TopBar = ({
     theme,
     onEquipmentLabellingClick,
     equipmentLabelling,
+    withElementsSearch,
+    searchingLabel,
+    onSearchTermChange,
+    onSelectionChange,
+    elementsFound,
+    renderElement,
     onLanguageClick,
     language,
 }) => {
@@ -194,6 +201,12 @@ const TopBar = ({
     const fullScreenRef = useRef(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isMenuOpen, setMenuOpen] = useState(false);
+    const [isDialogSearchOpen, setDialogSearchOpen] = useState(false);
+
+    const handleClickElementSearch = () => {
+        setDialogSearchOpen(true);
+    };
+
     const handleToggleSettingsMenu = () => {
         setAnchorElSettingsMenu(true);
         setMenuOpen(true);
@@ -203,6 +216,7 @@ const TopBar = ({
         setAnchorElSettingsMenu(false);
         setMenuOpen(false);
     };
+
     const handleClickAppsMenu = (event) => {
         setAnchorElAppsMenu(event.currentTarget);
     };
@@ -262,6 +276,17 @@ const TopBar = ({
         }
     };
 
+    useEffect(() => {
+        if (user && withElementsSearch) {
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    setDialogSearchOpen(true);
+                }
+            });
+        }
+    }, [user, withElementsSearch]);
+
     return (
         <AppBar position="static" color="default" className={classes.appBar}>
             <FullScreen
@@ -291,6 +316,27 @@ const TopBar = ({
                     <span style={{ color: appColor }}>{appName}</span>
                 </Typography>
                 <div className={classes.grow}>{children}</div>
+                {user && withElementsSearch && (
+                    <React.Fragment>
+                        <ElementSearchDialog
+                            open={isDialogSearchOpen}
+                            onClose={() => setDialogSearchOpen(false)}
+                            searchingLabel={searchingLabel}
+                            onSearchTermChange={onSearchTermChange}
+                            onSelectionChange={(element) => {
+                                setDialogSearchOpen(false);
+                                onSelectionChange(element);
+                            }}
+                            elementsFound={elementsFound}
+                            renderElement={renderElement}
+                        />
+                        <div>
+                            <Button onClick={handleClickElementSearch}>
+                                <SearchIcon />
+                            </Button>
+                        </div>
+                    </React.Fragment>
+                )}
                 {user && (
                     <div>
                         <Button
@@ -754,6 +800,11 @@ TopBar.propTypes = {
     onAboutClick: PropTypes.func,
     onEquipmentLabellingClick: PropTypes.func,
     equipmentLabelling: PropTypes.bool,
+    withElementsSearch: PropTypes.bool,
+    searchingLabel: PropTypes.string,
+    onSearchTermChange: PropTypes.func,
+    onSelectionChange: PropTypes.func,
+    elementsFound: PropTypes.array,
     onLanguageClick: PropTypes.func.isRequired,
     language: PropTypes.string.isRequired,
 };
