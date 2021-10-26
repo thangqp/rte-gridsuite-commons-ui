@@ -99,12 +99,53 @@ export const getTagLabelForEquipmentType = (type, intl) => {
     }
 };
 
+const getSortOrderForEquipmentType = (type) => {
+    switch (type) {
+        case EQUIPMENT_TYPE.SUBSTATION:
+            return 0;
+        case EQUIPMENT_TYPE.VOLTAGE_LEVEL:
+            return 1;
+        case EQUIPMENT_TYPE.LINE:
+            return 2;
+        case EQUIPMENT_TYPE.TWO_WINDINGS_TRANSFORMER:
+            return 3;
+        case EQUIPMENT_TYPE.THREE_WINDINGS_TRANSFORMER:
+            return 4;
+        case EQUIPMENT_TYPE.HVDC:
+            return 5;
+        case EQUIPMENT_TYPE.GENERATOR:
+            return 6;
+        case EQUIPMENT_TYPE.BATTERY:
+            return 7;
+        case EQUIPMENT_TYPE.LOAD:
+            return 8;
+        case EQUIPMENT_TYPE.SHUNT_COMPENSATOR:
+            return 9;
+        case EQUIPMENT_TYPE.DANGLING_LINE:
+            return 10;
+        case EQUIPMENT_TYPE.STATIC_VAR_COMPENSATOR:
+            return 11;
+        case EQUIPMENT_TYPE.HVDC_CONVERTER_STATION:
+            return 12;
+        case EQUIPMENT_TYPE.BUSBAR_SECTION:
+            return 13;
+        case EQUIPMENT_TYPE.BREAKER:
+            return 14;
+        case EQUIPMENT_TYPE.DISCONNECTOR:
+            return 15;
+        case EQUIPMENT_TYPE.LOAD_BREAK_SWITCH:
+            return 16;
+        default:
+            throw new Error(`Unknown equipment type : ${type}`);
+    }
+};
+
 export const getEquipmentsInfosForSearchBar = (
     equipmentsInfos,
     equipmentLabelling
 ) => {
-    return getSortedEquipmentsOptionsByType(
-        equipmentsInfos.flatMap((e) => {
+    return equipmentsInfos
+        .flatMap((e) => {
             let label = equipmentLabelling ? e.name : e.id;
             return e.type === 'SUBSTATION'
                 ? [
@@ -123,66 +164,18 @@ export const getEquipmentsInfosForSearchBar = (
                       };
                   });
         })
-    );
+        .sort(sortEquipments);
 };
 
-const getSortedEquipmentsOptionsByType = (equipmentsInfos) => {
-    return [
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.SUBSTATION)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.VOLTAGE_LEVEL)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.LINE)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.TWO_WINDINGS_TRANSFORMER)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.THREE_WINDINGS_TRANSFORMER)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.HVDC)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.GENERATOR)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.BATTERY)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.LOAD)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.SHUNT_COMPENSATOR)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.DANGLING_LINE)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.STATIC_VAR_COMPENSATOR)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.HVDC_CONVERTER_STATION)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.BUSBAR_SECTION)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.BREAKER)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.DISCONNECTOR)
-            .sort(sortEquipmentsOptions),
-        ...equipmentsInfos
-            .filter((e) => e.type === EQUIPMENT_TYPE.LOAD_BREAK_SWITCH)
-            .sort(sortEquipmentsOptions),
-    ];
+const sortEquipments = (a, b) => {
+    return getSortOrderForEquipmentType(a.type) <
+        getSortOrderForEquipmentType(b.type)
+        ? -1
+        : getSortOrderForEquipmentType(a.type) >
+          getSortOrderForEquipmentType(b.type)
+        ? 1
+        : a.label.localeCompare(b.label);
 };
-
-const sortEquipmentsOptions = (a, b) => a.label.localeCompare(b.label);
 
 export function getFileIcon(type, theme) {
     switch (type) {

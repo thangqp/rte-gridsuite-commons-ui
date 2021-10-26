@@ -18,6 +18,20 @@ const EQUIPMENTS = [
         networkUuid: NETWORK_UUID,
     },
     {
+        id: 'ident12',
+        name: 'name12',
+        type: 'LOAD',
+        voltageLevelsIds: ['POSTEP6'],
+        networkUuid: NETWORK_UUID,
+    },
+    {
+        id: 'ident13',
+        name: 'name13',
+        type: 'LOAD',
+        voltageLevelsIds: ['POSTEP5'],
+        networkUuid: NETWORK_UUID,
+    },
+    {
         id: 'ident2',
         name: 'name2',
         type: 'GENERATOR',
