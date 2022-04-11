@@ -73,9 +73,9 @@ import {
 import { LOGS_JSON } from '../data/ReportViewer';
 
 import { searchEquipments } from '../data/EquipmentSearchBar';
-import { renderEquipmentForSearchBar } from '../../src/utils/EquipmentType';
-import { elementType, getFileIcon } from '../../src/utils/ElementType';
+import { elementType, getFileIcon } from '../../src';
 import { Grid } from '@mui/material';
+import { EquipmentItem } from '../../src/components/ElementSearchDialog/equipment-item';
 
 const messages = {
     en: {
@@ -372,9 +372,12 @@ const AppContent = ({ language, onLanguageClick }) => {
                         onSearchTermChange={searchMatchingEquipments}
                         onSelectionChange={displayEquipment}
                         elementsFound={equipmentsFound}
-                        renderElement={renderEquipmentForSearchBar(
-                            equipmentClasses,
-                            intl
+                        renderElement={(props) => (
+                            <EquipmentItem
+                                classes={equipmentClasses}
+                                {...props}
+                                key={props.element.key}
+                            />
                         )}
                         onLanguageClick={onLanguageClick}
                         language={language}

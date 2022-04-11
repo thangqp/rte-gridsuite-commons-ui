@@ -11,7 +11,6 @@ export ElementSearchDialog from './components/ElementSearchDialog';
 export {
     EQUIPMENT_TYPE,
     getEquipmentsInfosForSearchBar,
-    renderEquipmentForSearchBar,
     equipmentStyles,
 } from './utils/EquipmentType';
 
@@ -58,3 +57,5 @@ export element_search_en from './components/translations/element-search-en';
 export element_search_fr from './components/translations/element-search-fr';
 export equipment_search_en from './components/translations/equipment-search-en';
 export equipment_search_fr from './components/translations/equipment-search-fr';
+export { TagRenderer } from './components/ElementSearchDialog';
+export { EquipmentItem } from './components/ElementSearchDialog/equipment-item';

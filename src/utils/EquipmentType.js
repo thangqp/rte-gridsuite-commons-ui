@@ -4,12 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
-import clsx from 'clsx';
-import React from 'react';
 import { LIGHT_THEME } from '../components/TopBar/TopBar';
-import OverflowableText from '../components/OverflowableText';
 
 export const TYPE_TAG_MAX_SIZE = '90px';
 export const VL_TAG_MAX_SIZE = '100px';
@@ -170,58 +165,4 @@ const sortEquipments = (a, b) => {
         : EQUIPMENT_TYPE[a.type].sortOrder > EQUIPMENT_TYPE[b.type].sortOrder
         ? 1
         : a.label.localeCompare(b.label);
-};
-
-export const renderEquipmentForSearchBar = (classes, intl) => {
-    return (props, element, { inputValue }) => {
-        let matches = match(element.label, inputValue, {
-            insideWords: true,
-            findAllOccurrences: true,
-        });
-        let parts = parse(element.label, matches);
-        /* override li.key otherwise it will use label which could be duplicated */
-        return (
-            <li {...props} key={element.key}>
-                <div className={classes.equipmentOption}>
-                    <span
-                        className={clsx(
-                            classes.equipmentTag,
-                            classes.equipmentTypeTag
-                        )}
-                    >
-                        {intl.formatMessage({
-                            id: EQUIPMENT_TYPE[element.type].tagLabel,
-                        })}
-                    </span>
-                    <OverflowableText
-                        text={parts.map((e) => e.text).join()}
-                        className={classes.result}
-                    >
-                        {parts.map((part, index) => (
-                            <span
-                                key={index}
-                                style={{
-                                    fontWeight: part.highlight
-                                        ? 'bold'
-                                        : 'inherit',
-                                }}
-                            >
-                                {part.text}
-                            </span>
-                        ))}
-                    </OverflowableText>
-                    {element.type !== EQUIPMENT_TYPE.SUBSTATION.name &&
-                        element.type !== EQUIPMENT_TYPE.VOLTAGE_LEVEL.name && (
-                            <OverflowableText
-                                text={element.voltageLevelLabel}
-                                className={clsx(
-                                    classes.equipmentTag,
-                                    classes.equipmentVlTag
-                                )}
-                            />
-                        )}
-                </div>
-            </li>
-        );
-    };
 };
