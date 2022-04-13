@@ -24,6 +24,7 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CheckIcon from '@mui/icons-material/Check';
+import * as constants from '../../utils/UIconstants';
 
 const defaultStyles = {
     dialogPaper: {
@@ -239,6 +240,13 @@ const TreeViewFinder = (props) => {
             aria-labelledby="TreeViewFindertitle"
             classes={{
                 paper: classes.dialogPaper,
+            }}
+            //Being in a Dialog box we don't want the right click event to bubble to the parent component
+            onContextMenu={(e) => e.stopPropagation()}
+            onMouseDown={(e) => {
+                if (e.button === constants.MOUSE_EVENT_RIGHT_BUTTON) {
+                    e.stopPropagation();
+                }
             }}
         >
             <DialogTitle id="TreeViewFindertitle">
