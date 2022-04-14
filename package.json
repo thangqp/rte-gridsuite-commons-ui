@@ -80,7 +80,8 @@
     "eslintConfig": {
         "extends": [
             "react-app",
-            "plugin:prettier/recommended"
+            "plugin:prettier/recommended",
+            "plugin:react/recommended"
         ],
         "rules": {
             "prettier/prettier": "warn",
