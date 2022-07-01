@@ -106,7 +106,7 @@ export default function ReportViewer({
                     xs={12}
                     sm={3}
                     style={{
-                        height: '100%',
+                        height: '95%',
                         borderRight: '1px solid rgba(81, 81, 81, 1)',
                     }}
                 >
@@ -123,7 +123,7 @@ export default function ReportViewer({
                         {treeView.current}
                     </TreeView>
                 </Grid>
-                <Grid item xs={12} sm={9} style={{ height: '100%' }}>
+                <Grid item xs={12} sm={9} style={{ height: '95%' }}>
                     <LogTable logs={logs} />
                 </Grid>
             </Grid>
