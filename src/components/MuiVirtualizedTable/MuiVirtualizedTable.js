@@ -13,6 +13,7 @@ import CsvDownloader from 'react-csv-downloader';
 import IconButton from '@mui/material/IconButton';
 import { FormattedMessage } from 'react-intl';
 import withStyles from '@mui/styles/withStyles';
+import OverflowableText from '../OverflowableText/overflowable-text';
 
 function getTextWidth(text) {
     // re-use canvas object for better performance
@@ -60,6 +61,10 @@ const defaultStyles = {
     },
     rowBackgroundDark: {},
     rowBackgroundLight: {},
+    cellTooltip: {
+        maxWidth: '1260px',
+        fontSize: '0.9rem',
+    },
 };
 
 class MuiVirtualizedTable extends React.PureComponent {
@@ -252,7 +257,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                             columns[columnIndex].clickable),
                 })}
                 variant="body"
-                style={{ height: rowHeight, whiteSpace: 'pre-line' }}
+                style={{ height: rowHeight, width: '100%' }}
                 align={
                     (columnIndex != null && columns[columnIndex].numeric) ||
                     false
@@ -265,7 +270,10 @@ class MuiVirtualizedTable extends React.PureComponent {
                     }
                 }}
             >
-                {displayedValue}
+                <OverflowableText
+                    text={displayedValue}
+                    tooltipStyle={classes.cellTooltip}
+                />
             </TableCell>
         );
     };
