@@ -24,6 +24,8 @@ const ElementSearchDialog = (props) => {
         onSelectionChange,
         elementsFound, // [{ label: aLabel, id: anId }, ...]
         renderElement,
+        searchTermDisabled,
+        initialSearchTerm,
     } = props;
 
     const [expanded, setExpanded] = useState(false);
@@ -66,9 +68,11 @@ const ElementSearchDialog = (props) => {
                         setExpanded(false);
                     }}
                     fullWidth
-                    onInputChange={(_event, value) =>
-                        handleSearchTermChange(value)
-                    }
+                    onInputChange={(_event, value) => {
+                        if (!searchTermDisabled) {
+                            handleSearchTermChange(value);
+                        }
+                    }}
                     onChange={(_event, newValue) => onSelectionChange(newValue)}
                     getOptionLabel={(option) => option.label}
                     isOptionEqualToValue={(option, value) =>
@@ -109,6 +113,10 @@ const ElementSearchDialog = (props) => {
                             }}
                         />
                     )}
+                    defaultValue={
+                        searchTermDisabled ? { label: initialSearchTerm } : null
+                    }
+                    disabled={searchTermDisabled}
                 />
             </DialogContent>
         </Dialog>
@@ -123,6 +131,8 @@ ElementSearchDialog.propTypes = {
     onSelectionChange: PropTypes.func.isRequired,
     elementsFound: PropTypes.array.isRequired,
     renderElement: PropTypes.func.isRequired,
+    searchTermDisabled: PropTypes.bool,
+    initialSearchTerm: PropTypes.string,
 };
 
 export default ElementSearchDialog;
