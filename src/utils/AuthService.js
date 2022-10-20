@@ -6,7 +6,11 @@
  */
 import { Log, UserManager } from 'oidc-client';
 import { UserManagerMock } from './UserManagerMock';
-import { setLoggedUser, setSignInCallbackError } from './actions';
+import {
+    setLoggedUser,
+    setSignInCallbackError,
+    setUnauthorizedUserInfo,
+} from './actions';
 import jwtDecode from 'jwt-decode';
 
 // set as a global variable to allow log level configuration at runtime
@@ -16,17 +20,22 @@ const hackauthoritykey = 'oidc.hack.authority';
 
 const pathKey = 'powsybl-gridsuite-current-path';
 
-function initializeAuthenticationDev(dispatch, isSilentRenew) {
+function initializeAuthenticationDev(dispatch, isSilentRenew, validateUser) {
     let userManager = new UserManagerMock({});
     if (!isSilentRenew) {
-        handleUser(dispatch, userManager);
+        handleUser(dispatch, userManager, validateUser);
     }
     return Promise.resolve(userManager);
 }
 
 const accessTokenExpiringNotificationTime = 60; // seconds
 
-function initializeAuthenticationProd(dispatch, isSilentRenew, idpSettings) {
+function initializeAuthenticationProd(
+    dispatch,
+    isSilentRenew,
+    idpSettings,
+    validateUser
+) {
     return idpSettings
         .then((r) => r.json())
         .then((idpSettings) => {
@@ -137,7 +146,7 @@ function initializeAuthenticationProd(dispatch, isSilentRenew, idpSettings) {
             let userManager = new UserManager(settings);
             userManager.idpSettings = idpSettings; //store our settings in there as well to use it later
             if (!isSilentRenew) {
-                handleUser(dispatch, userManager);
+                handleUser(dispatch, userManager, validateUser);
             }
             return userManager;
         });
@@ -163,20 +172,35 @@ function logout(dispatch, userManagerInstance) {
         .then(() => console.debug('logged out'));
 }
 
-function dispatchUser(dispatch, userManagerInstance) {
+function dispatchUser(dispatch, userManagerInstance, validateUser) {
     return userManagerInstance.getUser().then((user) => {
         if (user) {
-            const now = parseInt(Date.now() / 1000);
-            const exp = jwtDecode(user.id_token).exp;
-            const idTokenExpiresIn = exp - now;
-            if (idTokenExpiresIn < 0) {
-                console.debug(
-                    'User token is expired and will not be dispatched'
-                );
-                return;
-            }
-            console.debug('User has been successfully loaded from store.');
-            return dispatch(setLoggedUser(user));
+            // without validateUser defined, valid user by default
+            let validateUserPromise =
+                (validateUser && validateUser(user)) || Promise.resolve(true);
+            return validateUserPromise.then((valid) => {
+                if (!valid) {
+                    console.debug(
+                        "User isn't authorized to log in and will not be dispatched"
+                    );
+                    return dispatch(
+                        setUnauthorizedUserInfo({
+                            userName: user?.profile?.name,
+                        })
+                    );
+                }
+                const now = parseInt(Date.now() / 1000);
+                const exp = jwtDecode(user.id_token).exp;
+                const idTokenExpiresIn = exp - now;
+                if (idTokenExpiresIn < 0) {
+                    console.debug(
+                        'User token is expired and will not be dispatched'
+                    );
+                    return;
+                }
+                console.debug('User has been successfully loaded from store.');
+                return dispatch(setLoggedUser(user));
+            });
         } else {
             console.debug('You are not logged in.');
         }
@@ -205,10 +229,10 @@ function handleSilentRenewCallback(userManagerInstance) {
     userManagerInstance.signinSilentCallback();
 }
 
-function handleUser(dispatch, userManager) {
+function handleUser(dispatch, userManager, validateUser) {
     userManager.events.addUserLoaded((user) => {
-        console.debug('user loaded');
-        dispatchUser(dispatch, userManager);
+        console.debug('user loaded', user);
+        dispatchUser(dispatch, userManager, validateUser);
     });
 
     userManager.events.addSilentRenewError((error) => {
@@ -274,7 +298,7 @@ function handleUser(dispatch, userManager) {
     });
 
     console.debug('dispatch user');
-    dispatchUser(dispatch, userManager);
+    dispatchUser(dispatch, userManager, validateUser);
 }
 
 export {

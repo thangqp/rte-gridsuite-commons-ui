@@ -12,13 +12,22 @@ import {
     handleSigninCallback,
     handleSilentRenewCallback,
     login,
+    logout,
 } from '../../utils/AuthService';
 import SilentRenewCallbackHandler from '../SilentRenewCallbackHandler';
 import Login from '../Login';
 
+import { Grid } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import { FormattedMessage } from 'react-intl';
+import Button from '@mui/material/Button';
+
 const AuthenticationRouter = ({
     userManager,
     signInCallbackError,
+    unauthorizedUserInfo,
+    showAuthenticationRouterLogin,
     dispatch,
     navigate,
     location,
@@ -33,50 +42,92 @@ const AuthenticationRouter = ({
     );
     return (
         <React.Fragment>
-            {userManager.error !== null && (
-                <h1>Error : Getting userManager; {userManager.error}</h1>
-            )}
-            {signInCallbackError !== null && (
-                <h1>
-                    Error : SignIn Callback Error; {signInCallbackError.message}
-                </h1>
-            )}
-            <Routes>
-                <Route
-                    path="sign-in-callback"
-                    element={
-                        <SignInCallbackHandler
-                            userManager={userManager.instance}
-                            handleSignInCallback={handleSigninCallbackClosure}
-                        />
-                    }
-                />
-                <Route
-                    path="silent-renew-callback"
-                    element={
-                        <SilentRenewCallbackHandler
-                            userManager={userManager.instance}
-                            handleSilentRenewCallback={
-                                handleSilentRenewCallbackClosure
-                            }
-                        />
-                    }
-                />
-                <Route path="logout-callback" element={<Navigate to="/" />} />
-                <Route
-                    path="*"
-                    element={
-                        userManager.error === null && (
-                            <Login
-                                disabled={userManager.instance === null}
-                                onLoginClick={() =>
-                                    login(location, userManager.instance)
+            <Grid
+                container
+                alignContent={'center'}
+                alignItems={'center'}
+                direction={'column'}
+            >
+                {userManager.error !== null && (
+                    <h1>Error : Getting userManager; {userManager.error}</h1>
+                )}
+                {signInCallbackError !== null && (
+                    <h1>
+                        Error : SignIn Callback Error;
+                        {signInCallbackError.message}
+                    </h1>
+                )}
+                <Routes>
+                    <Route
+                        path="sign-in-callback"
+                        element={
+                            <SignInCallbackHandler
+                                userManager={userManager.instance}
+                                handleSignInCallback={
+                                    handleSigninCallbackClosure
                                 }
                             />
-                        )
-                    }
-                />
-            </Routes>
+                        }
+                    />
+                    <Route
+                        path="silent-renew-callback"
+                        element={
+                            <SilentRenewCallbackHandler
+                                userManager={userManager.instance}
+                                handleSilentRenewCallback={
+                                    handleSilentRenewCallbackClosure
+                                }
+                            />
+                        }
+                    />
+                    <Route
+                        path="logout-callback"
+                        element={<Navigate to="/" />}
+                    />
+                    <Route
+                        path="*"
+                        element={
+                            showAuthenticationRouterLogin && (
+                                <Login
+                                    disabled={userManager.instance === null}
+                                    onLoginClick={() =>
+                                        login(location, userManager.instance)
+                                    }
+                                />
+                            )
+                        }
+                    />
+                </Routes>
+
+                {unauthorizedUserInfo !== null && (
+                    <>
+                        <Grid item>
+                            <Button
+                                variant="contained"
+                                onClick={() => {
+                                    logout(dispatch, userManager.instance);
+                                }}
+                            >
+                                <FormattedMessage id="login/logout" />
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Alert severity="info">
+                                <AlertTitle>
+                                    <FormattedMessage id="login/unauthorizedAccess" />
+                                </AlertTitle>
+                                <FormattedMessage
+                                    id="login/unauthorizedAccessMessage"
+                                    values={{
+                                        userName:
+                                            unauthorizedUserInfo?.userName,
+                                    }}
+                                />
+                            </Alert>
+                        </Grid>
+                    </>
+                )}
+            </Grid>
         </React.Fragment>
     );
 };

@@ -19,3 +19,23 @@ export function setSignInCallbackError(signInCallbackError) {
         signInCallbackError: signInCallbackError,
     };
 }
+
+export const UNAUTHORIZED_USER_INFO = 'UNAUTHORIZED_USER_INFO';
+
+export function setUnauthorizedUserInfo(unauthorizedUserInfo) {
+    return {
+        type: UNAUTHORIZED_USER_INFO,
+        unauthorizedUserInfo: unauthorizedUserInfo,
+    };
+}
+
+export const SHOW_AUTH_INFO_LOGIN = 'SHOW_AUTH_INFO_LOGIN';
+
+export function setShowAuthenticationRouterLogin(
+    showAuthenticationRouterLogin
+) {
+    return {
+        type: SHOW_AUTH_INFO_LOGIN,
+        showAuthenticationRouterLogin: showAuthenticationRouterLogin,
+    };
+}

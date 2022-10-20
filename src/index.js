@@ -49,6 +49,9 @@ export {
     setLoggedUser,
     SIGNIN_CALLBACK_ERROR,
     setSignInCallbackError,
+    UNAUTHORIZED_USER_INFO,
+    setShowAuthenticationRouterLogin,
+    SHOW_AUTH_INFO_LOGIN,
 } from './utils/actions';
 export report_viewer_en from './components/translations/report-viewer-en';
 export report_viewer_fr from './components/translations/report-viewer-fr';

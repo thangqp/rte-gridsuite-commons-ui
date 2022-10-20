@@ -8,6 +8,9 @@
 const login_en = {
     'login/login': 'Login',
     'login/connection': 'Connection',
+    'login/unauthorizedAccess': 'Unauthorized access',
+    'login/unauthorizedAccessMessage': "The user {userName} isn't granted yet",
+    'login/logout': 'Logout',
 };
 
 export default login_en;
