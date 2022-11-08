@@ -10,6 +10,8 @@ import {
     setLoggedUser,
     setSignInCallbackError,
     setUnauthorizedUserInfo,
+    setLogoutError,
+    setUserValidationError,
     setShowAuthenticationRouterLogin,
 } from './actions';
 import jwtDecode from 'jwt-decode';
@@ -161,16 +163,30 @@ function login(location, userManagerInstance) {
 }
 
 function logout(dispatch, userManagerInstance) {
-    dispatch(setLoggedUser(null));
     sessionStorage.removeItem(hackauthoritykey); //To remove when hack is removed
-    return userManagerInstance
-        .signoutRedirect({
-            extraQueryParams: {
-                TargetResource:
-                    userManagerInstance.settings.post_logout_redirect_uri,
-            },
-        })
-        .then(() => console.debug('logged out'));
+    return userManagerInstance.getUser().then((user) => {
+        if (user) {
+            return userManagerInstance
+                .signoutRedirect({
+                    extraQueryParams: {
+                        TargetResource:
+                            userManagerInstance.settings
+                                .post_logout_redirect_uri,
+                    },
+                })
+                .then(() => {
+                    console.debug('logged out, window is closing...');
+                })
+                .catch((e) => {
+                    console.log('Error during logout :', e);
+                    // An error occured, window may not be closed, reset the user state
+                    dispatch(setLoggedUser(null));
+                    dispatch(setLogoutError(user?.profile?.name, { error: e }));
+                });
+        } else {
+            console.log('Error nobody to logout ');
+        }
+    });
 }
 
 function dispatchUser(dispatch, userManagerInstance, validateUser) {
@@ -179,29 +195,38 @@ function dispatchUser(dispatch, userManagerInstance, validateUser) {
             // without validateUser defined, valid user by default
             let validateUserPromise =
                 (validateUser && validateUser(user)) || Promise.resolve(true);
-            return validateUserPromise.then((valid) => {
-                if (!valid) {
+            return validateUserPromise
+                .then((valid) => {
+                    if (!valid) {
+                        console.debug(
+                            "User isn't authorized to log in and will not be dispatched"
+                        );
+                        return dispatch(
+                            setUnauthorizedUserInfo(user?.profile?.name, {})
+                        );
+                    }
+                    const now = parseInt(Date.now() / 1000);
+                    const exp = jwtDecode(user.id_token).exp;
+                    const idTokenExpiresIn = exp - now;
+                    if (idTokenExpiresIn < 0) {
+                        console.debug(
+                            'User token is expired and will not be dispatched'
+                        );
+                        return;
+                    }
                     console.debug(
-                        "User isn't authorized to log in and will not be dispatched"
+                        'User has been successfully loaded from store.'
                     );
+                    return dispatch(setLoggedUser(user));
+                })
+                .catch((e) => {
+                    console.log('Error in dispatchUser', e);
                     return dispatch(
-                        setUnauthorizedUserInfo({
-                            userName: user?.profile?.name,
+                        setUserValidationError(user?.profile?.name, {
+                            error: e,
                         })
                     );
-                }
-                const now = parseInt(Date.now() / 1000);
-                const exp = jwtDecode(user.id_token).exp;
-                const idTokenExpiresIn = exp - now;
-                if (idTokenExpiresIn < 0) {
-                    console.debug(
-                        'User token is expired and will not be dispatched'
-                    );
-                    return;
-                }
-                console.debug('User has been successfully loaded from store.');
-                return dispatch(setLoggedUser(user));
-            });
+                });
         } else {
             console.debug('You are not logged in.');
         }
@@ -234,12 +259,7 @@ function handleUser(dispatch, userManager, validateUser) {
     userManager.events.addUserLoaded((user) => {
         console.debug('user loaded', user);
 
-        dispatchUser(dispatch, userManager, validateUser)
-            // The oidc-client-lib doesn't manage errors from this Promise
-            // For now we log it to avoid uncaught Promise for good practice.
-            .catch((e) => {
-                console.log('Error in dispatchUser in addUserLoaded event', e);
-            });
+        dispatchUser(dispatch, userManager, validateUser);
     });
 
     userManager.events.addSilentRenewError((error) => {
