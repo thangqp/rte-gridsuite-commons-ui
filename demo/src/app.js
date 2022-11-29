@@ -34,7 +34,7 @@ import { useMatch } from 'react-router';
 import { IntlProvider, useIntl } from 'react-intl';
 
 import { BrowserRouter, useNavigate, useLocation } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
+import { useSnackMessage } from '../../src/hooks/useSnackMessage';
 
 import {
     element_search_en,
@@ -199,21 +199,62 @@ const Crasher = () => {
     return <Button onClick={() => setCrash(true)}>CRASH ME</Button>;
 };
 
-const MyButton = (props) => {
-    const { enqueueSnackbar } = useSnackbar();
+function SnackErrorButton() {
+    const { snackError } = useSnackMessage();
     return (
         <Button
             variant="contained"
-            color={props.variant}
-            style={{ float: 'left', color: '#fff', margin: '5px' }}
+            color="error"
+            style={{ float: 'left', margin: '5px' }}
             onClick={() => {
-                enqueueSnackbar(props.message, { variant: props.variant });
+                snackError({
+                    messageTxt: 'Snack error message',
+                    headerTxt: 'Header',
+                });
             }}
         >
-            {props.variant}
+            error snack hook
         </Button>
     );
-};
+}
+
+function SnackWarningButton() {
+    const { snackWarning } = useSnackMessage();
+    return (
+        <Button
+            variant="contained"
+            color="warning"
+            style={{ float: 'left', margin: '5px' }}
+            onClick={() => {
+                snackWarning({
+                    messageTxt: 'Snack warning message',
+                    headerTxt: 'Header',
+                });
+            }}
+        >
+            warning snack hook
+        </Button>
+    );
+}
+
+function SnackInfoButton() {
+    const { snackInfo } = useSnackMessage();
+    return (
+        <Button
+            variant="contained"
+            color="info"
+            style={{ float: 'left', margin: '5px' }}
+            onClick={() => {
+                snackInfo({
+                    messageTxt: 'Snack info message',
+                    headerTxt: 'Header',
+                });
+            }}
+        >
+            info snack hook
+        </Button>
+    );
+}
 
 const validateUser = (user) => {
     // change to false to simulate user unauthorized access
@@ -342,15 +383,6 @@ const AppContent = ({ language, onLanguageClick }) => {
         },
         { name: 'App2', url: '/app2' },
         { name: 'App3', url: '/app3', hiddenInAppsMenu: true },
-    ];
-
-    const buttons = [
-        {
-            variant: 'success',
-            message: 'Successfully done the operation.',
-            id: 'button1',
-        },
-        { variant: 'error', message: 'Something went wrong.', id: 'button2' },
     ];
 
     const rows = [
@@ -526,9 +558,9 @@ const AppContent = ({ language, onLanguageClick }) => {
                                     {testIcons()}
                                     <hr />
 
-                                    {buttons.map((button) => (
-                                        <MyButton {...button} key={button.id} />
-                                    ))}
+                                    <SnackErrorButton />
+                                    <SnackWarningButton />
+                                    <SnackInfoButton />
                                     <Button
                                         variant="contained"
                                         style={{ float: 'left', margin: '5px' }}
