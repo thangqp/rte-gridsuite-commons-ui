@@ -9,18 +9,30 @@
  * This class has been taken from 'Virtualized Table' example at https://material-ui.com/components/tables/
  */
 import React, { createRef } from 'react';
+import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import TableCell from '@mui/material/TableCell';
-import { AutoSizer, Column, Table } from 'react-virtualized';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import memoize from 'memoize-one';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import CsvDownloader from 'react-csv-downloader';
-import IconButton from '@mui/material/IconButton';
-import { FormattedMessage } from 'react-intl';
+import {
+    Autocomplete,
+    Chip,
+    IconButton,
+    Popover,
+    TableCell,
+    TextField,
+} from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import { AutoSizer, Column, Table } from 'react-virtualized';
+import CsvDownloader from 'react-csv-downloader';
 import OverflowableText from '../OverflowableText/overflowable-text';
+import {
+    CHANGE_WAYS,
+    collectibleHelper,
+    getHelper,
+    KeyedColumnsRowIndexer,
+} from './KeyedColumnsRowIndexer';
+import ColumnHeader from './ColumnHeader';
 
 function getTextWidth(text) {
     // re-use canvas object for better performance
@@ -74,6 +86,71 @@ const defaultStyles = {
     },
 };
 
+const AmongChooser = (props) => {
+    const { options, value, setValue, id } = props;
+    return (
+        <>
+            <span>{props.label}</span>
+            <Autocomplete
+                id={id}
+                value={value ?? []}
+                multiple={true}
+                onChange={(evt, newVal) => {
+                    setValue(newVal);
+                }}
+                options={options}
+                // getOptionLabel={(code) => options.get(code)}
+                renderInput={(props) => (
+                    <TextField
+                        // label={<FormattedMessage id={titleMessage} />}
+                        {...props}
+                    />
+                )}
+                renderTags={(val, getTagsProps) => {
+                    return val.map((code, index) => {
+                        return (
+                            <Chip
+                                id={'chip_' + code}
+                                size={'small'}
+                                label={code}
+                                {...getTagsProps({ index })}
+                            />
+                        );
+                    });
+                }}
+            />
+        </>
+    );
+};
+
+const initIndexer = (props, oldProps, versionSetter) => {
+    if (!props.sortable) {
+        return null;
+    }
+
+    if (props.indexer) {
+        return props.indexer;
+    } else if (!props.sort) {
+        return new KeyedColumnsRowIndexer(true, true, null, versionSetter);
+    } else if (typeof props.sort === 'function') {
+        return new KeyedColumnsRowIndexer(
+            true,
+            true,
+            (cbfgs, done_cb) => {
+                console.debug('dummy func, now :-/');
+                done_cb(true);
+            },
+            versionSetter
+        );
+    } else if (typeof props.sort === 'object') {
+        return props.sort;
+    } else {
+        console.warn('unknown type of sort', props.sort);
+    }
+
+    return new KeyedColumnsRowIndexer(true, true, null, versionSetter);
+};
+
 class MuiVirtualizedTable extends React.PureComponent {
     static defaultProps = {
         headerHeight: DEFAULT_HEADER_HEIGHT,
@@ -81,14 +158,9 @@ class MuiVirtualizedTable extends React.PureComponent {
         enableExportCSV: false,
     };
 
-    state = {
-        key: undefined,
-        direction: 'asc',
-        headerHeight: this.props.headerHeight,
-    };
-
     constructor(props, context) {
         super(props, context);
+
         this._computeHeaderSize = this._computeHeaderSize.bind(this);
         this._registerHeader = this._registerHeader.bind(this);
         this._registerObserver = this._registerObserver.bind(this);
@@ -99,11 +171,40 @@ class MuiVirtualizedTable extends React.PureComponent {
             rootMargin: '0px',
             threshold: 0.1,
         };
-
         this.observer = new IntersectionObserver(
             this._computeHeaderSize,
             options
         );
+        this.state = {
+            headerHeight: this.props.headerHeight,
+            indexer: initIndexer(props, null, this.setVersion),
+            indirectionVersion: 0,
+            reorderIndex: null,
+            popoverAnchorEl: null,
+            popoverColKey: null,
+            deferredFilterChange: null,
+        };
+    }
+
+    setVersion = (v) => {
+        this.setState({ indirectionVersion: v });
+    };
+
+    componentDidUpdate(oldProps) {
+        if (oldProps.data !== this.props.data) {
+            this.setState({
+                indexer: initIndexer(this.props, oldProps),
+            });
+        }
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this._computeHeaderSize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this._computeHeaderSize);
+        this.observer.disconnect();
     }
 
     _registerHeader(label, header) {
@@ -118,37 +219,65 @@ class MuiVirtualizedTable extends React.PureComponent {
         }
     }
 
-    reorderIndex = memoize((key, direction, filter, rows) => {
-        if (!rows) return [];
-        let indexedArray = [];
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            if (!filter || filter(row)) indexedArray.push([row, i]);
-        }
+    preFilterData = memoize((columns, rows) => {
+        return this.state.indexer.preFilterRowMapping(columns, rows);
+    });
 
-        function compareValue(a, b, isNumeric, reverse) {
-            const mult = reverse ? 1 : -1;
-            if (a === undefined && b === undefined) return 0;
-            else if (a === undefined) return mult;
-            else if (b === undefined) return -mult;
+    reorderIndex = memoize((indirectorVersion, rows, columns) => {
+        const indexer = this.state.indexer;
+        if (!rows)
+            return {
+                viewIndexToModel: [],
+                rowGetter: (viewIndex) => viewIndex,
+            };
 
-            return isNumeric
-                ? (Number(a) < Number(b) ? 1 : -1) * mult
-                : ('' + a).localeCompare(b) * mult;
-        }
-
-        if (key !== undefined) {
-            const reverse = direction === 'asc';
-            const isNumeric = this.props.columns[key].numeric;
-            const dataKey = this.props.columns[key].dataKey;
-            if (dataKey && dataKey !== '' && this.state.direction !== '')
-                if (this.props.sort)
-                    return this.props.sort(dataKey, reverse, isNumeric);
-            indexedArray.sort((a, b) =>
-                compareValue(a[0][dataKey], b[0][dataKey], isNumeric, reverse)
+        const props = this.props;
+        if (indexer && props.sort) {
+            const highestCodedColumn = indexer.highestCodedColumn(
+                props.columns
             );
+            if (highestCodedColumn !== 0) {
+                const colIdx = Math.abs(highestCodedColumn) - 1;
+                const ret = props.sort(
+                    props.columns[colIdx].dataKey,
+                    highestCodedColumn > 0,
+                    !!props.columns[colIdx].numeric
+                );
+
+                return {
+                    viewIndexToModel: ret,
+                    rowGetter: (viewIndex) => {
+                        if (viewIndex >= ret.length || viewIndex < 0) {
+                            return {};
+                        }
+                        const modelIndex = ret[viewIndex];
+                        return rows[modelIndex];
+                    },
+                };
+            }
+        } else if (indexer) {
+            const prefiltered = this.preFilterData(columns, rows);
+            const reorderedIndex = indexer.makeGroupAndSortIndirector(
+                prefiltered,
+                columns
+            );
+            return {
+                viewIndexToModel: reorderedIndex,
+                rowGetter: (viewIndex) => {
+                    if (reorderedIndex === null) return rows[viewIndex];
+                    if (viewIndex >= reorderedIndex.length || viewIndex < 0) {
+                        return {};
+                    }
+                    const modelIndex = reorderedIndex[viewIndex];
+                    return rows[modelIndex];
+                },
+            };
         }
-        return indexedArray.map((k) => k[1]);
+
+        return {
+            viewIndexToModel: null,
+            rowGetter: (viewIndex) => rows[viewIndex],
+        };
     });
 
     computeDataWidth = (text) => {
@@ -161,17 +290,17 @@ class MuiVirtualizedTable extends React.PureComponent {
             if (col.width) {
                 sizes[col.dataKey] = col.width;
             } else {
-                /* calculate the header (and min size if exists) */
+                /* calculate the header (and min size if exists)
+                 * NB : ignores the possible icons
+                 */
                 let size = Math.max(
                     col.minWidth || 0,
                     this.computeDataWidth(col.label)
                 );
                 /* calculate for each row the width, and keep the max  */
                 for (let i = 0; i < rows.length; ++i) {
-                    let text = this.getDisplayValue(
-                        col,
-                        rowGetter({ index: i })[col.dataKey]
-                    );
+                    const gotRow = rowGetter(i);
+                    let text = this.getDisplayValue(col, gotRow[col.dataKey]);
                     size = Math.max(size, this.computeDataWidth(text));
                 }
                 if (col.maxWidth) size = Math.min(col.maxWidth, size);
@@ -181,48 +310,183 @@ class MuiVirtualizedTable extends React.PureComponent {
         return sizes;
     });
 
-    sortableHeader = ({ label, columnIndex, width }) => {
-        const { columns, classes } = this.props;
+    openPopover = (popoverTarget, colKey) => {
+        if (this.state.indexer.delegatorCallback) {
+            return; // retro compatibility stops here ;-)
+        }
+        const col = this.props.columns.find((c) => c.dataKey === colKey);
+        if (getHelper(col) !== collectibleHelper) {
+            return;
+        }
+
+        this.setState({
+            popoverAnchorEl: popoverTarget,
+            popoverColKey: colKey,
+        });
+    };
+
+    closePopover = (evt, reason) => {
+        let bumpsVersion = false;
+        if (reason === 'backdropClick') {
+            bumpsVersion = this._commitFilterChange();
+        }
+        this.setState({
+            popoverAnchorEl: null,
+            popoverColKey: null,
+            deferredFilterChange: null,
+            indirectionVersion:
+                this.state.indirectionVersion + (bumpsVersion ? 1 : 0),
+        });
+    };
+
+    makeColumnFilterEditor = () => {
+        const colKey = this.state.popoverColKey;
+        const outerParams = this.state.indexer.getColFilterOuterParams(colKey);
+        const userParams =
+            !this.props.defersFilterChanges || !this.state.deferredFilterChange
+                ? this.state.indexer.getColFilterUserParams(colKey)
+                : this.state.deferredFilterChange.newVal;
+        const prefiltered = this.preFilterData(
+            this.props.columns,
+            this.props.rows
+        );
+
+        let options = [];
+        if (outerParams) {
+            options.push(...outerParams);
+        }
+        const colStat = prefiltered?.colsStats?.[colKey];
+        if (colStat?.seen) {
+            for (let key of Object.getOwnPropertyNames(colStat.seen)) {
+                if (options.findIndex((o) => o === key) < 0) {
+                    options.push(key);
+                }
+            }
+        }
+
+        const col = this.props.columns.find((c) => c.dataKey === colKey);
+
         return (
-            <TableSortLabel
-                component="div"
-                className={clsx(
-                    classes.tableCell,
-                    classes.flexContainer,
-                    classes.header
-                )}
-                active={columnIndex === this.state.key}
-                style={{
-                    justifyContent: columns[columnIndex].numeric
-                        ? 'flex-end'
-                        : 'baseline',
-                    height: this.state.headerHeight,
+            <AmongChooser
+                options={options}
+                value={userParams}
+                id={'fielt' + colKey}
+                label={col?.label ?? '\u2208'}
+                setValue={(newVal) => {
+                    this.onFilterParamsChange(newVal, colKey);
                 }}
-                direction={this.state.direction}
-                onClick={() => {
-                    let { key, direction } = this.state;
-                    if (key === undefined) key = columnIndex;
-                    else if (direction === 'asc') direction = 'desc';
-                    else {
-                        key = undefined;
-                        direction = 'asc';
-                    }
-                    this.setState({
-                        key: key,
-                        direction: direction,
-                    });
+            />
+        );
+    };
+
+    _commitFilterChange = () => {
+        if (this.state.deferredFilterChange) {
+            const colKey = this.state.deferredFilterChange.colKey;
+            let newVal = this.state.deferredFilterChange.newVal;
+            if (newVal?.length === 0) {
+                newVal = null;
+            }
+            if (this.state.indexer.setColFilterUserParams(colKey, newVal)) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    onFilterParamsChange(newVal, colKey) {
+        const nonEmpty = newVal.length === 0 ? null : newVal;
+        if (this.props.defersFilterChanges) {
+            this.setState({
+                deferredFilterChange: { newVal: newVal, colKey },
+            });
+        } else if (
+            this.state.indexer.setColFilterUserParams(colKey, nonEmpty)
+        ) {
+            this.setState({
+                indirectionVersion: this.state.indirectionVersion + 1,
+            });
+        }
+    }
+
+    sortClickHandler = (evt, name, columnIndex) => {
+        const colKey = this.props.columns[columnIndex].dataKey;
+
+        if (evt.altKey) {
+            this.openPopover(evt.target, colKey);
+            return;
+        }
+
+        let way = CHANGE_WAYS.SIMPLE;
+        if (evt.ctrlKey && evt.shiftKey) {
+            way = CHANGE_WAYS.AMEND;
+        } else if (evt.ctrlKey) {
+            way = CHANGE_WAYS.REMOVE;
+        } else if (evt.shiftKey) {
+            way = CHANGE_WAYS.TAIL;
+        }
+
+        if (this.state.indexer.updateSortingFromUser(colKey, way)) {
+            this.setState({
+                indirectionVersion: this.state.indirectionVersion + 1,
+            });
+        }
+    };
+
+    filterClickHandler = (evt, retargeted, columnIndex) => {
+        const colKey = this.props.columns[columnIndex].dataKey;
+        this.openPopover(retargeted, colKey);
+    };
+
+    sortableHeader = ({ label, columnIndex }) => {
+        const { columns, classes } = this.props;
+        const indexer = this.state.indexer;
+        const colKey = columns[columnIndex].dataKey;
+        const signedRank = indexer.columnSortingSignedRank(colKey);
+        const userParams = indexer.getColFilterUserParams(colKey);
+        const numeric = columns[columnIndex].numeric;
+
+        const prefiltered = this.preFilterData(columns, this.props.rows);
+        const colStat = prefiltered?.colsStats?.[colKey];
+        let filterLevel = 0;
+        if (colStat?.seen) {
+            const countSeen = Object.getOwnPropertyNames(colStat.seen).length;
+            const userSelectedCount = userParams?.length;
+            filterLevel += userSelectedCount ? 1 : 0;
+            filterLevel += userSelectedCount >= countSeen ? 2 : 0;
+        }
+
+        const onFilterClick =
+            numeric || this.props.sort
+                ? undefined
+                : (ev, retargeted) => {
+                      this.filterClickHandler(ev, retargeted, columnIndex);
+                  };
+        return (
+            <ColumnHeader
+                label={label}
+                ref={(e) => this._registerHeader(label, e)}
+                className={clsx(classes.tableCell, classes.header)}
+                sortSignedRank={signedRank}
+                filterLevel={filterLevel}
+                numeric={numeric}
+                onSortClick={(ev, name) => {
+                    this.sortClickHandler(ev, name, columnIndex);
                 }}
-                width={width}
-                ref={(e) => this._registerObserver(e)}
+                onFilterClick={onFilterClick}
+            />
+        );
+    };
+
+    simpleHeaderRenderer = ({ label }) => {
+        return (
+            <div
+                ref={(element) => {
+                    this._registerHeader(label, element);
+                }}
             >
-                <div
-                    ref={(element) => {
-                        this._registerHeader(label, element);
-                    }}
-                >
-                    {label}
-                </div>
-            </TableSortLabel>
+                {label}
+            </div>
         );
     };
 
@@ -303,23 +567,17 @@ class MuiVirtualizedTable extends React.PureComponent {
 
     getDisplayValue(column, cellData) {
         let displayedValue;
-        if (column.numeric) {
-            if (!isNaN(cellData)) {
-                if (
-                    column.fractionDigits !== undefined &&
-                    column.fractionDigits !== 0
-                ) {
-                    displayedValue = Number(cellData).toFixed(
-                        column.fractionDigits
-                    );
-                } else {
-                    displayedValue = Math.round(cellData);
-                }
-            } else {
-                displayedValue = '';
-            }
-        } else {
+        if (!column.numeric) {
             displayedValue = cellData;
+        } else if (isNaN(cellData)) {
+            displayedValue = '';
+        } else if (
+            column.fractionDigits === undefined ||
+            column.fractionDigits === 0
+        ) {
+            displayedValue = Math.round(cellData);
+        } else {
+            displayedValue = Number(cellData).toFixed(column.fractionDigits);
         }
 
         if (column.unit !== undefined) {
@@ -329,48 +587,18 @@ class MuiVirtualizedTable extends React.PureComponent {
         return displayedValue;
     }
 
-    headerRenderer = ({ label, columnIndex }) => {
-        const { columns, classes } = this.props;
-        return (
-            <TableCell
-                component="div"
-                className={clsx(
-                    classes.tableCell,
-                    classes.flexContainer,
-                    classes.noClick,
-                    classes.header
-                )}
-                variant="head"
-                style={{ height: this.state.headerHeight }}
-                align={columns[columnIndex].numeric || false ? 'right' : 'left'}
-                ref={(e) => this._registerObserver(e)}
-            >
-                <div
-                    ref={(element) => {
-                        this._registerHeader(label, element);
-                    }}
-                >
-                    {label}
-                </div>
-            </TableCell>
-        );
-    };
-
     _computeHeaderSize() {
-        console.debug('recompute header size');
         const headers = Object.values(this.headers.current);
         if (headers.length === 0) return;
-        let headerHeight = this.props.headerHeight;
-        headers.forEach((h) => {
-            // https://developer.mozilla.org/fr/docs/Web/API/Element/scrollHeight
-            // The scrollHeight value is equal to the minimum height the element
-            // would require in order to fit all the content in the viewport
-            // without using a vertical scrollbar.
-            headerHeight = Math.max(
-                h.scrollHeight + DEFAULT_CELL_PADDING,
-                headerHeight
-            );
-        });
+        // for now keep 'historical' use of scrollHeight,
+        // though it can not make a difference from clientHeight,
+        // as overflow-y as no scroll value
+        const scrollHeights = headers.map((header) => header.scrollHeight);
+        let headerHeight = Math.max(
+            Math.max(...scrollHeights) + DEFAULT_CELL_PADDING,
+            this.props.headerHeight
+            // hides (most often) padding override by forcing height
+        );
         if (headerHeight !== this.state.headerHeight) {
             this.setState({
                 headerHeight: headerHeight,
@@ -378,52 +606,115 @@ class MuiVirtualizedTable extends React.PureComponent {
         }
     }
 
-    componentDidMount() {
-        window.addEventListener('resize', this._computeHeaderSize);
+    makeHeaderRenderer(dataKey, columnIndex) {
+        const { columns, classes } = this.props;
+        return (headerProps) => {
+            return (
+                <TableCell
+                    component="div"
+                    className={clsx(
+                        classes.tableCell,
+                        classes.flexContainer,
+                        classes.noClick,
+                        classes.header
+                    )}
+                    variant="head"
+                    style={{ height: this.state.headerHeight }}
+                    align={
+                        columns[columnIndex].numeric || false ? 'right' : 'left'
+                    }
+                    ref={(e) => this._registerObserver(e)}
+                >
+                    {this.props.sortable
+                        ? this.sortableHeader({
+                              ...headerProps,
+                              columnIndex,
+                              key: { dataKey },
+                          })
+                        : this.simpleHeaderRenderer({
+                              ...headerProps,
+                          })}
+                </TableCell>
+            );
+        };
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this._computeHeaderSize);
-        this.observer.disconnect();
-    }
+    makeSizedTable = (height, width, sizes, reorderedIndex, rowGetter) => {
+        const { sort, ...otherProps } = this.props;
+
+        return (
+            <Table
+                {...otherProps}
+                height={height}
+                width={width}
+                rowHeight={otherProps.rowHeight}
+                gridStyle={{ direction: 'inherit' }}
+                headerHeight={this.state.headerHeight}
+                className={otherProps.classes.table}
+                onRowClick={
+                    this.props.onRowClick &&
+                    /* The {...otherProps} just above would hold the slot onRowClick */
+                    this.onClickableRowClick
+                }
+                rowCount={reorderedIndex?.length ?? otherProps.rows.length}
+                rowClassName={({ index }) =>
+                    this.getRowClassName({ index, rowGetter })
+                }
+                rowGetter={({ index }) => rowGetter(index)}
+            >
+                {otherProps.columns.map(({ dataKey, ...other }, index) => {
+                    return (
+                        <Column
+                            key={dataKey}
+                            headerRenderer={this.makeHeaderRenderer(
+                                dataKey,
+                                index
+                            )}
+                            className={otherProps.classes.flexContainer}
+                            cellRenderer={this.cellRenderer}
+                            dataKey={dataKey}
+                            flexGrow={1}
+                            width={sizes[dataKey]}
+                            {...other}
+                        />
+                    );
+                })}
+            </Table>
+        );
+    };
 
     getCSVFilename = () => {
-        if (this.props.name && this.props.name.length > 0) {
+        if (this.props.name?.length > 0) {
             return this.props.name.replace(/\s/g, '_');
         } else {
-            let filename = '';
-            this.props.columns.forEach((col, idx) => {
-                filename += col.label;
-                if (idx !== this.props.columns.length - 1) filename += '_';
-            });
+            let filename = Object.entries(this.props.columns)
+                .map((p) => p[1].label)
+                .join('_');
             return filename;
         }
     };
 
     getCSVData = () => {
         let reorderedIndex = this.reorderIndex(
-            this.state.key,
-            this.state.direction,
-            this.props.filter,
-            this.props.rows
+            this.state.indirectionVersion,
+            this.props.rows,
+            this.props.columns
         );
+        let rowsCount =
+            reorderedIndex.viewIndexToModel?.length ?? this.props.rows.length;
 
-        let csvData = [];
-        reorderedIndex.forEach((index) => {
-            var myobj = {};
-            let sortedRow = this.props.rows[index];
+        const csvData = [];
+        for (let index = 0; index < rowsCount; ++index) {
+            const myobj = {};
+            const sortedRow = reorderedIndex.rowGetter(index);
+            const exportedKeys = this.props.exportCSVDataKeys;
             this.props.columns.forEach((col) => {
-                if (
-                    this.props.exportCSVDataKeys !== undefined &&
-                    this.props.exportCSVDataKeys.find(
-                        (el) => el === col.dataKey
-                    )
-                ) {
+                if (exportedKeys?.find((el) => el === col.dataKey)) {
                     myobj[col.dataKey] = sortedRow[col.dataKey];
                 }
             });
             csvData.push(myobj);
-        });
+        }
 
         return Promise.resolve(csvData);
     };
@@ -445,34 +736,11 @@ class MuiVirtualizedTable extends React.PureComponent {
     });
 
     render() {
-        const {
-            name,
-            classes,
-            rows,
-            columns,
-            rowHeight,
-            headerHeight,
-            rowCount,
-            sortable,
-            enableExportCSV,
-            ...tableProps
-        } = this.props;
-        if (tableProps.onRowClick) {
-            tableProps.onRowClick = this.onClickableRowClick;
-        }
-
-        const reorderedIndex = this.reorderIndex(
-            this.state.key,
-            this.state.direction,
-            this.props.filter,
-            this.props.rows
+        const { viewIndexToModel, rowGetter } = this.reorderIndex(
+            this.state.indirectionVersion,
+            this.props.rows,
+            this.props.columns
         );
-
-        const getIndexFor = (index) => {
-            return index < reorderedIndex.length ? reorderedIndex[index] : 0;
-        };
-
-        const rowGetter = (index) => this.props.rows[getIndexFor(index)];
 
         const sizes = this.sizes(
             this.props.columns,
@@ -483,6 +751,7 @@ class MuiVirtualizedTable extends React.PureComponent {
             this.props.columns,
             this.props.exportCSVDataKeys
         );
+
         return (
             <div
                 style={{
@@ -491,7 +760,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                     height: '100%',
                 }}
             >
-                {enableExportCSV && (
+                {this.props.enableExportCSV && (
                     <div
                         style={{
                             display: 'flex',
@@ -516,55 +785,34 @@ class MuiVirtualizedTable extends React.PureComponent {
                 )}
                 <div style={{ flexGrow: 1 }}>
                     <AutoSizer>
-                        {({ height, width }) => (
-                            <Table
-                                height={height}
-                                width={width}
-                                rowHeight={rowHeight}
-                                gridStyle={{
-                                    direction: 'inherit',
-                                }}
-                                headerHeight={this.state.headerHeight}
-                                className={classes.table}
-                                {...tableProps}
-                                rowCount={reorderedIndex.length}
-                                rowClassName={({ index }) =>
-                                    this.getRowClassName({ index, rowGetter })
-                                }
-                                rowGetter={({ index }) => rowGetter(index)}
-                            >
-                                {columns.map(({ dataKey, ...other }, index) => {
-                                    return (
-                                        <Column
-                                            key={dataKey}
-                                            headerRenderer={(headerProps) => {
-                                                if (sortable) {
-                                                    return this.sortableHeader({
-                                                        ...headerProps,
-                                                        width: sizes[dataKey],
-                                                        columnIndex: index,
-                                                        key: { dataKey },
-                                                    });
-                                                } else {
-                                                    return this.headerRenderer({
-                                                        ...headerProps,
-                                                        columnIndex: index,
-                                                    });
-                                                }
-                                            }}
-                                            className={classes.flexContainer}
-                                            cellRenderer={this.cellRenderer}
-                                            dataKey={dataKey}
-                                            flexGrow={1}
-                                            width={sizes[dataKey]}
-                                            {...other}
-                                        />
-                                    );
-                                })}
-                            </Table>
-                        )}
+                        {({ height, width }) =>
+                            this.makeSizedTable(
+                                height,
+                                width,
+                                sizes,
+                                viewIndexToModel,
+                                rowGetter
+                            )
+                        }
                     </AutoSizer>
                 </div>
+                {this.state.popoverAnchorEl && (
+                    <Popover
+                        anchorEl={this.state.popoverAnchorEl}
+                        anchorOrigin={{
+                            vertical: 'center',
+                            horizontal: 'center',
+                        }}
+                        transformOrigin={{
+                            vertical: 'center',
+                            horizontal: 'center',
+                        }}
+                        onClose={this.closePopover}
+                        open={!!this.state.popoverAnchorEl}
+                    >
+                        {this.makeColumnFilterEditor()}
+                    </Popover>
+                )}
             </div>
         );
     }
@@ -588,13 +836,14 @@ MuiVirtualizedTable.propTypes = {
     ).isRequired,
     enableExportCSV: PropTypes.bool,
     exportCSVDataKeys: PropTypes.array,
+    sort: PropTypes.func,
     sortable: PropTypes.bool,
+    indexer: PropTypes.object,
     headerHeight: PropTypes.number,
     onRowClick: PropTypes.func,
     onCellClick: PropTypes.func,
     rowHeight: PropTypes.number,
     filter: PropTypes.func,
-    sort: PropTypes.func,
 };
 
 export default withStyles(defaultStyles)(MuiVirtualizedTable);
