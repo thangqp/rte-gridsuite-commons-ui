@@ -357,7 +357,7 @@ class MuiVirtualizedTable extends React.PureComponent {
         }
         const colStat = prefiltered?.colsStats?.[colKey];
         if (colStat?.seen) {
-            for (let key of Object.getOwnPropertyNames(colStat.seen)) {
+            for (const key of Object.getOwnPropertyNames(colStat.seen)) {
                 if (options.findIndex((o) => o === key) < 0) {
                     options.push(key);
                 }
@@ -452,8 +452,10 @@ class MuiVirtualizedTable extends React.PureComponent {
             filterLevel += userSelectedCount >= countSeen ? 2 : 0;
         }
 
+        // disable filtering when a cellRenderer is defined,
+        // as we have no simple way to match for chosen value(s)
         const onFilterClick =
-            columnData.numeric || this.props.sort
+            columnData.numeric || this.props.sort || columnData.cellRenderer
                 ? undefined
                 : (ev, retargeted) => {
                       this.filterClickHandler(ev, retargeted, colKey);
