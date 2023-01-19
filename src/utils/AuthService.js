@@ -24,10 +24,31 @@ const hackauthoritykey = 'oidc.hack.authority';
 
 const pathKey = 'powsybl-gridsuite-current-path';
 
+function handleSigninSilent(dispatch, userManager) {
+    userManager.getUser().then((user) => {
+        if (user == null || getIdTokenExpiresIn(user) < 0) {
+            return userManager.signinSilent().catch((error) => {
+                dispatch(setShowAuthenticationRouterLogin(true));
+                const oidcHackReloaded = 'gridsuite-oidc-hack-reloaded';
+                if (
+                    !sessionStorage.getItem(oidcHackReloaded) &&
+                    error.message ===
+                        'authority mismatch on settings vs. signin state'
+                ) {
+                    sessionStorage.setItem(oidcHackReloaded, true);
+                    console.log('Hack oidc, reload page to make login work');
+                    window.location.reload();
+                }
+            });
+        }
+    });
+}
+
 function initializeAuthenticationDev(dispatch, isSilentRenew, validateUser) {
     let userManager = new UserManagerMock({});
     if (!isSilentRenew) {
         handleUser(dispatch, userManager, validateUser);
+        handleSigninSilent(dispatch, userManager);
     }
     return Promise.resolve(userManager);
 }
@@ -151,8 +172,14 @@ function initializeAuthenticationProd(
             userManager.idpSettings = idpSettings; //store our settings in there as well to use it later
             if (!isSilentRenew) {
                 handleUser(dispatch, userManager, validateUser);
+                handleSigninSilent(dispatch, userManager);
             }
             return userManager;
+        })
+        .catch((error) => {
+            console.debug('error when importing the idp settings', error);
+            dispatch(setShowAuthenticationRouterLogin(true));
+            throw error;
         });
 }
 
@@ -360,5 +387,4 @@ export {
     dispatchUser,
     handleSigninCallback,
     getPreLoginPath,
-    getIdTokenExpiresIn,
 };
