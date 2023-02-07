@@ -135,9 +135,6 @@ const initIndexer = (props, oldProps, versionSetter) => {
     }
 
     let indexer = new KeyedColumnsRowIndexer(true, true, null, versionSetter);
-    if (typeof props.filter === 'function') {
-        indexer.updateRowFiltering(props.filter);
-    }
 
     return indexer;
 };
@@ -181,14 +178,6 @@ class MuiVirtualizedTable extends React.PureComponent {
         this.setState({ indirectionVersion: v });
     };
 
-    componentDidUpdate(oldProps) {
-        console.debug('componentDidUpdate', (oldProps.data !== this.props.data), oldProps.filter !== this.props.filter);
-        // deferred change when legacy filter goes off
-        if (this.state.indexer && oldProps.filter && !this.props.filter) {
-            this.state.indexer.updateRowFiltering(this.props.filter);
-        }
-    }
-
     componentDidMount() {
         window.addEventListener('resize', this._computeHeaderSize);
     }
@@ -210,14 +199,11 @@ class MuiVirtualizedTable extends React.PureComponent {
         }
     }
 
-    preFilterData = memoize((columns, rows) => {
-        if (this.props.filter) {
-            this.state.indexer.updateRowFiltering(this.props.filter);
-        }
-        return this.state.indexer.preFilterRowMapping(columns, rows);
+    preFilterData = memoize((columns, rows, filterFromProps) => {
+        return this.state.indexer.preFilterRowMapping(columns, rows, filterFromProps);
     });
 
-    reorderIndex = memoize((indirectorVersion, rows, columns) => {
+    reorderIndex = memoize((indirectorVersion, rows, columns, filterFromProps) => {
         const indexer = this.state.indexer;
         if (!rows)
             return {
@@ -250,7 +236,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                 };
             }
         } else if (indexer) {
-            const prefiltered = this.preFilterData(columns, rows);
+            const prefiltered = this.preFilterData(columns, rows, filterFromProps);
             const reorderedIndex = indexer.makeGroupAndSortIndirector(
                 prefiltered,
                 columns
@@ -344,7 +330,8 @@ class MuiVirtualizedTable extends React.PureComponent {
                 : this.state.deferredFilterChange.newVal;
         const prefiltered = this.preFilterData(
             this.props.columns,
-            this.props.rows
+            this.props.rows,
+            this.props.filter
         );
 
         let options = [];
@@ -442,7 +429,7 @@ class MuiVirtualizedTable extends React.PureComponent {
         const userParams = indexer.getColFilterUserParams(colKey);
         const numeric = columns[columnIndex].numeric;
 
-        const prefiltered = this.preFilterData(columns, this.props.rows);
+        const prefiltered = this.preFilterData(columns, this.props.rows, this.props.filter);
         const colStat = prefiltered?.colsStats?.[colKey];
         let filterLevel = 0;
         if (colStat?.seen) {
@@ -695,7 +682,8 @@ class MuiVirtualizedTable extends React.PureComponent {
         let reorderedIndex = this.reorderIndex(
             this.state.indirectionVersion,
             this.props.rows,
-            this.props.columns
+            this.props.columns,
+            this.props.filter,
         );
         let rowsCount =
             reorderedIndex.viewIndexToModel?.length ?? this.props.rows.length;
@@ -736,7 +724,8 @@ class MuiVirtualizedTable extends React.PureComponent {
         const { viewIndexToModel, rowGetter } = this.reorderIndex(
             this.state.indirectionVersion,
             this.props.rows,
-            this.props.columns
+            this.props.columns,
+            this.props.filter,
         );
 
         const sizes = this.sizes(
