@@ -844,7 +844,6 @@ MuiVirtualizedTable.propTypes = {
     onRowClick: PropTypes.func,
     onCellClick: PropTypes.func,
     rowHeight: PropTypes.number,
-    filter: PropTypes.func,
 };
 
 export default withStyles(defaultStyles)(MuiVirtualizedTable);
