@@ -200,65 +200,78 @@ class MuiVirtualizedTable extends React.PureComponent {
     }
 
     preFilterData = memoize((columns, rows, filterFromProps) => {
-        return this.state.indexer.preFilterRowMapping(columns, rows, filterFromProps);
+        return this.state.indexer.preFilterRowMapping(
+            columns,
+            rows,
+            filterFromProps
+        );
     });
 
-    reorderIndex = memoize((indirectorVersion, rows, columns, filterFromProps) => {
-        const indexer = this.state.indexer;
-        if (!rows)
-            return {
-                viewIndexToModel: [],
-                rowGetter: (viewIndex) => viewIndex,
-            };
-
-        const props = this.props;
-        if (indexer && props.sort) {
-            const highestCodedColumn = indexer.highestCodedColumn(
-                props.columns
-            );
-            if (highestCodedColumn !== 0) {
-                const colIdx = Math.abs(highestCodedColumn) - 1;
-                const ret = props.sort(
-                    props.columns[colIdx].dataKey,
-                    highestCodedColumn > 0,
-                    !!props.columns[colIdx].numeric
-                );
-
+    reorderIndex = memoize(
+        (indirectorVersion, rows, columns, filterFromProps) => {
+            const indexer = this.state.indexer;
+            if (!rows)
                 return {
-                    viewIndexToModel: ret,
+                    viewIndexToModel: [],
+                    rowGetter: (viewIndex) => viewIndex,
+                };
+
+            const props = this.props;
+            if (indexer && props.sort) {
+                const highestCodedColumn = indexer.highestCodedColumn(
+                    props.columns
+                );
+                if (highestCodedColumn !== 0) {
+                    const colIdx = Math.abs(highestCodedColumn) - 1;
+                    const ret = props.sort(
+                        props.columns[colIdx].dataKey,
+                        highestCodedColumn > 0,
+                        !!props.columns[colIdx].numeric
+                    );
+
+                    return {
+                        viewIndexToModel: ret,
+                        rowGetter: (viewIndex) => {
+                            if (viewIndex >= ret.length || viewIndex < 0) {
+                                return {};
+                            }
+                            const modelIndex = ret[viewIndex];
+                            return rows[modelIndex];
+                        },
+                    };
+                }
+            } else if (indexer) {
+                const prefiltered = this.preFilterData(
+                    columns,
+                    rows,
+                    filterFromProps
+                );
+                const reorderedIndex = indexer.makeGroupAndSortIndirector(
+                    prefiltered,
+                    columns
+                );
+                return {
+                    viewIndexToModel: reorderedIndex,
                     rowGetter: (viewIndex) => {
-                        if (viewIndex >= ret.length || viewIndex < 0) {
+                        if (reorderedIndex === null) return rows[viewIndex];
+                        if (
+                            viewIndex >= reorderedIndex.length ||
+                            viewIndex < 0
+                        ) {
                             return {};
                         }
-                        const modelIndex = ret[viewIndex];
+                        const modelIndex = reorderedIndex[viewIndex];
                         return rows[modelIndex];
                     },
                 };
             }
-        } else if (indexer) {
-            const prefiltered = this.preFilterData(columns, rows, filterFromProps);
-            const reorderedIndex = indexer.makeGroupAndSortIndirector(
-                prefiltered,
-                columns
-            );
+
             return {
-                viewIndexToModel: reorderedIndex,
-                rowGetter: (viewIndex) => {
-                    if (reorderedIndex === null) return rows[viewIndex];
-                    if (viewIndex >= reorderedIndex.length || viewIndex < 0) {
-                        return {};
-                    }
-                    const modelIndex = reorderedIndex[viewIndex];
-                    return rows[modelIndex];
-                },
+                viewIndexToModel: null,
+                rowGetter: (viewIndex) => rows[viewIndex],
             };
         }
-
-        return {
-            viewIndexToModel: null,
-            rowGetter: (viewIndex) => rows[viewIndex],
-        };
-    });
+    );
 
     computeDataWidth = (text) => {
         return getTextWidth(text || '') + 2 * DEFAULT_CELL_PADDING;
@@ -317,7 +330,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                 deferredFilterChange: null,
                 indirectionVersion:
                     state.indirectionVersion + (bumpsVersion ? 1 : 0),
-            }
+            };
         });
     };
 
@@ -429,7 +442,11 @@ class MuiVirtualizedTable extends React.PureComponent {
         const userParams = indexer.getColFilterUserParams(colKey);
         const numeric = columns[columnIndex].numeric;
 
-        const prefiltered = this.preFilterData(columns, this.props.rows, this.props.filter);
+        const prefiltered = this.preFilterData(
+            columns,
+            this.props.rows,
+            this.props.filter
+        );
         const colStat = prefiltered?.colsStats?.[colKey];
         let filterLevel = 0;
         if (colStat?.seen) {
@@ -683,7 +700,7 @@ class MuiVirtualizedTable extends React.PureComponent {
             this.state.indirectionVersion,
             this.props.rows,
             this.props.columns,
-            this.props.filter,
+            this.props.filter
         );
         let rowsCount =
             reorderedIndex.viewIndexToModel?.length ?? this.props.rows.length;
@@ -725,7 +742,7 @@ class MuiVirtualizedTable extends React.PureComponent {
             this.state.indirectionVersion,
             this.props.rows,
             this.props.columns,
-            this.props.filter,
+            this.props.filter
         );
 
         const sizes = this.sizes(
