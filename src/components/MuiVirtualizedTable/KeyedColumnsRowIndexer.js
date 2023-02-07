@@ -444,11 +444,13 @@ export class KeyedColumnsRowIndexer {
     };
 
     updateRowFiltering = (rowFilterFunc) => {
-        if (typeof rowFilterFunc !== 'function') {
+        if (rowFilterFunc && typeof rowFilterFunc !== 'function') {
             throw new Error('row filter should be a function');
         }
-        this.byRowFilter = rowFilterFunc;
-        this._bumpVersion();
+        if (this.byRowFilter !== rowFilterFunc) {
+            this.byRowFilter = rowFilterFunc;
+            this._bumpVersion(true);
+        }
     };
 }
 

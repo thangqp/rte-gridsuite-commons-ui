@@ -130,25 +130,16 @@ const initIndexer = (props, oldProps, versionSetter) => {
 
     if (props.indexer) {
         return props.indexer;
-    } else if (!props.sort) {
-        return new KeyedColumnsRowIndexer(true, true, null, versionSetter);
-    } else if (typeof props.sort === 'function') {
-        return new KeyedColumnsRowIndexer(
-            true,
-            true,
-            (cbfgs, done_cb) => {
-                console.debug('dummy func, now :-/');
-                done_cb(true);
-            },
-            versionSetter
-        );
     } else if (typeof props.sort === 'object') {
         return props.sort;
-    } else {
-        console.warn('unknown type of sort', props.sort);
     }
 
-    return new KeyedColumnsRowIndexer(true, true, null, versionSetter);
+    let indexer = new KeyedColumnsRowIndexer(true, true, null, versionSetter);
+    if (typeof props.filter === 'function') {
+        indexer.updateRowFiltering(props.filter);
+    }
+
+    return indexer;
 };
 
 class MuiVirtualizedTable extends React.PureComponent {
@@ -191,10 +182,10 @@ class MuiVirtualizedTable extends React.PureComponent {
     };
 
     componentDidUpdate(oldProps) {
-        if (oldProps.data !== this.props.data) {
-            this.setState({
-                indexer: initIndexer(this.props, oldProps),
-            });
+        console.debug('componentDidUpdate', (oldProps.data !== this.props.data), oldProps.filter !== this.props.filter);
+        // deferred change when legacy filter goes off
+        if (this.state.indexer && oldProps.filter && !this.props.filter) {
+            this.state.indexer.updateRowFiltering(this.props.filter);
         }
     }
 
@@ -220,6 +211,9 @@ class MuiVirtualizedTable extends React.PureComponent {
     }
 
     preFilterData = memoize((columns, rows) => {
+        if (this.props.filter) {
+            this.state.indexer.updateRowFiltering(this.props.filter);
+        }
         return this.state.indexer.preFilterRowMapping(columns, rows);
     });
 
@@ -330,12 +324,14 @@ class MuiVirtualizedTable extends React.PureComponent {
         if (reason === 'backdropClick') {
             bumpsVersion = this._commitFilterChange();
         }
-        this.setState({
-            popoverAnchorEl: null,
-            popoverColKey: null,
-            deferredFilterChange: null,
-            indirectionVersion:
-                this.state.indirectionVersion + (bumpsVersion ? 1 : 0),
+        this.setState((state, props) => {
+            return {
+                popoverAnchorEl: null,
+                popoverColKey: null,
+                deferredFilterChange: null,
+                indirectionVersion:
+                    state.indirectionVersion + (bumpsVersion ? 1 : 0),
+            }
         });
     };
 
