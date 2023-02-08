@@ -220,25 +220,18 @@ class MuiVirtualizedTable extends React.PureComponent {
                 const highestCodedColumn = indexer.highestCodedColumn(
                     props.columns
                 );
-                if (highestCodedColumn !== 0) {
+                let reorderedIndex;
+                if (highestCodedColumn === 0) {
+                    reorderedIndex = props.sort(null, false, false);
+                } else {
                     const colIdx = Math.abs(highestCodedColumn) - 1;
-                    const ret = props.sort(
+                    reorderedIndex = props.sort(
                         props.columns[colIdx].dataKey,
                         highestCodedColumn > 0,
                         !!props.columns[colIdx].numeric
                     );
-
-                    return {
-                        viewIndexToModel: ret,
-                        rowGetter: (viewIndex) => {
-                            if (viewIndex >= ret.length || viewIndex < 0) {
-                                return {};
-                            }
-                            const modelIndex = ret[viewIndex];
-                            return rows[modelIndex];
-                        },
-                    };
                 }
+                return this.makeIndexRecord(reorderedIndex, rows);
             } else if (indexer) {
                 const prefiltered = this.preFilterData(
                     columns,
@@ -249,38 +242,16 @@ class MuiVirtualizedTable extends React.PureComponent {
                     prefiltered,
                     columns
                 );
-                return {
-                    viewIndexToModel: reorderedIndex,
-                    rowGetter: (viewIndex) => {
-                        if (reorderedIndex === null) return rows[viewIndex];
-                        if (
-                            viewIndex >= reorderedIndex.length ||
-                            viewIndex < 0
-                        ) {
-                            return {};
-                        }
-                        const modelIndex = reorderedIndex[viewIndex];
-                        return rows[modelIndex];
-                    },
-                };
+                return this.makeIndexRecord(reorderedIndex, rows);
+            } else if (props.sort) {
+                const viewIndexToModel = props.sort(null, false, false);
+                return this.makeIndexRecord(viewIndexToModel, rows);
             } else if (filterFromProps) {
                 const viewIndexToModel = rows
                     .map((r, idx) => [r, idx])
                     .filter(([r, idx]) => filterFromProps(r))
                     .map(([r, idx]) => idx);
-                return {
-                    viewIndexToModel,
-                    rowGetter: (viewIndex) => {
-                        if (
-                            viewIndex >= viewIndexToModel.length ||
-                            viewIndex < 0
-                        ) {
-                            return {};
-                        }
-                        const modelIndex = viewIndexToModel[viewIndex];
-                        return rows[modelIndex];
-                    },
-                };
+                return this.makeIndexRecord(viewIndexToModel, rows);
             }
 
             return {
@@ -289,6 +260,24 @@ class MuiVirtualizedTable extends React.PureComponent {
             };
         }
     );
+
+    makeIndexRecord(viewIndexToModel, rows) {
+        return {
+            viewIndexToModel,
+            rowGetter: !viewIndexToModel
+                ? (viewIndex) => rows[viewIndex]
+                : (viewIndex) => {
+                      if (
+                          viewIndex >= viewIndexToModel.length ||
+                          viewIndex < 0
+                      ) {
+                          return {};
+                      }
+                      const modelIndex = viewIndexToModel[viewIndex];
+                      return rows[modelIndex];
+                  },
+        };
+    }
 
     computeDataWidth = (text) => {
         return getTextWidth(text || '') + 2 * DEFAULT_CELL_PADDING;
