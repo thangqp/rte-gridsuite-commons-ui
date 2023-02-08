@@ -108,11 +108,14 @@ export const TableTab = () => {
         return ret;
     }, []);
 
-    const [filterValue, setFilterValue] = useState("");
-    const filter = useCallback( row => {
-        return row.key2 && row.key2.includes(filterValue);
-    }, [filterValue]);
-    const optFilter = filterValue && {filter};
+    const [filterValue, setFilterValue] = useState('');
+    const filter = useCallback(
+        (row) => {
+            return row.key2 && row.key2.includes(filterValue);
+        },
+        [filterValue]
+    );
+    const optFilter = filterValue && { filter };
 
     return (
         <>
@@ -130,7 +133,7 @@ export const TableTab = () => {
                 style={{ marginLeft: '10px' }}
                 label="header2 filter"
                 size={'small'}
-                onChange={ event => setFilterValue(event.target.value) }
+                onChange={(event) => setFilterValue(event.target.value)}
             />
             <Box style={{ height: '20rem' }}>
                 <VirtualizedTable
