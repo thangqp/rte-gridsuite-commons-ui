@@ -53,12 +53,68 @@ const styles = (theme) => ({
     },
 });
 
+const StyledVirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
+
+const renderTables = (
+    usesCustomStyles,
+    rows,
+    defersFilterChanges,
+    columns,
+    indexer,
+    version,
+    filterValue,
+    filter,
+    doesSort,
+    sort
+) => {
+    const VirtualizedTable = usesCustomStyles
+        ? StyledVirtualizedTable
+        : MuiVirtualizedTable;
+
+    return (
+        <>
+            <Box style={{ height: '20rem' }}>
+                <VirtualizedTable
+                    key={'sortable'}
+                    name="Demo Virtualized Table"
+                    rows={rows}
+                    sortable={true}
+                    defersFilterChanges={defersFilterChanges}
+                    columns={columns}
+                    enableExportCSV={true}
+                    exportCSVDataKeys={['key2', 'key3']}
+                    onRowClick={(...args) => console.log('onRowClick', args)}
+                    onClick={(...args) => console.log('onClick', args)}
+                    onCellClick={(...args) => console.log('onCellClick', args)}
+                    indexer={indexer}
+                    version={version}
+                    {...(filterValue && { filter })}
+                    {...(doesSort && { sort })}
+                />
+            </Box>
+            <Box style={{ height: '20rem' }}>
+                <VirtualizedTable
+                    key={'sort not interactive'}
+                    rows={rows}
+                    sortable={false}
+                    columns={columns}
+                    enableExportCSV={true}
+                    exportCSVDataKeys={['key2', 'key3']}
+                    onRowClick={(...args) => console.log('onRowClick', args)}
+                    onClick={(...args) => console.log('onClick', args)}
+                    onCellClick={(...args) => console.log('onCellClick', args)}
+                    indexer={indexer}
+                    version={version}
+                    {...(filterValue && { filter })}
+                    {...(doesSort && { sort })}
+                />
+            </Box>
+        </>
+    );
+};
+
 export const TableTab = () => {
     const [usesCustomStyles, setUsesCustomStyles] = useState(true);
-
-    const VirtualizedTable = usesCustomStyles
-        ? withStyles(styles)(MuiVirtualizedTable)
-        : MuiVirtualizedTable;
 
     const [version, setVersion] = useState(0);
 
@@ -108,8 +164,11 @@ export const TableTab = () => {
         return ret;
     }, []);
 
+    const [memoes, setMemoes] = useState(false);
+    const [isIndexerExternal, setIndexerIsExternal] = useState(true);
     const [filterValue, setFilterValue] = useState('');
     const [doesSort, setDoesSort] = useState(false);
+    const [defersFilterChanges, setDefersFilterChanges] = useState(false);
     const filter = useCallback(
         (row) => {
             return row.key2 && row.key2.includes(filterValue);
@@ -126,8 +185,33 @@ export const TableTab = () => {
         },
         [rows, filter]
     );
-    const optFilter = filterValue && { filter };
-    const optSort = doesSort && { sort }
+
+    const renderTablesMemoed = useMemo(() => {
+        return () =>
+            renderTables(
+                usesCustomStyles,
+                rows,
+                defersFilterChanges,
+                columns,
+                indexer,
+                version,
+                filterValue,
+                filter,
+                doesSort,
+                sort
+            );
+    }, [
+        usesCustomStyles,
+        rows,
+        defersFilterChanges,
+        columns,
+        indexer,
+        version,
+        filterValue,
+        filter,
+        doesSort,
+        sort,
+    ]);
 
     return (
         <>
@@ -144,12 +228,42 @@ export const TableTab = () => {
             <FormControlLabel
                 control={
                     <Switch
+                        checked={isIndexerExternal}
+                        onChange={() => setIndexerIsExternal((was) => !was)}
+                    />
+                }
+                labelPlacement={'start'}
+                label="Uses external indexer"
+            />
+            <FormControlLabel
+                control={
+                    <Switch
+                        checked={memoes}
+                        onChange={() => setMemoes((was) => !was)}
+                    />
+                }
+                labelPlacement={'start'}
+                label="Memoize"
+            />
+            <FormControlLabel
+                control={
+                    <Switch
                         checked={doesSort}
                         onChange={() => setDoesSort((was) => !was)}
                     />
                 }
                 labelPlacement={'start'}
-                label="Outer sort"
+                label="External sort (reverses)"
+            />
+            <FormControlLabel
+                control={
+                    <Switch
+                        checked={defersFilterChanges}
+                        onChange={() => setDefersFilterChanges((was) => !was)}
+                    />
+                }
+                labelPlacement={'start'}
+                label="Defer filter changes"
             />
             <TextField
                 style={{ marginLeft: '10px' }}
@@ -157,39 +271,20 @@ export const TableTab = () => {
                 size={'small'}
                 onChange={(event) => setFilterValue(event.target.value)}
             />
-            <Box style={{ height: '20rem' }}>
-                <VirtualizedTable
-                    name="Demo Virtualized Table"
-                    rows={rows}
-                    sortable={true}
-                    columns={columns}
-                    enableExportCSV={true}
-                    exportCSVDataKeys={['key2', 'key3']}
-                    onRowClick={(...args) => console.log('onRowClick', args)}
-                    onClick={(...args) => console.log('onClick', args)}
-                    onCellClick={(...args) => console.log('onCellClick', args)}
-                    indexer={indexer}
-                    version={version}
-                    {...optFilter}
-                    {...optSort}
-                />
-            </Box>
-            <Box style={{ height: '20rem' }}>
-                <VirtualizedTable
-                    rows={rows}
-                    sortable={false}
-                    columns={columns}
-                    enableExportCSV={true}
-                    exportCSVDataKeys={['key2', 'key3']}
-                    onRowClick={(...args) => console.log('onRowClick', args)}
-                    onClick={(...args) => console.log('onClick', args)}
-                    onCellClick={(...args) => console.log('onCellClick', args)}
-                    indexer={indexer}
-                    version={version}
-                    {...optFilter}
-                    {...optSort}
-                />
-            </Box>
+            {memoes
+                ? renderTablesMemoed()
+                : renderTables(
+                      usesCustomStyles,
+                      rows,
+                      defersFilterChanges,
+                      columns,
+                      isIndexerExternal ? indexer : null,
+                      version,
+                      filterValue,
+                      filter,
+                      doesSort,
+                      sort
+                  )}
         </>
     );
 };

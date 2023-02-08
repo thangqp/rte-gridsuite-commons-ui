@@ -177,6 +177,15 @@ class MuiVirtualizedTable extends React.PureComponent {
         this.setState({ indirectionVersion: v });
     };
 
+    componentDidUpdate(oldProps) {
+        if (oldProps.indexer !== this.props.indexer) {
+            this.setState({
+                headerHeight: this.props.headerHeight,
+                indexer: initIndexer(this.props, oldProps),
+            });
+        }
+    }
+
     componentDidMount() {
         window.addEventListener('resize', this._computeHeaderSize);
     }
@@ -207,7 +216,7 @@ class MuiVirtualizedTable extends React.PureComponent {
     });
 
     reorderIndex = memoize(
-        (indirectorVersion, rows, columns, filterFromProps) => {
+        (indirectorVersion, rows, columns, filterFromProps, sortFromProps) => {
             const indexer = this.state.indexer;
             if (!rows)
                 return {
@@ -216,35 +225,43 @@ class MuiVirtualizedTable extends React.PureComponent {
                 };
 
             const props = this.props;
-            if (indexer && props.sort) {
-                const highestCodedColumn = indexer.highestCodedColumn(
-                    props.columns
+            const highestCodedColumn = !indexer
+                ? 0
+                : indexer.highestCodedColumn(props.columns);
+            if (indexer && sortFromProps && highestCodedColumn) {
+                const colIdx = Math.abs(highestCodedColumn) - 1;
+                let reorderedIndex = sortFromProps(
+                    props.columns[colIdx].dataKey,
+                    highestCodedColumn > 0,
+                    !!props.columns[colIdx].numeric
                 );
-                let reorderedIndex;
-                if (highestCodedColumn === 0) {
-                    reorderedIndex = props.sort(null, false, false);
-                } else {
-                    const colIdx = Math.abs(highestCodedColumn) - 1;
-                    reorderedIndex = props.sort(
-                        props.columns[colIdx].dataKey,
-                        highestCodedColumn > 0,
-                        !!props.columns[colIdx].numeric
-                    );
-                }
                 return this.makeIndexRecord(reorderedIndex, rows);
-            } else if (indexer) {
+            } else if (indexer && !sortFromProps) {
                 const prefiltered = this.preFilterData(
                     columns,
                     rows,
-                    filterFromProps
+                    filterFromProps,
+                    indexer.filterVersion
                 );
                 const reorderedIndex = indexer.makeGroupAndSortIndirector(
                     prefiltered,
                     columns
                 );
                 return this.makeIndexRecord(reorderedIndex, rows);
-            } else if (props.sort) {
-                const viewIndexToModel = props.sort(null, false, false);
+            } else if (sortFromProps && highestCodedColumn) {
+                const viewIndexToModel = sortFromProps(
+                    highestCodedColumn,
+                    false,
+                    false
+                );
+                return this.makeIndexRecord(viewIndexToModel, rows);
+            } else if (sortFromProps) {
+                let viewIndexToModel;
+                try {
+                    viewIndexToModel = sortFromProps(null, false, false);
+                } catch (e) {
+                    viewIndexToModel = null;
+                }
                 return this.makeIndexRecord(viewIndexToModel, rows);
             } else if (filterFromProps) {
                 const viewIndexToModel = rows
@@ -350,7 +367,8 @@ class MuiVirtualizedTable extends React.PureComponent {
         const prefiltered = this.preFilterData(
             this.props.columns,
             this.props.rows,
-            this.props.filter
+            this.props.filter,
+            this.state.indexer.filterVersion
         );
 
         let options = [];
@@ -451,7 +469,8 @@ class MuiVirtualizedTable extends React.PureComponent {
         const prefiltered = this.preFilterData(
             columns,
             this.props.rows,
-            this.props.filter
+            this.props.filter,
+            indexer.filterVersion
         );
         const colStat = prefiltered?.colsStats?.[colKey];
         let filterLevel = 0;
@@ -706,7 +725,8 @@ class MuiVirtualizedTable extends React.PureComponent {
             this.state.indirectionVersion,
             this.props.rows,
             this.props.columns,
-            this.props.filter
+            this.props.filter,
+            this.props.sort
         );
         let rowsCount =
             reorderedIndex.viewIndexToModel?.length ?? this.props.rows.length;
@@ -748,7 +768,8 @@ class MuiVirtualizedTable extends React.PureComponent {
             this.state.indirectionVersion,
             this.props.rows,
             this.props.columns,
-            this.props.filter
+            this.props.filter,
+            this.props.sort
         );
 
         const sizes = this.sizes(
