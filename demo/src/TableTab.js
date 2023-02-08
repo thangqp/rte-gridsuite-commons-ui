@@ -5,11 +5,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { DEFAULT_CELL_PADDING, KeyedColumnsRowIndexer } from '../../src';
 import withStyles from '@mui/styles/withStyles';
 
-import { Box, FormControlLabel, Switch } from '@mui/material';
+import { Box, FormControlLabel, Switch, TextField } from '@mui/material';
 import MuiVirtualizedTable from '../../src/components/MuiVirtualizedTable';
 
 const styles = (theme) => ({
@@ -108,6 +108,12 @@ export const TableTab = () => {
         return ret;
     }, []);
 
+    const [filterValue, setFilterValue] = useState("");
+    const filter = useCallback( row => {
+        return row.key2 && row.key2.includes(filterValue);
+    }, [filterValue]);
+    const optFilter = filterValue && {filter};
+
     return (
         <>
             <FormControlLabel
@@ -119,6 +125,12 @@ export const TableTab = () => {
                 }
                 labelPlacement={'start'}
                 label="Custom theme"
+            />
+            <TextField
+                style={{ marginLeft: '10px' }}
+                label="header2 filter"
+                size={'small'}
+                onChange={ event => setFilterValue(event.target.value) }
             />
             <Box style={{ height: '20rem' }}>
                 <VirtualizedTable
@@ -133,6 +145,7 @@ export const TableTab = () => {
                     onCellClick={(...args) => console.log('onCellClick', args)}
                     indexer={indexer}
                     version={version}
+                    {...optFilter}
                 />
             </Box>
             <Box style={{ height: '20rem' }}>
@@ -147,6 +160,7 @@ export const TableTab = () => {
                     onCellClick={(...args) => console.log('onCellClick', args)}
                     indexer={indexer}
                     version={version}
+                    {...optFilter}
                 />
             </Box>
         </>
