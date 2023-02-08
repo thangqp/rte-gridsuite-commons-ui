@@ -109,13 +109,19 @@ export const TableTab = () => {
     }, []);
 
     const [filterValue, setFilterValue] = useState('');
+    const [doesSort, setDoesSort] = useState(false);
     const filter = useCallback(
         (row) => {
             return row.key2 && row.key2.includes(filterValue);
         },
         [filterValue]
     );
+    const outerSort = useCallback(
+        (dataKey, reverse, isNumeric) => [8, 7, 6, 5, 4, 3, 2, 1, 0],
+        []
+    );
     const optFilter = filterValue && { filter };
+    const optSort = doesSort && { outerSort };
 
     return (
         <>
@@ -128,6 +134,16 @@ export const TableTab = () => {
                 }
                 labelPlacement={'start'}
                 label="Custom theme"
+            />
+            <FormControlLabel
+                control={
+                    <Switch
+                        checked={doesSort}
+                        onChange={() => setDoesSort((was) => !was)}
+                    />
+                }
+                labelPlacement={'start'}
+                label="Outer sort"
             />
             <TextField
                 style={{ marginLeft: '10px' }}
@@ -149,6 +165,7 @@ export const TableTab = () => {
                     indexer={indexer}
                     version={version}
                     {...optFilter}
+                    {...optSort}
                 />
             </Box>
             <Box style={{ height: '20rem' }}>
@@ -164,6 +181,7 @@ export const TableTab = () => {
                     indexer={indexer}
                     version={version}
                     {...optFilter}
+                    {...optSort}
                 />
             </Box>
         </>
