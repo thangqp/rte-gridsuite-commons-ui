@@ -481,8 +481,9 @@ class MuiVirtualizedTable extends React.PureComponent {
             filterLevel += userSelectedCount >= countSeen ? 2 : 0;
         }
 
-        // disable filtering when a cellRenderer is defined,
-        // as we have no simple way to match for chosen value(s)
+        // disable filtering
+        //  - when a cellRenderer is defined, as we have no simple way to match for chosen value(s)
+        //  - when an external sort, if defined, would hardly know about the indexer filtering
         const onFilterClick =
             numeric || this.props.sort || columns[columnIndex].cellRenderer
                 ? undefined
