@@ -228,7 +228,7 @@ class MuiVirtualizedTable extends React.PureComponent {
             const highestCodedColumn = !indexer
                 ? 0
                 : indexer.highestCodedColumn(props.columns);
-            if (indexer && sortFromProps && highestCodedColumn) {
+            if (sortFromProps && highestCodedColumn) {
                 const colIdx = Math.abs(highestCodedColumn) - 1;
                 let reorderedIndex = sortFromProps(
                     props.columns[colIdx].dataKey,
@@ -236,7 +236,15 @@ class MuiVirtualizedTable extends React.PureComponent {
                     !!props.columns[colIdx].numeric
                 );
                 return this.makeIndexRecord(reorderedIndex, rows);
-            } else if (indexer && !sortFromProps) {
+            } else if (sortFromProps) {
+                let viewIndexToModel;
+                try {
+                    viewIndexToModel = sortFromProps(null, false, false);
+                } catch (e) {
+                    viewIndexToModel = null;
+                }
+                return this.makeIndexRecord(viewIndexToModel, rows);
+            } else if (indexer) {
                 const prefiltered = this.preFilterData(
                     columns,
                     rows,
@@ -248,26 +256,11 @@ class MuiVirtualizedTable extends React.PureComponent {
                     columns
                 );
                 return this.makeIndexRecord(reorderedIndex, rows);
-            } else if (sortFromProps && highestCodedColumn) {
-                const viewIndexToModel = sortFromProps(
-                    highestCodedColumn,
-                    false,
-                    false
-                );
-                return this.makeIndexRecord(viewIndexToModel, rows);
-            } else if (sortFromProps) {
-                let viewIndexToModel;
-                try {
-                    viewIndexToModel = sortFromProps(null, false, false);
-                } catch (e) {
-                    viewIndexToModel = null;
-                }
-                return this.makeIndexRecord(viewIndexToModel, rows);
             } else if (filterFromProps) {
                 const viewIndexToModel = rows
-                    .map((r, idx) => [r, idx])
+                    .map((r, i) => [r, i])
                     .filter(([r, idx]) => filterFromProps(r))
-                    .map(([r, idx]) => idx);
+                    .map(([r, j]) => j);
                 return this.makeIndexRecord(viewIndexToModel, rows);
             }
 
