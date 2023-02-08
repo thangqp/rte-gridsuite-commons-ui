@@ -116,18 +116,18 @@ export const TableTab = () => {
         },
         [filterValue]
     );
-    const outerSort = useCallback(
+    const sort = useCallback(
         (dataKey, reverse, isNumeric) => {
             return rows
                 .map((r, i) => [r, i])
                 .filter(([r, i]) => !filter || filter(r))
-                .map(([r, i]) => i)
+                .map(([r, j]) => j)
                 .reverse();
         },
         [rows, filter]
     );
     const optFilter = filterValue && { filter };
-    const optSort = doesSort && { sort: outerSort };
+    const optSort = doesSort && { sort }
 
     return (
         <>

@@ -177,7 +177,7 @@ export class KeyedColumnsRowIndexer {
     //     }, colKeyN, ...
     //   }
     // }
-    preFilterRowMapping = (columns, rows, rowsPasserFilter) => {
+    preFilterRowMapping = (columns, rows, rowFilter) => {
         if (!rows?.length || !columns?.length) return null;
 
         const ri = [];
@@ -218,8 +218,8 @@ export class KeyedColumnsRowIndexer {
                 acceptsRow &= acceptsCell;
             }
 
-            if (acceptsRow && rowsPasserFilter) {
-                acceptsRow = rowsPasserFilter(row);
+            if (acceptsRow && rowFilter) {
+                acceptsRow = rowFilter(row);
             }
             if (acceptsRow && this.byRowFilter) {
                 acceptsRow = this.byRowFilter(row);
