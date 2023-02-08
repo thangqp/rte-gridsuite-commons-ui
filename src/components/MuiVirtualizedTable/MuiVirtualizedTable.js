@@ -167,7 +167,6 @@ class MuiVirtualizedTable extends React.PureComponent {
             headerHeight: this.props.headerHeight,
             indexer: initIndexer(props, null, this.setVersion),
             indirectionVersion: 0,
-            reorderIndex: null,
             popoverAnchorEl: null,
             popoverColKey: null,
             deferredFilterChange: null,
@@ -261,6 +260,24 @@ class MuiVirtualizedTable extends React.PureComponent {
                             return {};
                         }
                         const modelIndex = reorderedIndex[viewIndex];
+                        return rows[modelIndex];
+                    },
+                };
+            } else if (filterFromProps) {
+                const viewIndexToModel = rows
+                    .map((r, idx) => [r, idx])
+                    .filter(([r, idx]) => filterFromProps(r))
+                    .map(([r, idx]) => idx);
+                return {
+                    viewIndexToModel,
+                    rowGetter: (viewIndex) => {
+                        if (
+                            viewIndex >= viewIndexToModel.length ||
+                            viewIndex < 0
+                        ) {
+                            return {};
+                        }
+                        const modelIndex = viewIndexToModel[viewIndex];
                         return rows[modelIndex];
                     },
                 };
