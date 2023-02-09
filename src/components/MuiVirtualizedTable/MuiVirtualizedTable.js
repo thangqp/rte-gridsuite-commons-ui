@@ -844,7 +844,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                             vertical: 'top',
                             horizontal: 'left',
                         }}
-                        PaperProps={{ style: { width: '40ex' } }}
+                        PaperProps={{ style: { minWidth: '20ex' } }}
                         onKeyDown={this.handleKeyDownOnPopover}
                         onClose={this.closePopover}
                         open={!!this.state.popoverAnchorEl}
