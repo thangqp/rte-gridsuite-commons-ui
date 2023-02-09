@@ -86,11 +86,18 @@ const defaultStyles = {
     },
 };
 
+function extractExpandedStatus(evt) {
+    const expanded = Object.entries(evt.target.attributes)
+        .filter((attr) => attr[1].name === 'aria-expanded')
+        .map((attr) => attr[1].value)[0];
+    return expanded === 'true';
+}
+
 const AmongChooser = (props) => {
     const { options, value, setValue, id } = props;
+
     return (
-        <>
-            <span>{props.label}</span>
+        <span>
             <Autocomplete
                 id={id}
                 value={value ?? []}
@@ -99,13 +106,7 @@ const AmongChooser = (props) => {
                     setValue(newVal);
                 }}
                 options={options}
-                // getOptionLabel={(code) => options.get(code)}
-                renderInput={(props) => (
-                    <TextField
-                        // label={<FormattedMessage id={titleMessage} />}
-                        {...props}
-                    />
-                )}
+                renderInput={(props) => <TextField autoFocus {...props} />}
                 renderTags={(val, getTagsProps) => {
                     return val.map((code, index) => {
                         return (
@@ -119,7 +120,7 @@ const AmongChooser = (props) => {
                     });
                 }}
             />
-        </>
+        </span>
     );
 };
 
@@ -334,9 +335,18 @@ class MuiVirtualizedTable extends React.PureComponent {
         });
     };
 
+    handleKeyDownOnPopover = (evt) => {
+        if (evt.key === 'Enter') {
+            const expanded = extractExpandedStatus(evt);
+            if (!expanded) {
+                this.closePopover(evt, 'enterKeyDown');
+            }
+        }
+    };
+
     closePopover = (evt, reason) => {
         let bumpsVersion = false;
-        if (reason === 'backdropClick') {
+        if (reason === 'backdropClick' || reason === 'enterKeyDown') {
             bumpsVersion = this._commitFilterChange();
         }
         this.setState((state, props) => {
@@ -376,6 +386,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                 }
             }
         }
+        options.sort();
 
         const col = this.props.columns.find((c) => c.dataKey === colKey);
 
@@ -824,13 +835,15 @@ class MuiVirtualizedTable extends React.PureComponent {
                     <Popover
                         anchorEl={this.state.popoverAnchorEl}
                         anchorOrigin={{
-                            vertical: 'center',
-                            horizontal: 'center',
+                            vertical: 'bottom',
+                            horizontal: 'left',
                         }}
                         transformOrigin={{
-                            vertical: 'center',
-                            horizontal: 'center',
+                            vertical: 'top',
+                            horizontal: 'left',
                         }}
+                        PaperProps={{ style: { width: '20ex' } }}
+                        onKeyDown={this.handleKeyDownOnPopover}
                         onClose={this.closePopover}
                         open={!!this.state.popoverAnchorEl}
                     >
