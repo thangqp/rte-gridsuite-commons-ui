@@ -217,7 +217,7 @@ export const TableTab = () => {
                         />
                     }
                     labelPlacement={'start'}
-                    label="External sort (reverses) but loses filtering"
+                    label="External sort (reverses)"
                 />
                 <FormControlLabel
                     control={
