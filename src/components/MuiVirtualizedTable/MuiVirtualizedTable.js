@@ -179,9 +179,11 @@ class MuiVirtualizedTable extends React.PureComponent {
     };
 
     componentDidUpdate(oldProps) {
-        if (oldProps.indexer !== this.props.indexer) {
+        if (
+            oldProps.indexer !== this.props.indexer ||
+            oldProps.sortable !== this.props.sortable
+        ) {
             this.setState({
-                headerHeight: this.props.headerHeight,
                 indexer: initIndexer(this.props, oldProps),
             });
         }
