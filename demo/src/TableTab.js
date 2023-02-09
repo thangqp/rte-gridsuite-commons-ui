@@ -55,62 +55,6 @@ const styles = (theme) => ({
 
 const StyledVirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
 
-const renderTables = (
-    usesCustomStyles,
-    rows,
-    defersFilterChanges,
-    columns,
-    indexer,
-    version,
-    filterValue,
-    filter,
-    doesSort,
-    sort
-) => {
-    const VirtualizedTable = usesCustomStyles
-        ? StyledVirtualizedTable
-        : MuiVirtualizedTable;
-
-    return (
-        <>
-            <Box style={{ height: '20rem' }}>
-                <VirtualizedTable
-                    name="Demo Virtualized Table"
-                    rows={rows}
-                    sortable={true}
-                    defersFilterChanges={defersFilterChanges}
-                    columns={columns}
-                    enableExportCSV={true}
-                    exportCSVDataKeys={['key2', 'key3']}
-                    onRowClick={(...args) => console.log('onRowClick', args)}
-                    onClick={(...args) => console.log('onClick', args)}
-                    onCellClick={(...args) => console.log('onCellClick', args)}
-                    indexer={indexer}
-                    version={version}
-                    {...(filterValue && { filter })}
-                    {...(doesSort && { sort })}
-                />
-            </Box>
-            <Box style={{ height: '20rem' }}>
-                <VirtualizedTable
-                    rows={rows}
-                    sortable={false}
-                    columns={columns}
-                    enableExportCSV={true}
-                    exportCSVDataKeys={['key2', 'key3']}
-                    onRowClick={(...args) => console.log('onRowClick', args)}
-                    onClick={(...args) => console.log('onClick', args)}
-                    onCellClick={(...args) => console.log('onCellClick', args)}
-                    indexer={indexer}
-                    version={version}
-                    {...(filterValue && { filter })}
-                    {...(doesSort && { sort })}
-                />
-            </Box>
-        </>
-    );
-};
-
 export const TableTab = () => {
     const [usesCustomStyles, setUsesCustomStyles] = useState(true);
 
@@ -189,6 +133,59 @@ export const TableTab = () => {
         [rows, filter]
     );
 
+    const renderTables = (indexer) => {
+        const VirtualizedTable = usesCustomStyles
+            ? StyledVirtualizedTable
+            : MuiVirtualizedTable;
+
+        return (
+            <>
+                <Box style={{ height: '20rem' }}>
+                    <VirtualizedTable
+                        name="Demo Virtualized Table"
+                        rows={rows}
+                        sortable={true}
+                        defersFilterChanges={defersFilterChanges}
+                        columns={columns}
+                        enableExportCSV={true}
+                        exportCSVDataKeys={['key2', 'key3']}
+                        onRowClick={(...args) =>
+                            console.log('onRowClick', args)
+                        }
+                        onClick={(...args) => console.log('onClick', args)}
+                        onCellClick={(...args) =>
+                            console.log('onCellClick', args)
+                        }
+                        indexer={indexer}
+                        version={version}
+                        {...(filterValue && { filter })}
+                        {...(doesSort && { sort })}
+                    />
+                </Box>
+                <Box style={{ height: '20rem' }}>
+                    <VirtualizedTable
+                        rows={rows}
+                        sortable={false}
+                        columns={columns}
+                        enableExportCSV={true}
+                        exportCSVDataKeys={['key2', 'key3']}
+                        onRowClick={(...args) =>
+                            console.log('onRowClick', args)
+                        }
+                        onClick={(...args) => console.log('onClick', args)}
+                        onCellClick={(...args) =>
+                            console.log('onCellClick', args)
+                        }
+                        indexer={indexer}
+                        version={version}
+                        {...(filterValue && { filter })}
+                        {...(doesSort && { sort })}
+                    />
+                </Box>
+            </>
+        );
+    };
+
     function renderParams() {
         return (
             <Stack sx={{ marginRight: '1ex' }}>
@@ -248,18 +245,7 @@ export const TableTab = () => {
         <Stack direction="row">
             {renderParams()}
             <Stack sx={{ width: '100%' }}>
-                {renderTables(
-                    usesCustomStyles,
-                    rows,
-                    defersFilterChanges,
-                    columns,
-                    isIndexerExternal ? indexer : null,
-                    version,
-                    filterValue,
-                    filter,
-                    doesSort,
-                    sort
-                )}
+                {renderTables(isIndexerExternal ? indexer : null)}
             </Stack>
         </Stack>
     );
