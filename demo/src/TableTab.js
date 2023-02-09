@@ -75,7 +75,6 @@ const renderTables = (
         <>
             <Box style={{ height: '20rem' }}>
                 <VirtualizedTable
-                    key={'sortable'}
                     name="Demo Virtualized Table"
                     rows={rows}
                     sortable={true}
@@ -94,7 +93,6 @@ const renderTables = (
             </Box>
             <Box style={{ height: '20rem' }}>
                 <VirtualizedTable
-                    key={'sort not interactive'}
                     rows={rows}
                     sortable={false}
                     columns={columns}
@@ -170,7 +168,6 @@ export const TableTab = () => {
         return ret;
     }, []);
 
-    const [memoes, setMemoes] = useState(false);
     const [isIndexerExternal, setIndexerIsExternal] = useState(true);
     const [filterValue, setFilterValue] = useState('');
     const [doesSort, setDoesSort] = useState(false);
@@ -191,33 +188,6 @@ export const TableTab = () => {
         },
         [rows, filter]
     );
-
-    const renderTablesMemoed = useMemo(() => {
-        return () =>
-            renderTables(
-                usesCustomStyles,
-                rows,
-                defersFilterChanges,
-                columns,
-                indexer,
-                version,
-                filterValue,
-                filter,
-                doesSort,
-                sort
-            );
-    }, [
-        usesCustomStyles,
-        rows,
-        defersFilterChanges,
-        columns,
-        indexer,
-        version,
-        filterValue,
-        filter,
-        doesSort,
-        sort,
-    ]);
 
     function renderParams() {
         return (
@@ -241,16 +211,6 @@ export const TableTab = () => {
                     }
                     labelPlacement={'start'}
                     label="Uses external indexer"
-                />
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={memoes}
-                            onChange={() => setMemoes((was) => !was)}
-                        />
-                    }
-                    labelPlacement={'start'}
-                    label="Memoize"
                 />
                 <FormControlLabel
                     control={
@@ -288,20 +248,18 @@ export const TableTab = () => {
         <Stack direction="row">
             {renderParams()}
             <Stack sx={{ width: '100%' }}>
-                {memoes
-                    ? renderTablesMemoed()
-                    : renderTables(
-                          usesCustomStyles,
-                          rows,
-                          defersFilterChanges,
-                          columns,
-                          isIndexerExternal ? indexer : null,
-                          version,
-                          filterValue,
-                          filter,
-                          doesSort,
-                          sort
-                      )}
+                {renderTables(
+                    usesCustomStyles,
+                    rows,
+                    defersFilterChanges,
+                    columns,
+                    isIndexerExternal ? indexer : null,
+                    version,
+                    filterValue,
+                    filter,
+                    doesSort,
+                    sort
+                )}
             </Stack>
         </Stack>
     );
