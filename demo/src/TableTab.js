@@ -9,7 +9,7 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { DEFAULT_CELL_PADDING, KeyedColumnsRowIndexer } from '../../src';
 import withStyles from '@mui/styles/withStyles';
 
-import { Box, FormControlLabel, Switch, TextField } from '@mui/material';
+import { Box, FormControlLabel, Stack, Switch, TextField } from '@mui/material';
 import MuiVirtualizedTable from '../../src/components/MuiVirtualizedTable';
 
 const styles = (theme) => ({
@@ -154,6 +154,12 @@ export const TableTab = () => {
             { key1: 'group4', key2: 'val3', key3: 5, key4: 53.2 },
             { key1: 'group4', key2: 'val4', key3: 2, key4: 3.25 },
             { key1: 'group4', key2: 'val4', key3: 1, key4: 3.52 },
+            {
+                key1: 'bigger group',
+                key2: 'bigger val',
+                key3: 11111,
+                key4: 8.888888,
+            },
         ],
         []
     );
@@ -213,78 +219,90 @@ export const TableTab = () => {
         sort,
     ]);
 
+    function renderParams() {
+        return (
+            <Stack sx={{ marginRight: '1ex' }}>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={usesCustomStyles}
+                            onChange={() => setUsesCustomStyles((was) => !was)}
+                        />
+                    }
+                    labelPlacement={'start'}
+                    label="Custom theme"
+                />
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={isIndexerExternal}
+                            onChange={() => setIndexerIsExternal((was) => !was)}
+                        />
+                    }
+                    labelPlacement={'start'}
+                    label="Uses external indexer"
+                />
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={memoes}
+                            onChange={() => setMemoes((was) => !was)}
+                        />
+                    }
+                    labelPlacement={'start'}
+                    label="Memoize"
+                />
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={doesSort}
+                            onChange={() => setDoesSort((was) => !was)}
+                        />
+                    }
+                    labelPlacement={'start'}
+                    label="External sort (reverses) but loses filtering"
+                />
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={defersFilterChanges}
+                            onChange={() =>
+                                setDefersFilterChanges((was) => !was)
+                            }
+                        />
+                    }
+                    labelPlacement={'start'}
+                    label="Defer filter changes"
+                />
+                <TextField
+                    style={{ marginLeft: '10px' }}
+                    label="header2 filter"
+                    size={'small'}
+                    onChange={(event) => setFilterValue(event.target.value)}
+                />
+            </Stack>
+        );
+    }
+
     return (
-        <>
-            <FormControlLabel
-                control={
-                    <Switch
-                        checked={usesCustomStyles}
-                        onChange={() => setUsesCustomStyles((was) => !was)}
-                    />
-                }
-                labelPlacement={'start'}
-                label="Custom theme"
-            />
-            <FormControlLabel
-                control={
-                    <Switch
-                        checked={isIndexerExternal}
-                        onChange={() => setIndexerIsExternal((was) => !was)}
-                    />
-                }
-                labelPlacement={'start'}
-                label="Uses external indexer"
-            />
-            <FormControlLabel
-                control={
-                    <Switch
-                        checked={memoes}
-                        onChange={() => setMemoes((was) => !was)}
-                    />
-                }
-                labelPlacement={'start'}
-                label="Memoize"
-            />
-            <FormControlLabel
-                control={
-                    <Switch
-                        checked={doesSort}
-                        onChange={() => setDoesSort((was) => !was)}
-                    />
-                }
-                labelPlacement={'start'}
-                label="External sort (reverses) but loses filtering"
-            />
-            <FormControlLabel
-                control={
-                    <Switch
-                        checked={defersFilterChanges}
-                        onChange={() => setDefersFilterChanges((was) => !was)}
-                    />
-                }
-                labelPlacement={'start'}
-                label="Defer filter changes"
-            />
-            <TextField
-                style={{ marginLeft: '10px' }}
-                label="header2 filter"
-                size={'small'}
-                onChange={(event) => setFilterValue(event.target.value)}
-            />
-            {memoes
-                ? renderTablesMemoed()
-                : renderTables(
-                      usesCustomStyles,
-                      rows,
-                      defersFilterChanges,
-                      columns,
-                      isIndexerExternal ? indexer : null,
-                      version,
-                      filterValue,
-                      filter,
-                      doesSort,
-                      sort
-                  )}
-        </>
+        <Stack direction="row">
+            {renderParams()}
+            <Stack sx={{ width: '100%' }}>
+                {memoes
+                    ? renderTablesMemoed()
+                    : renderTables(
+                          usesCustomStyles,
+                          rows,
+                          defersFilterChanges,
+                          columns,
+                          isIndexerExternal ? indexer : null,
+                          version,
+                          filterValue,
+                          filter,
+                          doesSort,
+                          sort
+                      )}
+            </Stack>
+        </Stack>
     );
 };
