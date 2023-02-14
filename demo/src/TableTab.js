@@ -11,6 +11,8 @@ import withStyles from '@mui/styles/withStyles';
 
 import { Box, FormControlLabel, Stack, Switch, TextField } from '@mui/material';
 import MuiVirtualizedTable from '../../src/components/MuiVirtualizedTable';
+import Button from '@mui/material/Button';
+import { CHANGE_WAYS } from '../../src/components/MuiVirtualizedTable/KeyedColumnsRowIndexer';
 
 // For demo and fun.. all even numbers first, then all ascending odd numbers, only postive numbers..
 const evenThenOddOrderingKey = (n) => {
@@ -80,8 +82,6 @@ export const TableTab = () => {
         ? StyledVirtualizedTable
         : MuiVirtualizedTable;
 
-    const [version, setVersion] = useState(0);
-
     const columns = useMemo(
         () => [
             {
@@ -122,11 +122,20 @@ export const TableTab = () => {
         []
     );
 
-    const indexer = useMemo(() => {
-        const ret = new KeyedColumnsRowIndexer(true, false, null, setVersion);
-        ret.setColFilterOuterParams('key2', ['val9']);
+    function makeIndexer(prevIndexer) {
+        const prevCol = prevIndexer?.highestCodedColumn(columns);
+        let colKey = !prevCol ? 'key2' : 'key' + ((Math.abs(prevCol) % 4) + 1);
+        const ret = new KeyedColumnsRowIndexer(true, false);
+        ret.setColFilterOuterParams(colKey, ['val9']);
+
+        const changeWay = CHANGE_WAYS.SIMPLE;
+        // fake user click twice, to set descending order
+        ret.updateSortingFromUser(colKey, changeWay);
+        ret.updateSortingFromUser(colKey, changeWay);
         return ret;
-    }, []);
+    }
+
+    const [indexer, setIndexer] = useState(() => makeIndexer());
 
     const [isIndexerExternal, setIndexerIsExternal] = useState(true);
     const [sortable, setSortable] = useState(true);
@@ -209,6 +218,13 @@ export const TableTab = () => {
                     isIndexerExternal,
                     setIndexerIsExternal
                 )}
+                <Button
+                    disabled={!isIndexerExternal}
+                    onClick={() => setIndexer(makeIndexer(indexer))}
+                    variant={'contained'}
+                >
+                    New external indexer
+                </Button>
                 {mkSwitch(
                     'External sort (even then odds)',
                     doesSort,
@@ -256,7 +272,7 @@ export const TableTab = () => {
                     defersFilterChanges={defersFilterChanges}
                     columns={columns}
                     enableExportCSV={true}
-                    exportCSVDataKeys={['key2', 'key3']}
+                    exportCSVDataKeys={['key2', 'key4']}
                     headerHeight={
                         !headerHeight ? undefined : Number(headerHeight)
                     }
@@ -264,7 +280,6 @@ export const TableTab = () => {
                     onClick={(...args) => console.log('onClick', args)}
                     onCellClick={(...args) => console.log('onCellClick', args)}
                     indexer={isIndexerExternal ? indexer : null}
-                    version={version}
                     {...(filterValue && { filter })}
                     {...(doesSort && { sort })}
                 />
