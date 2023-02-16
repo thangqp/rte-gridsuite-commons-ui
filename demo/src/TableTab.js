@@ -63,7 +63,7 @@ const styles = (theme) => ({
     header: {
         backgroundColor: theme.palette.info.light,
         color: theme.palette.primary.contrastText,
-        fontWeight: 'bold', // TODO: this doesn't overwrite header column font weight
+        fontWeight: 'bolder',
     },
     rowBackgroundDark: {
         backgroundColor: theme.palette.info.dark,
