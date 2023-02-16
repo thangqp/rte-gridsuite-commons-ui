@@ -5,12 +5,32 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { DEFAULT_CELL_PADDING, KeyedColumnsRowIndexer } from '../../src';
 import withStyles from '@mui/styles/withStyles';
 
-import { Box, FormControlLabel, Switch } from '@mui/material';
+import { Box, FormControlLabel, Stack, Switch, TextField } from '@mui/material';
 import MuiVirtualizedTable from '../../src/components/MuiVirtualizedTable';
+import Button from '@mui/material/Button';
+import { CHANGE_WAYS } from '../../src/components/MuiVirtualizedTable/KeyedColumnsRowIndexer';
+
+// For demo and fun.. all even numbers first, then all ascending odd numbers, only postive numbers..
+const evenThenOddOrderingKey = (n) => {
+    const remainder = Math.abs(n % 2);
+    if (n <= 0 && remainder < 1) {
+        // first negative even and zero ]...-3,-2,-1]
+        return n / 2 - 1;
+    } else if (n > 0 && remainder < 1) {
+        // then positive even [-1/2, -1/3 ..., 0[
+        return -1 / (n / 2 + 1);
+    } else if (n < 0 && remainder >= 1) {
+        // then negative odds ]0, 1/3, 1/2...
+        return -1 / ((n - 1) / 2 - 1);
+    } else {
+        //positive odd [1,2,3,4...[
+        return (n + 1) / 2;
+    }
+};
 
 const styles = (theme) => ({
     table: {
@@ -53,14 +73,14 @@ const styles = (theme) => ({
     },
 });
 
+const StyledVirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
+
 export const TableTab = () => {
     const [usesCustomStyles, setUsesCustomStyles] = useState(true);
 
     const VirtualizedTable = usesCustomStyles
-        ? withStyles(styles)(MuiVirtualizedTable)
+        ? StyledVirtualizedTable
         : MuiVirtualizedTable;
-
-    const [version, setVersion] = useState(0);
 
     const columns = useMemo(
         () => [
@@ -109,53 +129,168 @@ export const TableTab = () => {
         []
     );
 
-    const indexer = useMemo(() => {
-        const ret = new KeyedColumnsRowIndexer(true, false, null, setVersion);
-        ret.setColFilterOuterParams('key2', ['val9']);
-        return ret;
-    }, []);
+    function makeIndexer(prevIndexer) {
+        const prevCol = prevIndexer?.highestCodedColumn(columns);
+        let colKey = !prevCol ? 'key2' : 'key' + ((Math.abs(prevCol) % 4) + 1);
+        const ret = new KeyedColumnsRowIndexer(true, false);
+        ret.setColFilterOuterParams(colKey, ['val9']);
 
-    return (
-        <>
+        const changeWay = CHANGE_WAYS.SIMPLE;
+        // fake user click twice, to set descending order
+        ret.updateSortingFromUser(colKey, changeWay);
+        ret.updateSortingFromUser(colKey, changeWay);
+        return ret;
+    }
+
+    const [indexer, setIndexer] = useState(() => makeIndexer());
+
+    const [isIndexerExternal, setIndexerIsExternal] = useState(true);
+    const [sortable, setSortable] = useState(true);
+    const [recreates, setRecreates] = useState(false);
+
+    const [defersFilterChanges, setDefersFilterChanges] = useState(false);
+
+    const [headerHeight, setHeaderHeight] = useState('');
+
+    const [filterValue, setFilterValue] = useState('');
+    const [doesSort, setDoesSort] = useState(false);
+    const filter = useCallback(
+        (row) => {
+            return row.key2 && row.key2.includes(filterValue);
+        },
+        [filterValue]
+    );
+    const sort = useCallback(
+        (dataKey, reverse, isNumeric) => {
+            let filtered = rows
+                .map((r, i) => [r, i])
+                .filter(([r]) => !filter || filter(r));
+            if (dataKey) {
+                filtered = filtered
+                    .map(([r, j]) => [r[dataKey], j])
+                    .map(([r, j]) => [
+                        isNumeric ? r : Number(r.replace(/[^0-9.]/g, '')),
+                        j,
+                    ]); // for demo, extract any number from a string..
+                filtered.sort(
+                    ([a], [b]) =>
+                        evenThenOddOrderingKey(b) - evenThenOddOrderingKey(a)
+                );
+                if (reverse) {
+                    filtered = filtered.reverse();
+                }
+            }
+            return filtered.map(([d, j]) => j);
+        },
+        [rows, filter]
+    );
+
+    const [key, setKey] = useState();
+
+    function updateKeyIfNeeded() {
+        if (recreates) {
+            setKey(crypto.randomUUID());
+        }
+    }
+
+    function mkSwitch(label, value, setter) {
+        return (
             <FormControlLabel
                 control={
                     <Switch
-                        checked={usesCustomStyles}
-                        onChange={() => setUsesCustomStyles((was) => !was)}
+                        checked={value}
+                        onChange={() => {
+                            updateKeyIfNeeded();
+                            setter((was) => !was);
+                        }}
                     />
                 }
-                labelPlacement={'start'}
-                label="Custom theme"
+                label={label}
             />
-            <Box style={{ height: '20rem' }}>
+        );
+    }
+
+    function renderParams() {
+        return (
+            <Stack sx={{ margin: '1ex' }}>
+                {mkSwitch(
+                    'Custom theme',
+                    usesCustomStyles,
+                    setUsesCustomStyles
+                )}
+                {mkSwitch('Sortable', sortable, setSortable)}
+                {mkSwitch('Instance renewal', recreates, setRecreates)}
+                {mkSwitch(
+                    'Uses external indexer',
+                    isIndexerExternal,
+                    setIndexerIsExternal
+                )}
+                <Button
+                    disabled={!isIndexerExternal}
+                    onClick={() => setIndexer(makeIndexer(indexer))}
+                    variant={'contained'}
+                >
+                    New external indexer
+                </Button>
+                {mkSwitch(
+                    'External sort (even then odds)',
+                    doesSort,
+                    setDoesSort
+                )}
+                <TextField
+                    label="header2 filter"
+                    size={'small'}
+                    onChange={(event) => {
+                        updateKeyIfNeeded();
+                        setFilterValue(event.target.value);
+                    }}
+                />
+                {mkSwitch(
+                    'Defer filter changes',
+                    defersFilterChanges,
+                    setDefersFilterChanges
+                )}
+                <TextField
+                    label="Header height"
+                    size={'small'}
+                    onChange={(event) => {
+                        // still update the key to cause unmount/remount even if we don't get a new different number
+                        // from the field to give more occasions to test unmount/remounts
+                        updateKeyIfNeeded();
+                        const newHeaderHeight = Number(event.target.value);
+                        if (!isNaN(newHeaderHeight)) {
+                            setHeaderHeight(event.target.value);
+                        }
+                    }}
+                />
+            </Stack>
+        );
+    }
+
+    return (
+        <Stack direction="row">
+            {renderParams()}
+            <Box style={{ width: '100%', height: 'auto' }}>
                 <VirtualizedTable
+                    key={recreates ? key : undefined}
                     name="Demo Virtualized Table"
                     rows={rows}
-                    sortable={true}
+                    sortable={sortable}
+                    defersFilterChanges={defersFilterChanges}
                     columns={columns}
                     enableExportCSV={true}
-                    exportCSVDataKeys={['key2', 'key3']}
+                    exportCSVDataKeys={['key2', 'key4']}
+                    headerHeight={
+                        !headerHeight ? undefined : Number(headerHeight)
+                    }
                     onRowClick={(...args) => console.log('onRowClick', args)}
                     onClick={(...args) => console.log('onClick', args)}
                     onCellClick={(...args) => console.log('onCellClick', args)}
-                    indexer={indexer}
-                    version={version}
+                    indexer={isIndexerExternal ? indexer : null}
+                    {...(filterValue && { filter })}
+                    {...(doesSort && { sort })}
                 />
             </Box>
-            <Box style={{ height: '20rem' }}>
-                <VirtualizedTable
-                    rows={rows}
-                    sortable={false}
-                    columns={columns}
-                    enableExportCSV={true}
-                    exportCSVDataKeys={['key2', 'key3']}
-                    onRowClick={(...args) => console.log('onRowClick', args)}
-                    onClick={(...args) => console.log('onClick', args)}
-                    onCellClick={(...args) => console.log('onCellClick', args)}
-                    indexer={indexer}
-                    version={version}
-                />
-            </Box>
-        </>
+        </Stack>
     );
 };

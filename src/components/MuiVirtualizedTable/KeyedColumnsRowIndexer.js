@@ -102,7 +102,6 @@ export class KeyedColumnsRowIndexer {
         delegatorCallback = null,
         versionSetter = null
     ) {
-        console.debug('KeyedColumnsRowIndexer');
         this._versionSetter = versionSetter;
         this.version = 0;
         this.filterVersion = 0;
@@ -177,7 +176,7 @@ export class KeyedColumnsRowIndexer {
     //     }, colKeyN, ...
     //   }
     // }
-    preFilterRowMapping = (columns, rows) => {
+    preFilterRowMapping = (columns, rows, rowFilter) => {
         if (!rows?.length || !columns?.length) return null;
 
         const ri = [];
@@ -218,6 +217,9 @@ export class KeyedColumnsRowIndexer {
                 acceptsRow &= acceptsCell;
             }
 
+            if (acceptsRow && rowFilter) {
+                acceptsRow = rowFilter(row);
+            }
             if (acceptsRow && this.byRowFilter) {
                 acceptsRow = this.byRowFilter(row);
             }

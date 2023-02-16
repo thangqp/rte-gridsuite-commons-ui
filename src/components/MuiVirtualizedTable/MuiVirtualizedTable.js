@@ -87,10 +87,10 @@ const defaultStyles = {
 };
 
 const AmongChooser = (props) => {
-    const { options, value, setValue, id } = props;
+    const { options, value, setValue, id, onDropDownVisibility } = props;
+
     return (
-        <>
-            <span>{props.label}</span>
+        <span>
             <Autocomplete
                 id={id}
                 value={value ?? []}
@@ -98,14 +98,10 @@ const AmongChooser = (props) => {
                 onChange={(evt, newVal) => {
                     setValue(newVal);
                 }}
+                onClose={() => onDropDownVisibility(false)}
+                onOpen={() => onDropDownVisibility(true)}
                 options={options}
-                // getOptionLabel={(code) => options.get(code)}
-                renderInput={(props) => (
-                    <TextField
-                        // label={<FormattedMessage id={titleMessage} />}
-                        {...props}
-                    />
-                )}
+                renderInput={(props) => <TextField autoFocus {...props} />}
                 renderTags={(val, getTagsProps) => {
                     return val.map((code, index) => {
                         return (
@@ -119,9 +115,24 @@ const AmongChooser = (props) => {
                     });
                 }}
             />
-        </>
+        </span>
     );
 };
+
+function makeIndexRecord(viewIndexToModel, rows) {
+    return {
+        viewIndexToModel,
+        rowGetter: !viewIndexToModel
+            ? (viewIndex) => rows[viewIndex]
+            : (viewIndex) => {
+                  if (viewIndex >= viewIndexToModel.length || viewIndex < 0) {
+                      return {};
+                  }
+                  const modelIndex = viewIndexToModel[viewIndex];
+                  return rows[modelIndex];
+              },
+    };
+}
 
 const initIndexer = (props, oldProps, versionSetter) => {
     if (!props.sortable) {
@@ -130,26 +141,87 @@ const initIndexer = (props, oldProps, versionSetter) => {
 
     if (props.indexer) {
         return props.indexer;
-    } else if (!props.sort) {
-        return new KeyedColumnsRowIndexer(true, true, null, versionSetter);
-    } else if (typeof props.sort === 'function') {
-        return new KeyedColumnsRowIndexer(
-            true,
-            true,
-            (cbfgs, done_cb) => {
-                console.debug('dummy func, now :-/');
-                done_cb(true);
-            },
-            versionSetter
-        );
-    } else if (typeof props.sort === 'object') {
-        return props.sort;
-    } else {
-        console.warn('unknown type of sort', props.sort);
     }
 
     return new KeyedColumnsRowIndexer(true, true, null, versionSetter);
 };
+
+const preFilterData = memoize(
+    (
+        columns,
+        rows,
+        filterFromProps,
+        indexer,
+        filterVersion // filterVersion is unused directly, used only as a workaround just to reset the memoization
+    ) => {
+        return indexer.preFilterRowMapping(columns, rows, filterFromProps);
+    }
+);
+
+const reorderIndex = memoize(
+    (
+        indexer,
+        indirectionVersion,
+        rows,
+        columns,
+        filterFromProps,
+        sortFromProps
+    ) => {
+        if (!rows)
+            return {
+                viewIndexToModel: [],
+                rowGetter: (viewIndex) => viewIndex,
+            };
+
+        const highestCodedColumn = !indexer
+            ? 0
+            : indexer.highestCodedColumn(columns);
+        if (sortFromProps && highestCodedColumn) {
+            const colIdx = Math.abs(highestCodedColumn) - 1;
+            let reorderedIndex = sortFromProps(
+                columns[colIdx].dataKey,
+                highestCodedColumn > 0,
+                !!columns[colIdx].numeric
+            );
+            return makeIndexRecord(reorderedIndex, rows);
+        }
+        if (sortFromProps) {
+            try {
+                const viewIndexToModel = sortFromProps(null, false, false);
+                return makeIndexRecord(viewIndexToModel, rows);
+            } catch (e) {
+                //some external sort functions may expect to only be called
+                //when the user has select a column. Catch their errors and ignore
+                console.warn(
+                    'error in external sort. consider adding support for datakey=null in your external sort function'
+                );
+            }
+        }
+        if (indexer) {
+            const prefiltered = preFilterData(
+                columns,
+                rows,
+                filterFromProps,
+                indexer,
+                indirectionVersion
+            );
+            const reorderedIndex = indexer.makeGroupAndSortIndirector(
+                prefiltered,
+                columns
+            );
+            return makeIndexRecord(reorderedIndex, rows);
+        }
+        if (filterFromProps) {
+            const viewIndexToModel = rows
+                .map((r, i) => [r, i])
+                .filter(([r, idx]) => filterFromProps(r))
+                .map(([r, j]) => j);
+            return makeIndexRecord(viewIndexToModel, rows);
+        }
+
+        return makeIndexRecord(null, rows);
+    }
+);
 
 class MuiVirtualizedTable extends React.PureComponent {
     static defaultProps = {
@@ -179,7 +251,6 @@ class MuiVirtualizedTable extends React.PureComponent {
             headerHeight: this.props.headerHeight,
             indexer: initIndexer(props, null, this.setVersion),
             indirectionVersion: 0,
-            reorderIndex: null,
             popoverAnchorEl: null,
             popoverColKey: null,
             deferredFilterChange: null,
@@ -191,10 +262,19 @@ class MuiVirtualizedTable extends React.PureComponent {
     };
 
     componentDidUpdate(oldProps) {
-        if (oldProps.data !== this.props.data) {
-            this.setState({
-                indexer: initIndexer(this.props, oldProps),
+        if (
+            oldProps.indexer !== this.props.indexer ||
+            oldProps.sortable !== this.props.sortable
+        ) {
+            this.setState((state) => {
+                return {
+                    indexer: initIndexer(this.props, oldProps, this.setVersion),
+                    indirectionVersion: (state?.indirectionVersion ?? 0) + 1,
+                };
             });
+        }
+        if (oldProps.headerHeight !== this.props.headerHeight) {
+            this._computeHeaderSize();
         }
     }
 
@@ -218,67 +298,6 @@ class MuiVirtualizedTable extends React.PureComponent {
             this.observer.observe(element);
         }
     }
-
-    preFilterData = memoize((columns, rows) => {
-        return this.state.indexer.preFilterRowMapping(columns, rows);
-    });
-
-    reorderIndex = memoize((indirectorVersion, rows, columns) => {
-        const indexer = this.state.indexer;
-        if (!rows)
-            return {
-                viewIndexToModel: [],
-                rowGetter: (viewIndex) => viewIndex,
-            };
-
-        const props = this.props;
-        if (indexer && props.sort) {
-            const highestCodedColumn = indexer.highestCodedColumn(
-                props.columns
-            );
-            if (highestCodedColumn !== 0) {
-                const colIdx = Math.abs(highestCodedColumn) - 1;
-                const ret = props.sort(
-                    props.columns[colIdx].dataKey,
-                    highestCodedColumn > 0,
-                    !!props.columns[colIdx].numeric
-                );
-
-                return {
-                    viewIndexToModel: ret,
-                    rowGetter: (viewIndex) => {
-                        if (viewIndex >= ret.length || viewIndex < 0) {
-                            return {};
-                        }
-                        const modelIndex = ret[viewIndex];
-                        return rows[modelIndex];
-                    },
-                };
-            }
-        } else if (indexer) {
-            const prefiltered = this.preFilterData(columns, rows);
-            const reorderedIndex = indexer.makeGroupAndSortIndirector(
-                prefiltered,
-                columns
-            );
-            return {
-                viewIndexToModel: reorderedIndex,
-                rowGetter: (viewIndex) => {
-                    if (reorderedIndex === null) return rows[viewIndex];
-                    if (viewIndex >= reorderedIndex.length || viewIndex < 0) {
-                        return {};
-                    }
-                    const modelIndex = reorderedIndex[viewIndex];
-                    return rows[modelIndex];
-                },
-            };
-        }
-
-        return {
-            viewIndexToModel: null,
-            rowGetter: (viewIndex) => rows[viewIndex],
-        };
-    });
 
     computeDataWidth = (text) => {
         return getTextWidth(text || '') + 2 * DEFAULT_CELL_PADDING;
@@ -311,31 +330,37 @@ class MuiVirtualizedTable extends React.PureComponent {
     });
 
     openPopover = (popoverTarget, colKey) => {
-        if (this.state.indexer.delegatorCallback) {
-            return; // retro compatibility stops here ;-)
-        }
         const col = this.props.columns.find((c) => c.dataKey === colKey);
         if (getHelper(col) !== collectibleHelper) {
             return;
         }
 
+        this.dropDownVisible = false;
         this.setState({
             popoverAnchorEl: popoverTarget,
             popoverColKey: colKey,
         });
     };
 
+    handleKeyDownOnPopover = (evt) => {
+        if (evt.key === 'Enter' && !this.dropDownVisible) {
+            this.closePopover(evt, 'enterKeyDown');
+        }
+    };
+
     closePopover = (evt, reason) => {
         let bumpsVersion = false;
-        if (reason === 'backdropClick') {
+        if (reason === 'backdropClick' || reason === 'enterKeyDown') {
             bumpsVersion = this._commitFilterChange();
         }
-        this.setState({
-            popoverAnchorEl: null,
-            popoverColKey: null,
-            deferredFilterChange: null,
-            indirectionVersion:
-                this.state.indirectionVersion + (bumpsVersion ? 1 : 0),
+        this.setState((state, props) => {
+            return {
+                popoverAnchorEl: null,
+                popoverColKey: null,
+                deferredFilterChange: null,
+                indirectionVersion:
+                    state.indirectionVersion + (bumpsVersion ? 1 : 0),
+            };
         });
     };
 
@@ -346,9 +371,12 @@ class MuiVirtualizedTable extends React.PureComponent {
             !this.props.defersFilterChanges || !this.state.deferredFilterChange
                 ? this.state.indexer.getColFilterUserParams(colKey)
                 : this.state.deferredFilterChange.newVal;
-        const prefiltered = this.preFilterData(
+        const prefiltered = preFilterData(
             this.props.columns,
-            this.props.rows
+            this.props.rows,
+            this.props.filter,
+            this.state.indexer,
+            this.state.indirectionVersion
         );
 
         let options = [];
@@ -363,6 +391,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                 }
             }
         }
+        options.sort();
 
         const col = this.props.columns.find((c) => c.dataKey === colKey);
 
@@ -371,10 +400,13 @@ class MuiVirtualizedTable extends React.PureComponent {
                 options={options}
                 value={userParams}
                 id={'fielt' + colKey}
-                label={col?.label ?? '\u2208'}
+                label={col?.label ?? '\u2208'} // "contained in" math symbol
                 setValue={(newVal) => {
                     this.onFilterParamsChange(newVal, colKey);
                 }}
+                onDropDownVisibility={(visible) =>
+                    (this.dropDownVisible = visible)
+                }
             />
         );
     };
@@ -431,7 +463,9 @@ class MuiVirtualizedTable extends React.PureComponent {
         }
     };
 
-    filterClickHandler = (evt, retargeted, colKey) => {
+    filterClickHandler = (evt, target, colKey) => {
+        // ColumnHeader to (header) TableCell
+        const retargeted = target.parentNode ?? target;
         this.openPopover(retargeted, colKey);
     };
 
@@ -442,7 +476,13 @@ class MuiVirtualizedTable extends React.PureComponent {
         const signedRank = indexer.columnSortingSignedRank(colKey);
         const userParams = indexer.getColFilterUserParams(colKey);
 
-        const prefiltered = this.preFilterData(columns, this.props.rows);
+        const prefiltered = preFilterData(
+            columns,
+            this.props.rows,
+            this.props.filter,
+            indexer,
+            indexer.filterVersion
+        );
         const colStat = prefiltered?.colsStats?.[colKey];
         let filterLevel = 0;
         if (colStat?.seen) {
@@ -452,8 +492,10 @@ class MuiVirtualizedTable extends React.PureComponent {
             filterLevel += userSelectedCount >= countSeen ? 2 : 0;
         }
 
-        // disable filtering when a cellRenderer is defined,
-        // as we have no simple way to match for chosen value(s)
+        // disable filtering when either:
+        //  - the column is numeric, we only handle tags for string values
+        //  - a cellRenderer is defined, as we have no simple way to match for chosen value(s)
+        //  - using an external sort, because it would hardly know about the indexer filtering
         const onFilterClick =
             columnData.numeric || this.props.sort || columnData.cellRenderer
                 ? undefined
@@ -616,7 +658,7 @@ class MuiVirtualizedTable extends React.PureComponent {
                 }
                 ref={(e) => this._registerObserver(e)}
             >
-                {this.props.sortable
+                {this.props.sortable && this.state.indexer
                     ? this.sortableHeader(headerData)
                     : this.simpleHeaderRenderer(headerData)}
             </TableCell>
@@ -678,10 +720,13 @@ class MuiVirtualizedTable extends React.PureComponent {
     };
 
     getCSVData = () => {
-        let reorderedIndex = this.reorderIndex(
+        let reorderedIndex = reorderIndex(
+            this.state.indexer,
             this.state.indirectionVersion,
             this.props.rows,
-            this.props.columns
+            this.props.columns,
+            this.props.filter,
+            this.props.sort
         );
         let rowsCount =
             reorderedIndex.viewIndexToModel?.length ?? this.props.rows.length;
@@ -719,10 +764,13 @@ class MuiVirtualizedTable extends React.PureComponent {
     });
 
     render() {
-        const { viewIndexToModel, rowGetter } = this.reorderIndex(
+        const { viewIndexToModel, rowGetter } = reorderIndex(
+            this.state.indexer,
             this.state.indirectionVersion,
             this.props.rows,
-            this.props.columns
+            this.props.columns,
+            this.props.filter,
+            this.props.sort
         );
 
         const sizes = this.sizes(
@@ -783,15 +831,17 @@ class MuiVirtualizedTable extends React.PureComponent {
                     <Popover
                         anchorEl={this.state.popoverAnchorEl}
                         anchorOrigin={{
-                            vertical: 'center',
-                            horizontal: 'center',
+                            vertical: 'bottom',
+                            horizontal: 'left',
                         }}
                         transformOrigin={{
-                            vertical: 'center',
-                            horizontal: 'center',
+                            vertical: 'top',
+                            horizontal: 'left',
                         }}
+                        onKeyDownCapture={this.handleKeyDownOnPopover}
                         onClose={this.closePopover}
                         open={!!this.state.popoverAnchorEl}
+                        PaperProps={{ style: { minWidth: '20ex' } }}
                     >
                         {this.makeColumnFilterEditor()}
                     </Popover>
