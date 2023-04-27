@@ -19,7 +19,7 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const useStyles = makeStyles((theme) => ({
     paramList: {
@@ -111,16 +111,32 @@ export const FlatParameters = ({
     const [uncommitted, setUncommitted] = useState(null);
     const [inEditionParam, setInEditionParam] = useState(null);
 
-    const preparePossibleValues = useCallback(
-        (values) => {
+    const getTranslatedValue = useCallback(
+        (prefix, value) => {
+            return intl.formatMessage({
+                id: prefix + '.' + value,
+                defaultMessage: value,
+            });
+        },
+        [intl]
+    );
+
+    const sortPossibleValues = useCallback(
+        (prefix, values) => {
             if (values == null) {
                 return [];
             }
+            // Sort by translated values
             return values
-                .map((v) => intl.formatMessage({ id: v, defaultMessage: v }))
-                .sort((a, b) => a.localeCompare(b));
+                .map((value) => {
+                    return {
+                        id: value,
+                        message: getTranslatedValue(prefix, value),
+                    };
+                })
+                .sort((a, b) => a.message.localeCompare(b.message));
         },
-        [intl]
+        [getTranslatedValue]
     );
 
     const onFieldChange = useCallback(
@@ -174,24 +190,26 @@ export const FlatParameters = ({
     }
 
     const renderField = (param) => {
-        const value = mixInitAndDefault(param);
+        const fieldValue = mixInitAndDefault(param);
         switch (param.type) {
             case 'BOOLEAN':
                 return (
                     <Switch
-                        checked={!!value}
+                        checked={!!fieldValue}
                         onChange={(e) => onFieldChange(e.target.checked, param)}
                     />
                 );
             case 'DOUBLE':
                 const err =
-                    isNaN(value) ||
-                    (typeof value !== 'number' && !!value && isNaN(value - 0));
+                    isNaN(fieldValue) ||
+                    (typeof fieldValue !== 'number' &&
+                        !!fieldValue &&
+                        isNaN(fieldValue - 0));
                 return (
                     <TextField
                         fullWidth
                         sx={{ input: { textAlign: 'right' } }}
-                        value={value}
+                        value={fieldValue}
                         onFocus={() => onUncommited(param, true)}
                         onBlur={() => onUncommited(param, false)}
                         onChange={(e) => {
@@ -209,7 +227,7 @@ export const FlatParameters = ({
                     <TextField
                         fullWidth
                         sx={{ input: { textAlign: 'right' } }}
-                        value={value}
+                        value={fieldValue}
                         onFocus={() => onUncommited(param, true)}
                         onBlur={() => onUncommited(param, false)}
                         onChange={(e) => {
@@ -227,21 +245,28 @@ export const FlatParameters = ({
                         <Autocomplete
                             fullWidth
                             multiple
-                            options={preparePossibleValues(
+                            options={sortPossibleValues(
+                                param.name,
                                 param.possibleValues
-                            )}
+                            ).map((v) => v.id)}
+                            getOptionLabel={(option) =>
+                                getTranslatedValue(param.name, option)
+                            }
                             onChange={(e, value) => onFieldChange(value, param)}
-                            value={value}
-                            renderTags={(value, getTagProps) =>
-                                value.map((option, index) => (
+                            value={fieldValue}
+                            renderTags={(values, getTagProps) => {
+                                return values.map((value, index) => (
                                     <Chip
-                                        label={option}
+                                        label={getTranslatedValue(
+                                            param.name,
+                                            value
+                                        )}
                                         {...getTagProps({ index })}
                                     />
-                                ))
-                            }
-                            renderInput={(options) => (
-                                <TextField {...options} variant={variant} />
+                                ));
+                            }}
+                            renderInput={(inputProps) => (
+                                <TextField {...inputProps} variant={variant} />
                             )}
                         />
                     );
@@ -253,7 +278,7 @@ export const FlatParameters = ({
                         <>
                             <Select
                                 labelId={param.name}
-                                value={value ?? ''}
+                                value={fieldValue ?? ''}
                                 onChange={(ev, may) => {
                                     onFieldChange(ev.target.value, param);
                                 }}
@@ -261,14 +286,12 @@ export const FlatParameters = ({
                                 sx={{ minWidth: '4em' }}
                                 variant={variant}
                             >
-                                {param.possibleValues.map((value) => (
-                                    <MenuItem key={value} value={value}>
-                                        <Typography>
-                                            {intl.formatMessage({
-                                                id: value,
-                                                defaultMessage: value,
-                                            })}
-                                        </Typography>
+                                {sortPossibleValues(
+                                    param.name,
+                                    param.possibleValues
+                                ).map((value) => (
+                                    <MenuItem key={value.id} value={value.id}>
+                                        <Typography>{value.message}</Typography>
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -280,7 +303,7 @@ export const FlatParameters = ({
                 return (
                     <TextField
                         fullWidth
-                        defaultValue={value}
+                        defaultValue={fieldValue}
                         onFocus={() => onUncommited(param, true)}
                         onBlur={() => onUncommited(param, false)}
                         onChange={(e) => onFieldChange(e.target.value, param)}
@@ -294,7 +317,12 @@ export const FlatParameters = ({
         <List className={classes.paramList}>
             {paramsAsArray.map((param) => (
                 <Tooltip
-                    title={param.description}
+                    title={
+                        <FormattedMessage
+                            id={param.name + '.desc'}
+                            defaultMessage={param.description}
+                        />
+                    }
                     enterDelay={1200}
                     key={param.name}
                 >
@@ -303,7 +331,10 @@ export const FlatParameters = ({
                         className={classes.paramListItem}
                     >
                         <Typography className={classes.paramName}>
-                            {param.name.slice(prefix.length)}
+                            <FormattedMessage
+                                id={param.name}
+                                defaultMessage={param.name.slice(prefix.length)}
+                            />
                         </Typography>
                         {renderField(param)}
                     </ListItem>
