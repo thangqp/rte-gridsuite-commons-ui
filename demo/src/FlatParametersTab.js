@@ -123,6 +123,7 @@ export const FlatParametersTab = () => {
                     initValues={currentParameters}
                     onChange={onChange}
                     variant={'standard'}
+                    showSeparator
                 />
             </RightResizableBox>
         </div>

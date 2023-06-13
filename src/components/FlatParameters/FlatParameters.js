@@ -18,6 +18,7 @@ import {
     TextField,
     Tooltip,
     Typography,
+    Divider,
 } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
         margin: 0,
     },
     paramListItem: {
+        display: 'flex',
         justifyContent: 'space-between',
         gap: theme.spacing(2),
         paddingLeft: 0,
@@ -100,6 +102,7 @@ export const FlatParameters = ({
     initValues,
     onChange,
     variant = 'outlined',
+    showSeparator = false,
 }) => {
     const classes = useStyles();
     const intl = useIntl();
@@ -216,6 +219,7 @@ export const FlatParameters = ({
             case 'BOOLEAN':
                 return (
                     <Switch
+                        size={'small'}
                         checked={!!fieldValue}
                         onChange={(e) => onFieldChange(e.target.checked, param)}
                     />
@@ -228,8 +232,9 @@ export const FlatParameters = ({
                         isNaN(fieldValue - 0));
                 return (
                     <TextField
-                        fullWidth
-                        sx={{ input: { textAlign: 'right' } }}
+                        size={'small'}
+                        sx={{ width: '50%' }}
+                        inputProps={{ style: { textAlign: 'right' } }}
                         value={fieldValue}
                         onFocus={() => onUncommitted(param, true)}
                         onBlur={() => onUncommitted(param, false)}
@@ -249,8 +254,9 @@ export const FlatParameters = ({
             case 'INTEGER':
                 return (
                     <TextField
-                        fullWidth
-                        sx={{ input: { textAlign: 'right' } }}
+                        size={'small'}
+                        sx={{ width: '50%' }}
+                        inputProps={{ style: { textAlign: 'right' } }}
                         value={fieldValue}
                         onFocus={() => onUncommitted(param, true)}
                         onBlur={() => onUncommitted(param, false)}
@@ -269,6 +275,7 @@ export const FlatParameters = ({
                         <Autocomplete
                             fullWidth
                             multiple
+                            size={'small'}
                             options={sortPossibleValues(
                                 param.name,
                                 param.possibleValues
@@ -298,11 +305,12 @@ export const FlatParameters = ({
                     // no possible values => free user inputs
                     return (
                         <Autocomplete
-                            fullWidth
                             multiple
                             freeSolo
                             autoSelect
+                            sx={{ width: '50%' }}
                             options={[]}
+                            size={'small'}
                             onChange={(e, value) => onFieldChange(value, param)}
                             value={fieldValue}
                             renderTags={(values, getTagProps) => {
@@ -351,7 +359,8 @@ export const FlatParameters = ({
             default:
                 return (
                     <TextField
-                        fullWidth
+                        sx={{ width: '50%' }}
+                        size={'small'}
                         value={fieldValue || ''}
                         onFocus={() => onUncommitted(param, true)}
                         onBlur={() => onUncommitted(param, false)}
@@ -364,27 +373,34 @@ export const FlatParameters = ({
 
     return (
         <List className={classes.paramList}>
-            {paramsAsArray.map((param) => (
-                <ListItem key={param.name} className={classes.paramListItem}>
-                    <Tooltip
-                        title={
-                            <FormattedMessage
-                                id={param.name + '.desc'}
-                                defaultMessage={param.description}
-                            />
-                        }
-                        enterDelay={1200}
-                        key={param.name}
-                    >
-                        <Typography className={classes.paramName}>
-                            <FormattedMessage
-                                id={param.name}
-                                defaultMessage={param.name.slice(prefix.length)}
-                            />
-                        </Typography>
-                    </Tooltip>
-                    {renderField(param)}
-                </ListItem>
+            {paramsAsArray.map((param, index) => (
+                <React.Fragment key={param.name}>
+                    <ListItem className={classes.paramListItem}>
+                        <Tooltip
+                            title={
+                                <FormattedMessage
+                                    id={param.name + '.desc'}
+                                    defaultMessage={param.description}
+                                />
+                            }
+                            enterDelay={1200}
+                            key={param.name}
+                        >
+                            <Typography className={classes.paramName}>
+                                <FormattedMessage
+                                    id={param.name}
+                                    defaultMessage={param.name.slice(
+                                        prefix.length
+                                    )}
+                                />
+                            </Typography>
+                        </Tooltip>
+                        {renderField(param)}
+                    </ListItem>
+                    {showSeparator && index !== paramsAsArray.length - 1 && (
+                        <Divider />
+                    )}
+                </React.Fragment>
             ))}
         </List>
     );
