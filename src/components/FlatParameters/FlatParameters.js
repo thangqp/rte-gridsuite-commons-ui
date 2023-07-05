@@ -6,7 +6,6 @@
  */
 
 import React, { useCallback, useState } from 'react';
-import makeStyles from '@mui/styles/makeStyles';
 import {
     Autocomplete,
     Chip,
@@ -22,24 +21,24 @@ import {
 } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-const useStyles = makeStyles((theme) => ({
+const styles = {
     paramList: {
         width: '100%',
         margin: 0,
     },
-    paramListItem: {
+    paramListItem: (theme) => ({
         display: 'flex',
         justifyContent: 'space-between',
         gap: theme.spacing(2),
         paddingLeft: 0,
         paddingRight: 0,
-    },
+    }),
     paramName: {
         fontWeight: 'bold',
         minWidth: '30%',
         overflowWrap: 'anywhere',
     },
-}));
+};
 
 const FloatRE = /^-?\d*[.,]?\d*([eE]-?\d*)?$/;
 const IntegerRE = /^-?\d*$/;
@@ -104,7 +103,6 @@ export const FlatParameters = ({
     variant = 'outlined',
     showSeparator = false,
 }) => {
-    const classes = useStyles();
     const intl = useIntl();
 
     const longestPrefix = longestCommonPrefix(paramsAsArray.map((m) => m.name));
@@ -371,10 +369,10 @@ export const FlatParameters = ({
     };
 
     return (
-        <List className={classes.paramList}>
+        <List sx={styles.paramList}>
             {paramsAsArray.map((param, index) => (
                 <React.Fragment key={param.name}>
-                    <ListItem className={classes.paramListItem}>
+                    <ListItem sx={styles.paramListItem}>
                         <Tooltip
                             title={
                                 <FormattedMessage
@@ -385,7 +383,7 @@ export const FlatParameters = ({
                             enterDelay={1200}
                             key={param.name}
                         >
-                            <Typography className={classes.paramName}>
+                            <Typography sx={styles.paramName}>
                                 <FormattedMessage
                                     id={param.name}
                                     defaultMessage={param.name.slice(
