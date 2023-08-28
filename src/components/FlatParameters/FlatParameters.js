@@ -18,8 +18,11 @@ import {
     Tooltip,
     Typography,
     Divider,
+    IconButton,
 } from '@mui/material';
+import TuneIcon from '@mui/icons-material/Tune';
 import { FormattedMessage, useIntl } from 'react-intl';
+import MultipleSelectionDialog from '../MultipleSelectionDialog/MultipleSelectionDialog';
 
 const styles = {
     paramList: {
@@ -95,6 +98,8 @@ function longestCommonPrefix(stringList) {
  * @param initValues {k:v}
  * @param onChange (paramName, newValue, isInEdition)
  * @param variant style variant for TextField, Autocomplete and Select parameter fields
+ * @param showSeparator if true, a separator is added between parameters
+ * @param selectionWithDialog {(param: {}) => boolean} if true, param with multiple options use dialog for selection
  */
 export const FlatParameters = ({
     paramsAsArray,
@@ -102,6 +107,7 @@ export const FlatParameters = ({
     onChange,
     variant = 'outlined',
     showSeparator = false,
+    selectionWithDialog = (param) => false,
 }) => {
     const intl = useIntl();
 
@@ -111,6 +117,7 @@ export const FlatParameters = ({
 
     const [uncommitted, setUncommitted] = useState(null);
     const [inEditionParam, setInEditionParam] = useState(null);
+    const [openSelector, setOpenSelector] = useState(false);
 
     const getTranslatedValue = useCallback(
         (prefix, value) => {
@@ -122,6 +129,19 @@ export const FlatParameters = ({
         [intl]
     );
 
+    const getSelectionDialogName = useCallback(
+        (paramName) => {
+            const defaultMessage = intl.formatMessage({
+                id: paramName,
+                defaultMessage: paramName.slice(prefix.length),
+            });
+            return intl.formatMessage({
+                id: paramName + '.selectionDialog.name',
+                defaultMessage: defaultMessage,
+            });
+        },
+        [intl, prefix.length]
+    );
     const sortPossibleValues = useCallback(
         (prefix, values) => {
             if (values == null) {
@@ -211,6 +231,18 @@ export const FlatParameters = ({
         return value?.replace(',', '.') || '';
     };
 
+    const getStringListValue = (allValues, selectValues) => {
+        if (!selectValues || !selectValues.length) {
+            return intl.formatMessage({ id: 'flat_parameters/none' });
+        }
+
+        if (selectValues.length === allValues.length) {
+            return intl.formatMessage({ id: 'flat_parameters/all' });
+        }
+
+        return intl.formatMessage({ id: 'flat_parameters/some' });
+    };
+
     const renderField = (param) => {
         const fieldValue = mixInitAndDefault(param);
         switch (param.type) {
@@ -268,6 +300,52 @@ export const FlatParameters = ({
                 );
             case 'STRING_LIST':
                 if (param.possibleValues) {
+                    const allOptions = sortPossibleValues(
+                        param.name,
+                        param.possibleValues
+                    ).map(({ id }) => id);
+
+                    const withDialog = selectionWithDialog(param);
+                    if (withDialog) {
+                        return (
+                            <>
+                                <TextField
+                                    value={getStringListValue(
+                                        allOptions,
+                                        fieldValue
+                                    )}
+                                    size={'small'}
+                                    variant={variant}
+                                    InputProps={{
+                                        readOnly: true,
+                                        endAdornment: (
+                                            <IconButton
+                                                onClick={() =>
+                                                    setOpenSelector(true)
+                                                }
+                                            >
+                                                <TuneIcon />
+                                            </IconButton>
+                                        ),
+                                    }}
+                                />
+                                <MultipleSelectionDialog
+                                    options={allOptions}
+                                    titleId={getSelectionDialogName(param.name)}
+                                    open={openSelector}
+                                    getOptionLabel={(option) =>
+                                        getTranslatedValue(param.name, option)
+                                    }
+                                    selectedOptions={fieldValue}
+                                    handleClose={() => setOpenSelector(false)}
+                                    handleValidate={(selectedOptions) => {
+                                        onFieldChange(selectedOptions, param);
+                                        setOpenSelector(false);
+                                    }}
+                                />
+                            </>
+                        );
+                    }
                     return (
                         <Autocomplete
                             fullWidth
