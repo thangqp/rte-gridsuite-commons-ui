@@ -3,8 +3,8 @@
     "version": "0.35.6",
     "description": "common react components for gridsuite applications",
     "engines": {
-        "npm": "<=6",
-        "node": ">=12 <=14"
+        "npm": ">=9",
+        "node": ">=18"
     },
     "exports": "es/index.js",
     "module": "es/index.js",
