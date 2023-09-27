@@ -51,7 +51,9 @@ export default function ReportViewer({
     const defaultSeverityFilter = useMemo(() => {
         const filterConfig = {};
         Object.values(LogReportItem.SEVERITY).forEach((severity) => {
-            filterConfig[severity.name] = true;
+            // by default display only INFO severity and higher
+            filterConfig[severity.name] =
+                severity.level >= LogReportItem.SEVERITY.INFO.level;
         });
         return filterConfig;
     }, []);
