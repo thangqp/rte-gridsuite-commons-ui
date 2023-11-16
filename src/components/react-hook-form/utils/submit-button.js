@@ -9,15 +9,23 @@ import React from 'react';
 import { Button } from '@mui/material';
 import { useFormState } from 'react-hook-form';
 import { FormattedMessage } from 'react-intl';
+import PropTypes from 'prop-types';
 
-const SubmitButton = ({ onClick, disabled = false }) => {
+const SubmitButton = ({ ...buttonProps }) => {
     const { isDirty } = useFormState();
 
     return (
-        <Button onClick={onClick} disabled={!isDirty || disabled}>
+        <Button
+            {...buttonProps}
+            disabled={!isDirty || (buttonProps?.disabled ?? false)}
+        >
             <FormattedMessage id="validate" />
         </Button>
     );
+};
+
+SubmitButton.propTypes = {
+    buttonProps: PropTypes.object,
 };
 
 export default SubmitButton;

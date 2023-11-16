@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import {
     toNestedGlobalSelectors,
@@ -28,6 +28,7 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CheckIcon from '@mui/icons-material/Check';
+import CancelButton from '../react-hook-form/utils/cancel-button';
 
 // As a bunch of individual variables to try to make it easier
 // to track that they are all used. Not sure, maybe group them in an object ?
@@ -96,6 +97,7 @@ const composeClasses = makeComposeClasses(generateTreeViewFinderClass);
  * @param {String}          [validationButtonText=default text] - Customized Validation Button text (default: Add N Elements)
  * @param {Boolean}         [onlyLeaves=true] - Allow/Forbid selection only on leaves
  * @param {Boolean}         [multiselect=false] - Allow/Forbid multiselection on Tree
+ * @param {Object}          [cancelButtonProps] - The cancel button props
  */
 const TreeViewFinder = (props) => {
     const intl = useIntl();
@@ -114,6 +116,7 @@ const TreeViewFinder = (props) => {
         multiselect,
         sortMethod,
         className,
+        cancelButtonProps,
     } = props;
 
     const [mapPrintedNodes, setMapPrintedNodes] = useState({});
@@ -343,18 +346,16 @@ const TreeViewFinder = (props) => {
                 </TreeView>
             </DialogContent>
             <DialogActions>
-                <Button
-                    variant="contained"
+                <CancelButton
                     style={{ float: 'left', margin: '5px' }}
                     onClick={() => {
                         onClose([]);
                         setSelected([]);
                     }}
-                >
-                    <FormattedMessage id="treeview_finder/cancel" />
-                </Button>
+                    {...cancelButtonProps}
+                />
                 <Button
-                    variant="contained"
+                    variant="outlined"
                     style={{ float: 'left', margin: '5px' }}
                     onClick={() => {
                         onClose(computeSelectedNodes());
@@ -392,6 +393,7 @@ TreeViewFinder.propTypes = {
     onlyLeaves: PropTypes.bool,
     multiselect: PropTypes.bool,
     sortMethod: PropTypes.func,
+    cancelButtonProps: PropTypes.object,
 };
 
 /* TreeViewFinder props default values */
