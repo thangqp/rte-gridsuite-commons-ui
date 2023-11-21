@@ -15,6 +15,15 @@ const FloatInput = (props) => {
         if (['-', '.'].includes(sanitizedValue)) {
             return sanitizedValue;
         }
+
+        // support editing exponential format
+        if (
+            sanitizedValue &&
+            (sanitizedValue.includes('e') || sanitizedValue.includes('E'))
+        ) {
+            return sanitizedValue;
+        }
+
         return sanitizedValue === null || isNaN(sanitizedValue)
             ? ''
             : sanitizedValue;
@@ -32,6 +41,12 @@ const FloatInput = (props) => {
         if (tmp.endsWith('.') || tmp.endsWith('0')) {
             return tmp;
         }
+
+        // support editing exponential format
+        if (tmp.includes('e') || tmp.includes('E')) {
+            return tmp;
+        }
+
         return parseFloat(tmp) || null;
     };
 
