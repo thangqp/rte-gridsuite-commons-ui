@@ -17,6 +17,14 @@ const top_bar_en = {
     'top-bar/name': 'Name',
     'top-bar/language': 'Language',
     'top-bar/customTheme': 'Custom theme',
+
+    'about-dialog/title': 'About',
+    'about-dialog/version': 'Version',
+    'about-dialog/alert-running-old-version-msg':
+        'Running old version.\nSave your work and refresh the application to load the latest version.',
+    'about-dialog/license': 'License',
+    'about-dialog/modules-section': 'Modules details',
+    'about-dialog/git-version': 'Tag',
 };
 
 export default top_bar_en;

@@ -10,13 +10,21 @@ const top_bar_fr = {
     'top-bar/logout': 'Se déconnecter',
     'top-bar/goFullScreen': 'Plein écran',
     'top-bar/exitFullScreen': 'Quitter mode plein écran',
-    'top-bar/about': 'A propos',
+    'top-bar/about': 'À propos',
     'top-bar/displayMode': "Mode d'affichage",
     'top-bar/equipmentLabel': 'Label des ouvrages',
     'top-bar/id': 'Id',
     'top-bar/name': 'Nom',
     'top-bar/language': 'Langue',
     'top-bar/customTheme': 'Choix de theme',
+
+    'about-dialog/title': 'À propos',
+    'about-dialog/version': 'Version',
+    'about-dialog/alert-running-old-version-msg':
+        "Ancienne version de l'application.\nVeuillez sauvegarder votre travail et rafraîchir l'application pour charger la dernière version",
+    'about-dialog/license': 'Licence',
+    'about-dialog/modules-section': 'Détails des modules',
+    'about-dialog/git-version': 'Tag',
 };
 
 export default top_bar_fr;
