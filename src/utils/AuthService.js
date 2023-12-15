@@ -288,8 +288,16 @@ function handleSigninCallback(dispatch, navigate, userManagerInstance) {
             navigate(previousPath);
         })
         .catch(function (e) {
-            dispatch(setSignInCallbackError(e));
-            console.error(e);
+            if (e.message.includes('Invalid issuer in token')) {
+                const issuer = e.message.split(' ').pop();
+                sessionStorage.setItem(hackauthoritykey, issuer);
+                const previousPath = getPreLoginPath();
+                navigate(previousPath);
+                window.location.reload();
+            } else {
+                dispatch(setSignInCallbackError(e));
+                console.error(e);
+            }
         });
 }
 
