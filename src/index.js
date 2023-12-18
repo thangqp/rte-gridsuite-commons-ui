@@ -29,11 +29,12 @@ export {
 } from './utils/EquipmentType';
 
 export {
+    dispatchUser,
+    getExpiresIn,
+    getPreLoginPath,
     initializeAuthenticationDev,
     initializeAuthenticationProd,
     logout,
-    dispatchUser,
-    getPreLoginPath,
 } from './utils/AuthService';
 
 export { elementType, getFileIcon } from './utils/ElementType';

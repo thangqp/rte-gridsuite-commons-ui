@@ -170,9 +170,9 @@ function initializeAuthenticationProd(
                 post_logout_redirect_uri: idpSettings.post_logout_redirect_uri,
                 silent_redirect_uri: idpSettings.silent_redirect_uri,
                 scope: idpSettings.scope,
-                automaticSilentRenew: !isSilentRenew,
-                accessTokenExpiringNotificationTime:
-                    accessTokenExpiringNotificationTime,
+                automaticSilentRenew:
+                    !isSilentRenew && !authorizationCodeFlowEnabled,
+                accessTokenExpiringNotificationTime,
                 ...responseSettings,
             };
             let userManager = new UserManager(settings);
@@ -385,13 +385,25 @@ function handleUser(dispatch, userManager, validateUser) {
     dispatchUser(dispatch, userManager, validateUser);
 }
 
+function getExpiresIn(idToken, maxTokenTtl) {
+    const decodedIdToken = jwtDecode(idToken);
+    const now = Date.now() / 1000;
+    const livingTime = now - decodedIdToken.iat;
+    const expiresIn = decodedIdToken.exp - now;
+    if (!maxTokenTtl) {
+        return expiresIn;
+    }
+    return Math.min(maxTokenTtl - livingTime, expiresIn, 0);
+}
+
 export {
+    dispatchUser,
+    getExpiresIn,
+    getPreLoginPath,
+    handleSigninCallback,
+    handleSilentRenewCallback,
     initializeAuthenticationDev,
     initializeAuthenticationProd,
-    handleSilentRenewCallback,
     login,
     logout,
-    dispatchUser,
-    handleSigninCallback,
-    getPreLoginPath,
 };
