@@ -26,14 +26,14 @@ const styles = {
     },
 };
 
-const GridLogo = ({ appLogo, appName, appColor, onClick }) => {
+const GridLogo = ({ appName, appColor, onClick }) => {
     return (
         <>
             <Box
                 sx={mergeSx(styles.logo, onClick && styles.clickable)}
                 onClick={onClick}
             >
-                {appLogo || <BrokenImage />}
+                <BrokenImage />
             </Box>
             <LogoText
                 appName={appName}
@@ -48,7 +48,6 @@ const GridLogo = ({ appLogo, appName, appColor, onClick }) => {
 export default GridLogo;
 
 GridLogo.propTypes = {
-    appLogo: PropTypes.element,
     appName: PropTypes.string.isRequired,
     appColor: PropTypes.string.isRequired,
     onClick: PropTypes.func,

@@ -156,7 +156,7 @@ const FR = 'FR';
 const TopBar = ({
     appName,
     appColor,
-    appLogo,
+    // appLogo,
     appVersion,
     appLicense,
     onParametersClick,
@@ -255,12 +255,12 @@ const TopBar = ({
         () => (
             <GridLogo
                 onClick={onLogoClick}
-                appLogo={appLogo}
+                // appLogo={appLogo}
                 appName={appName}
                 appColor={appColor}
             />
         ),
-        [onLogoClick, appLogo, appName, appColor]
+        [onLogoClick, appName, appColor]
     );
 
     return (
