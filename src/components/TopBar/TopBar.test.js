@@ -14,7 +14,7 @@ import { IntlProvider } from 'react-intl';
 import TopBar from './TopBar';
 import { top_bar_en } from '../../';
 
-import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
+import PowsyblLogo from '../images/powsybl_logo.svg?react';
 
 import { red } from '@mui/material/colors';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -54,6 +54,7 @@ it('renders', () => {
                     <TopBar
                         appName="Demo"
                         appColor="#808080"
+                        appLogo={PowsyblLogo}
                         onParametersClick={() => {}}
                         onLogoutClick={() => {}}
                         onLogoClick={() => {}}

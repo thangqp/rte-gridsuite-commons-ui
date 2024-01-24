@@ -6,24 +6,21 @@
         "npm": ">=9",
         "node": ">=18"
     },
-    "exports": "./es/index.js",
-    "module": "./es/index.js",
     "type": "module",
     "files": [
-        "css",
-        "es",
-        "lib",
-        "umd"
+        "dist"
     ],
+    "main": "./dist/commons-ui.js",
+    "module": "./dist/commons-ui.js",
+    "exports": "./dist/commons-ui.js",
     "scripts": {
         "watch": "vite watch",
         "build": "vite build",
         "test": "jest",
-        "start": "vite demo/ --open",
+        "start": "vite demo/ --config vite.config.ts",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
     },
     "dependencies": {
-        "@vitejs/plugin-react": "^4.2.1",
         "autosuggest-highlight": "^3.2.0",
         "clsx": "^1.0.4",
         "jwt-decode": "^3.0.0",
@@ -32,9 +29,8 @@
         "prop-types": "^15.7.2",
         "react-csv-downloader": "^2.7.0",
         "react-request-fullscreen": "^1.1.2",
-        "react-virtualized": "9.21.2",
-        "uuid": "^9.0.1",
-        "vite": "^5.0.11"
+        "react-virtualized": "9.22.5",
+        "uuid": "^9.0.1"
     },
     "peerDependencies": {
         "@emotion/react": "^11.8.1",
@@ -61,6 +57,7 @@
         "@mui/material": "^5.5.0",
         "@mui/styles": "^5.5.0",
         "@react-hook/window-size": "^3.1.1",
+        "@vitejs/plugin-react": "^4.2.1",
         "babel-eslint": "^10.1.0",
         "bufferutil": "^4.0.1",
         "eslint": "^7.9.0",
@@ -83,8 +80,12 @@
         "react-resizable": "^3.0.4",
         "react-router-dom": "^6.0.0",
         "type-fest": "^2.0.0",
+        "typescript": "^5.3.3",
         "utf-8-validate": "^5.0.2",
-        "webpack-plugin-serve": "^1.0.1",
+        "vite": "^5.0.11",
+        "vite-plugin-dts": "^3.7.1",
+        "vite-plugin-eslint": "^1.8.1",
+        "vite-plugin-svgr": "^4.2.0",
         "yup": "^1.0.0"
     },
     "eslintConfig": {
@@ -94,8 +95,7 @@
         ],
         "rules": {
             "prettier/prettier": "warn",
-            "curly": "error",
-            "import/no-webpack-loader-syntax": "off"
+            "curly": "error"
         }
     },
     "author": "gridsuite team",
