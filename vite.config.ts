@@ -11,7 +11,13 @@ import { createRequire } from 'node:module';
 import svgr from 'vite-plugin-svgr';
 
 export default defineConfig({
-    plugins: [react(), eslint(), dts(), svgr(), reactVirtualized()],
+    plugins: [
+        react(),
+        eslint(),
+        dts(),
+        svgr({ include: '**/*.svg' }), // default is { include: "**/*.svg?react" }
+        reactVirtualized(),
+    ],
 
     build: {
         lib: {
@@ -37,11 +43,10 @@ export default defineConfig({
     },
 });
 
-
 // Workaround for react-virtualized with vite
 // https://github.com/bvaughn/react-virtualized/issues/1632#issuecomment-1483966063
 function reactVirtualized(): PluginOption {
-    const WRONG_CODE = `import { bpfrpt_proptype_WindowScroller } from "../WindowScroller.js";`
+    const WRONG_CODE = `import { bpfrpt_proptype_WindowScroller } from "../WindowScroller.js";`;
     return {
         name: 'flat:react-virtualized',
         // Note: we cannot use the `transform` hook here
@@ -50,17 +55,25 @@ function reactVirtualized(): PluginOption {
         //       so instead we manually edit the file in node_modules.
         //       all we need is to find the timing before pre-bundling.
         configResolved: async () => {
-            const require = createRequire(import.meta.url)
-            const reactVirtualizedPath = require.resolve('react-virtualized')
-            const { pathname: reactVirtualizedFilePath } = new url.URL(reactVirtualizedPath, import.meta.url)
-            const file = reactVirtualizedFilePath
-              .replace(
+            const require = createRequire(import.meta.url);
+            const reactVirtualizedPath = require.resolve('react-virtualized');
+            const { pathname: reactVirtualizedFilePath } = new url.URL(
+                reactVirtualizedPath,
+                import.meta.url
+            );
+            const file = reactVirtualizedFilePath.replace(
                 path.join('dist', 'commonjs', 'index.js'),
-                path.join('dist', 'es', 'WindowScroller', 'utils', 'onScroll.js'),
-              )
-            const code = await fs.readFile(file, 'utf-8')
-            const modified = code.replace(WRONG_CODE, '')
-            await fs.writeFile(file, modified)
+                path.join(
+                    'dist',
+                    'es',
+                    'WindowScroller',
+                    'utils',
+                    'onScroll.js'
+                )
+            );
+            const code = await fs.readFile(file, 'utf-8');
+            const modified = code.replace(WRONG_CODE, '');
+            await fs.writeFile(file, modified);
         },
-    }
+    };
 }
