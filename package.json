@@ -35,16 +35,16 @@
     "peerDependencies": {
         "@emotion/react": "^11.8.1",
         "@emotion/styled": "^11.8.1",
-        "@hookform/resolvers": "^3.0.0",
         "@mui/icons-material": "^5.5.0",
         "@mui/lab": "^5.0.0-alpha.72",
         "@mui/material": "^5.5.0",
+        "@hookform/resolvers": "^3.0.0",
         "notistack": "^3.0.0",
+        "react-router-dom": "^6.0.0",
         "react": "^18.0.0",
         "react-dom": "^18.0.0",
-        "react-hook-form": "^7.41.0",
         "react-intl": "^6.0.0",
-        "react-router-dom": "^6.0.0",
+        "react-hook-form": "^7.41.0",
         "yup": "^1.0.0"
     },
     "devDependencies": {
