@@ -9,7 +9,7 @@
 //    https://reactjs.org/docs/error-boundaries.html
 //    https://mui.com/material-ui/react-card/#complex-interaction
 
-import * as React from 'react';
+import React from 'react';
 import Box from '@mui/material/Box/Box.js';
 import Card from '@mui/material/Card/Card.js';
 import CardHeader from '@mui/material/CardHeader/CardHeader.js';
