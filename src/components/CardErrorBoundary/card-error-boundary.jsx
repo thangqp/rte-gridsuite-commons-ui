@@ -20,7 +20,7 @@ import IconButton from '@mui/material/IconButton/IconButton.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore.js';
 import ReplayIcon from '@mui/icons-material/Replay.js';
 import Typography from '@mui/material/Typography/Typography.js';
-import { styled } from '@mui/material/styles';
+import styled from '@mui/material/styles/styled.js';
 import { FormattedMessage } from 'react-intl';
 
 const ExpandMore = styled((props) => {

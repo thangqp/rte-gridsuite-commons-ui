@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 import TableCell from '@mui/material/TableCell/TableCell.js';
 import { styled } from '@mui/system';
 import MuiVirtualizedTable from '../MuiVirtualizedTable';
-import { useTheme } from '@mui/material/styles';
+import useTheme from '@mui/material/styles/useTheme.js';
 import { FilterButton } from './filter-button';
 
 const SEVERITY_COLUMN_FIXED_WIDTH = 115;
