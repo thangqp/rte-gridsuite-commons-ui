@@ -10,7 +10,7 @@ import Avatar from '@mui/material/Avatar/Avatar.js';
 import Button from '@mui/material/Button/Button.js';
 import Link from '@mui/material/Link/Link.js';
 import Box from '@mui/material/Box/Box.js';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined.js';
+import { LogoutOutlined as LogoutOutlinedIcon } from '@mui/icons-material';
 import Typography from '@mui/material/Typography/Typography.js';
 import Container from '@mui/material/Container/Container.js';
 import { FormattedMessage } from 'react-intl';

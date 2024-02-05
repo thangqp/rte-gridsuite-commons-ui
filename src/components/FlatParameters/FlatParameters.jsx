@@ -20,7 +20,7 @@ import {
     Divider,
     IconButton,
 } from '@mui/material';
-import TuneIcon from '@mui/icons-material/Tune.js';
+import { Tune as TuneIcon } from '@mui/icons-material';
 import { FormattedMessage, useIntl } from 'react-intl';
 import MultipleSelectionDialog from '../MultipleSelectionDialog/MultipleSelectionDialog';
 

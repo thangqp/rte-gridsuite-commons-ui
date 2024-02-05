@@ -6,7 +6,7 @@
  */
 
 import React, { useState } from 'react';
-import ResizePanelHandleIcon from '@mui/icons-material/MoreVert.js';
+import { MoreVert as ResizePanelHandleIcon } from '@mui/icons-material';
 import { ResizableBox } from 'react-resizable';
 import { useWindowWidth } from '@react-hook/window-size';
 import PropTypes from 'prop-types';

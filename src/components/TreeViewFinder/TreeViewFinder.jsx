@@ -25,9 +25,9 @@ import Button from '@mui/material/Button/Button.js';
 import TreeItem from '@mui/lab/TreeItem/TreeItem.js';
 import TreeView from '@mui/lab/TreeView/TreeView.js';
 import Typography from '@mui/material/Typography/Typography.js';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore.js';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight.js';
-import CheckIcon from '@mui/icons-material/Check.js';
+import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
+import { Check as CheckIcon } from '@mui/icons-material';
 import CancelButton from '../react-hook-form/utils/cancel-button';
 
 // As a bunch of individual variables to try to make it easier
