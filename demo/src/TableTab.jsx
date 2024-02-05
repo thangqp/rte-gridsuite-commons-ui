@@ -14,7 +14,7 @@ import { Box, FormControlLabel, Stack, Switch, TextField } from '@mui/material';
 import MuiVirtualizedTable, {
     generateMuiVirtualizedTableClass,
 } from '../../src/components/MuiVirtualizedTable';
-import Button from '@mui/material/Button/Button.js';
+import { Button } from '@mui/material';
 import { CHANGE_WAYS } from '../../src/components/MuiVirtualizedTable/KeyedColumnsRowIndexer';
 
 import { toNestedGlobalSelectors } from '../../src/utils/styles';

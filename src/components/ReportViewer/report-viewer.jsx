@@ -17,7 +17,7 @@ import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { ArrowRight as ArrowRightIcon } from '@mui/icons-material';
 import ReportItem from './report-item';
 import LogReport from './log-report';
-import Grid from '@mui/material/Grid/Grid.js';
+import { Grid } from '@mui/material';
 import LogTable from './log-table';
 import ReportTreeViewContext from './report-tree-view-context';
 import LogReportItem from './log-report-item';

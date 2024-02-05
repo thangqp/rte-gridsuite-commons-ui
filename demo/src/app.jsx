@@ -25,8 +25,8 @@ import {
 } from '../../src';
 import { useSnackMessage } from '../../src/hooks/useSnackMessage';
 
-import ThemeProvider from '@mui/material/styles/ThemeProvider.js';
-import createTheme from '@mui/material/styles/createTheme.js';
+import { ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material';
 import StyledEngineProvider from '@mui/styled-engine/StyledEngineProvider/StyledEngineProvider.js';
 import { makeStyles, withStyles } from '@mui/styles';
 import { styled } from '@mui/system';

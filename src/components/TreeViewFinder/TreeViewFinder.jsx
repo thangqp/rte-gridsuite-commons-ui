@@ -15,16 +15,16 @@ import {
 
 import { styled } from '@mui/system';
 
-import Dialog from '@mui/material/Dialog/Dialog.js';
-import DialogActions from '@mui/material/DialogActions/DialogActions.js';
-import DialogContent from '@mui/material/DialogContent/DialogContent.js';
-import DialogContentText from '@mui/material/DialogContentText/DialogContentText.js';
-import DialogTitle from '@mui/material/DialogTitle/DialogTitle.js';
-import Button from '@mui/material/Button/Button.js';
+import { Dialog } from '@mui/material';
+import { DialogActions } from '@mui/material';
+import { DialogContent } from '@mui/material';
+import { DialogContentText } from '@mui/material';
+import { DialogTitle } from '@mui/material';
+import { Button } from '@mui/material';
 
 import TreeItem from '@mui/lab/TreeItem/TreeItem.js';
 import TreeView from '@mui/lab/TreeView/TreeView.js';
-import Typography from '@mui/material/Typography/Typography.js';
+import { Typography } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
 import { Check as CheckIcon } from '@mui/icons-material';

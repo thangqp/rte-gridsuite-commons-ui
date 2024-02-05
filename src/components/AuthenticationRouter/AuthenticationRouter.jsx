@@ -19,8 +19,8 @@ import Login from '../Login';
 import Logout from '../Login/Logout';
 
 import { Grid } from '@mui/material';
-import Alert from '@mui/material/Alert/Alert.js';
-import AlertTitle from '@mui/material/AlertTitle/AlertTitle.js';
+import { Alert } from '@mui/material';
+import { AlertTitle } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 const AuthenticationRouter = ({

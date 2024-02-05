@@ -7,7 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import FormControl from '@mui/material/FormControl/FormControl.js';
+import { FormControl } from '@mui/material';
 import { FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { useController } from 'react-hook-form';

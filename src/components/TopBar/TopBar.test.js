@@ -17,8 +17,8 @@ import { top_bar_en } from '../../';
 import PowsyblLogo from '../images/powsybl_logo.svg';
 
 import { red } from '@mui/material/colors';
-import ThemeProvider from '@mui/material/styles/ThemeProvider.js';
-import createTheme from '@mui/material/styles/createTheme.js';
+import { ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material';
 
 let container = null;
 beforeEach(() => {

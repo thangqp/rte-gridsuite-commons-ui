@@ -6,14 +6,14 @@
  */
 
 import { Dialog, DialogContent, List } from '@mui/material';
-import DialogTitle from '@mui/material/DialogTitle/DialogTitle.js';
+import { DialogTitle } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
-import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel.js';
-import Checkbox from '@mui/material/Checkbox/Checkbox.js';
+import { FormControlLabel } from '@mui/material';
+import { Checkbox } from '@mui/material';
 import React, { useState } from 'react';
-import DialogActions from '@mui/material/DialogActions/DialogActions.js';
-import Button from '@mui/material/Button/Button.js';
-import Grid from '@mui/material/Grid/Grid.js';
+import { DialogActions } from '@mui/material';
+import { Button } from '@mui/material';
+import { Grid } from '@mui/material';
 
 const MultipleSelectionDialog = ({
     options,

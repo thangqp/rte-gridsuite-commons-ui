@@ -6,13 +6,13 @@
  */
 
 import React from 'react';
-import Avatar from '@mui/material/Avatar/Avatar.js';
-import Button from '@mui/material/Button/Button.js';
-import Link from '@mui/material/Link/Link.js';
-import Box from '@mui/material/Box/Box.js';
+import { Avatar } from '@mui/material';
+import { Button } from '@mui/material';
+import { Link } from '@mui/material';
+import { Box } from '@mui/material';
 import { LockOutlined as LockOutlinedIcon } from '@mui/icons-material';
-import Typography from '@mui/material/Typography/Typography.js';
-import Container from '@mui/material/Container/Container.js';
+import { Typography } from '@mui/material';
+import { Container } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 const styles = {

@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BooleanInput from './boolean-input';
-import Switch from '@mui/material/Switch/Switch.js';
+import { Switch } from '@mui/material';
 
 const SwitchInput = ({ name, label, formProps }) => {
     return (

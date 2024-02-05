@@ -9,8 +9,8 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Clear as ClearIcon } from '@mui/icons-material';
 import { TextField } from '@mui/material';
-import IconButton from '@mui/material/IconButton/IconButton.js';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment.js';
+import { IconButton } from '@mui/material';
+import { InputAdornment } from '@mui/material';
 
 const TextFieldWithAdornment = (props) => {
     const {
