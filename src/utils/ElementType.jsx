@@ -5,10 +5,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import React from 'react';
-import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
-import OfflineBoltIcon from '@mui/icons-material/OfflineBolt';
-import ArticleIcon from '@mui/icons-material/Article';
-import SettingsIcon from '@mui/icons-material/Settings';
+import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined.js';
+import OfflineBoltIcon from '@mui/icons-material/OfflineBolt.js';
+import ArticleIcon from '@mui/icons-material/Article.js';
+import SettingsIcon from '@mui/icons-material/Settings.js';
 
 export const elementType = {
     DIRECTORY: 'DIRECTORY',

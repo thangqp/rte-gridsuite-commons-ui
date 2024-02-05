@@ -6,11 +6,11 @@
  */
 
 import React, { useState } from 'react';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import DialogTitle from '@mui/material/DialogTitle/DialogTitle.js';
+import DialogActions from '@mui/material/DialogActions/DialogActions.js';
+import Button from '@mui/material/Button/Button.js';
+import FullscreenIcon from '@mui/icons-material/Fullscreen.js';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit.js';
 import { FormattedMessage } from 'react-intl';
 import { Dialog, DialogContent } from '@mui/material';
 import ReportViewer from '../ReportViewer';

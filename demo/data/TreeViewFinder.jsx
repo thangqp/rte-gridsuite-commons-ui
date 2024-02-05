@@ -7,13 +7,13 @@
 import React from 'react';
 
 /* Icons for customization*/
-import FlashOnIcon from '@mui/icons-material/FlashOn';
-import WhatshotIcon from '@mui/icons-material/Whatshot';
-import WavesIcon from '@mui/icons-material/Waves';
-import CoronavirusIcon from '@mui/icons-material/Coronavirus';
-import AcUnitIcon from '@mui/icons-material/AcUnit';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import FiberNewIcon from '@mui/icons-material/FiberNew';
+import FlashOnIcon from '@mui/icons-material/FlashOn.js';
+import WhatshotIcon from '@mui/icons-material/Whatshot.js';
+import WavesIcon from '@mui/icons-material/Waves.js';
+import CoronavirusIcon from '@mui/icons-material/Coronavirus.js';
+import AcUnitIcon from '@mui/icons-material/AcUnit.js';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen.js';
+import FiberNewIcon from '@mui/icons-material/FiberNew.js';
 
 var PokemonTree = [
     {

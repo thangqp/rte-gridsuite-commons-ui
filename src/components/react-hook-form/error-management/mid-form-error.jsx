@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import Box from '@mui/material/Box';
+import Box from '@mui/material/Box/Box.js';
 
 // component to display error message in the middle of dialog
 const MidFormError = ({ message }) => {

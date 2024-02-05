@@ -6,12 +6,12 @@
  */
 
 import React, { useContext } from 'react';
-import Box from '@mui/material/Box';
+import Box from '@mui/material/Box/Box.js';
 import { styled } from '@mui/system';
 import PropTypes from 'prop-types';
-import TreeItem from '@mui/lab/TreeItem';
-import Typography from '@mui/material/Typography';
-import Label from '@mui/icons-material/Label';
+import TreeItem from '@mui/lab/TreeItem/TreeItem.js';
+import Typography from '@mui/material/Typography/Typography.js';
+import { Label } from '@mui/icons-material';
 import ReportTreeViewContext from './report-tree-view-context';
 import { alpha } from '@mui/system';
 

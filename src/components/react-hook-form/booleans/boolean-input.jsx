@@ -8,7 +8,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel.js';
 import { useController } from 'react-hook-form';
 
 const BooleanInput = ({ name, label, formProps, Input }) => {

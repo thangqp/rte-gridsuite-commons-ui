@@ -6,7 +6,7 @@
  */
 import React, { useMemo, useState } from 'react';
 import { Box, IconButton } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from '@mui/icons-material/Menu.js';
 import { MultiSelectList } from './multi-select-list';
 
 const styles = {

@@ -15,19 +15,19 @@ import {
 
 import { styled } from '@mui/system';
 
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog/Dialog.js';
+import DialogActions from '@mui/material/DialogActions/DialogActions.js';
+import DialogContent from '@mui/material/DialogContent/DialogContent.js';
+import DialogContentText from '@mui/material/DialogContentText/DialogContentText.js';
+import DialogTitle from '@mui/material/DialogTitle/DialogTitle.js';
+import Button from '@mui/material/Button/Button.js';
 
-import TreeItem from '@mui/lab/TreeItem';
-import TreeView from '@mui/lab/TreeView';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import CheckIcon from '@mui/icons-material/Check';
+import TreeItem from '@mui/lab/TreeItem/TreeItem.js';
+import TreeView from '@mui/lab/TreeView/TreeView.js';
+import Typography from '@mui/material/Typography/Typography.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore.js';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight.js';
+import CheckIcon from '@mui/icons-material/Check.js';
 import CancelButton from '../react-hook-form/utils/cancel-button';
 
 // As a bunch of individual variables to try to make it easier

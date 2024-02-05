@@ -10,16 +10,16 @@
 //    https://mui.com/material-ui/react-card/#complex-interaction
 
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ReplayIcon from '@mui/icons-material/Replay';
-import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box/Box.js';
+import Card from '@mui/material/Card/Card.js';
+import CardHeader from '@mui/material/CardHeader/CardHeader.js';
+import CardContent from '@mui/material/CardContent/CardContent.js';
+import CardActions from '@mui/material/CardActions/CardActions.js';
+import Collapse from '@mui/material/Collapse/Collapse.js';
+import IconButton from '@mui/material/IconButton/IconButton.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore.js';
+import ReplayIcon from '@mui/icons-material/Replay.js';
+import Typography from '@mui/material/Typography/Typography.js';
 import { styled } from '@mui/material/styles';
 import { FormattedMessage } from 'react-intl';
 

@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BooleanInput from './boolean-input';
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from '@mui/material/Checkbox/Checkbox.js';
 
 const CheckboxInput = ({ name, label, formProps }) => {
     return (

@@ -6,7 +6,7 @@
  */
 
 import React, { useRef } from 'react';
-import Button from '@mui/material/Button';
+import Button from '@mui/material/Button/Button.js';
 
 import { SnackbarProvider as OrigSnackbarProvider } from 'notistack';
 

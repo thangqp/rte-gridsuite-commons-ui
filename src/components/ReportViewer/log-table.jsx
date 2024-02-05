@@ -6,7 +6,7 @@
  */
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import TableCell from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell/TableCell.js';
 import { styled } from '@mui/system';
 import MuiVirtualizedTable from '../MuiVirtualizedTable';
 import { useTheme } from '@mui/material/styles';
