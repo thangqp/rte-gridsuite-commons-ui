@@ -9,6 +9,7 @@ import * as fs from 'fs/promises';
 import * as url from 'url';
 import { createRequire } from 'node:module';
 import svgr from 'vite-plugin-svgr';
+import { externalizeDeps } from 'vite-plugin-externalize-deps'
 
 export default defineConfig({
     plugins: [
@@ -17,28 +18,18 @@ export default defineConfig({
         dts(),
         svgr({ include: '**/*.svg' }), // default is { include: "**/*.svg?react" }
         reactVirtualized(),
+        externalizeDeps({
+            deps: false
+        }),
     ],
 
     build: {
         lib: {
-            // Could also be a dictionary or array of multiple entry points
             entry: resolve(__dirname, 'src/index.js'),
             name: 'Commons ui',
             // the proper extensions will be added
             fileName: 'commons-ui',
             formats: ['es'],
-        },
-        rollupOptions: {
-            // make sure to externalize deps that shouldn't be bundled
-            // into your library
-            external: ['react'],
-            output: {
-                // Provide global variables to use in the UMD build
-                // for externalized deps
-                globals: {
-                    vue: 'React',
-                },
-            },
         },
     },
 });
