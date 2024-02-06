@@ -25,8 +25,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import TreeItem from '@mui/lab/TreeItem/TreeItem.js';
-import TreeView from '@mui/lab/TreeView/TreeView.js';
+import { TreeItem, TreeView } from '@mui/lab';
 import {
     Check as CheckIcon,
     ChevronRight as ChevronRightIcon,

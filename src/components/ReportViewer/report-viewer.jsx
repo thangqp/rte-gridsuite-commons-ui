@@ -12,7 +12,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import TreeView from '@mui/lab/TreeView/TreeView.js';
+import { TreeView } from '@mui/lab';
 import {
     ArrowDropDown as ArrowDropDownIcon,
     ArrowRight as ArrowRightIcon,
