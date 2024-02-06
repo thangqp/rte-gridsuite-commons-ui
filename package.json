@@ -11,14 +11,13 @@
         "dist"
     ],
     "main": "./dist/commons-ui.js",
-    "module": "./dist/commons-ui.js",
     "exports": "./dist/commons-ui.js",
     "scripts": {
         "watch": "vite watch",
-        "build": "vite build",
+        "build": "npm install; vite build; npm prune --production",
         "test": "jest",
         "start": "vite demo/ --config vite.config.ts",
-        "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+        "lint": "eslint . --ext js,jsx,ts,tsx"
     },
     "dependencies": {
         "autosuggest-highlight": "^3.2.0",
@@ -71,7 +70,6 @@
         "eslint-plugin-prettier": "^4.0.0",
         "eslint-plugin-react": "^7.21.0",
         "eslint-plugin-react-hooks": "^4.1.2",
-        "eslint-webpack-plugin": "^2.0.0",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
         "jest-svg-transformer": "^1.0.0",
