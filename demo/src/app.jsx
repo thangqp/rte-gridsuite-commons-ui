@@ -25,15 +25,11 @@ import {
 } from '../../src';
 import { useSnackMessage } from '../../src/hooks/useSnackMessage';
 
-import { ThemeProvider } from '@mui/material';
-import { createTheme } from '@mui/material';
-import StyledEngineProvider from '@mui/styled-engine/StyledEngineProvider/StyledEngineProvider.js';
-import { makeStyles, withStyles } from '@mui/styles';
-import { styled } from '@mui/system';
 import {
     Box,
     Button,
     Checkbox,
+    createTheme,
     CssBaseline,
     FormControl,
     FormControlLabel,
@@ -45,8 +41,12 @@ import {
     Tab,
     Tabs,
     TextField,
+    ThemeProvider,
     Typography,
 } from '@mui/material';
+import StyledEngineProvider from '@mui/styled-engine/StyledEngineProvider/StyledEngineProvider.js';
+import { makeStyles, withStyles } from '@mui/styles';
+import { styled } from '@mui/system';
 
 import { useMatch } from 'react-router';
 import { IntlProvider, useIntl } from 'react-intl';

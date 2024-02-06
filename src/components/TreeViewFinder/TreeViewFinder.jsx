@@ -5,29 +5,33 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import {
-    toNestedGlobalSelectors,
     makeComposeClasses,
+    toNestedGlobalSelectors,
 } from '../../utils/styles';
 
 import { styled } from '@mui/system';
 
-import { Dialog } from '@mui/material';
-import { DialogActions } from '@mui/material';
-import { DialogContent } from '@mui/material';
-import { DialogContentText } from '@mui/material';
-import { DialogTitle } from '@mui/material';
-import { Button } from '@mui/material';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Typography,
+} from '@mui/material';
 
 import TreeItem from '@mui/lab/TreeItem/TreeItem.js';
 import TreeView from '@mui/lab/TreeView/TreeView.js';
-import { Typography } from '@mui/material';
-import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
-import { Check as CheckIcon } from '@mui/icons-material';
+import {
+    Check as CheckIcon,
+    ChevronRight as ChevronRightIcon,
+    ExpandMore as ExpandMoreIcon,
+} from '@mui/icons-material';
 import CancelButton from '../react-hook-form/utils/cancel-button';
 
 // As a bunch of individual variables to try to make it easier

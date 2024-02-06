@@ -27,8 +27,8 @@ import { AutoSizer, Column, Table } from 'react-virtualized';
 import CsvDownloader from 'react-csv-downloader';
 import OverflowableText from '../OverflowableText/overflowable-text';
 import {
-    toNestedGlobalSelectors,
     makeComposeClasses,
+    toNestedGlobalSelectors,
 } from '../../utils/styles';
 import {
     CHANGE_WAYS,

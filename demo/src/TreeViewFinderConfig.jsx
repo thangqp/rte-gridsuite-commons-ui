@@ -6,13 +6,15 @@
  */
 import React from 'react';
 
-import { Radio } from '@mui/material';
-import { RadioGroup } from '@mui/material';
-import { FormControlLabel } from '@mui/material';
-import { FormControl } from '@mui/material';
-import { FormLabel } from '@mui/material';
-import { FormGroup } from '@mui/material';
-import { Checkbox } from '@mui/material';
+import {
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    FormLabel,
+    Radio,
+    RadioGroup,
+} from '@mui/material';
 
 /**
  * TreeViewFinderConfig documentation :

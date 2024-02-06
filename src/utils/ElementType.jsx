@@ -5,10 +5,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import React from 'react';
-import { LibraryBooksOutlined as LibraryBooksOutlinedIcon } from '@mui/icons-material';
-import { OfflineBolt as OfflineBoltIcon } from '@mui/icons-material';
-import { Article as ArticleIcon } from '@mui/icons-material';
-import { Settings as SettingsIcon } from '@mui/icons-material';
+import {
+    Article as ArticleIcon,
+    LibraryBooksOutlined as LibraryBooksOutlinedIcon,
+    OfflineBolt as OfflineBoltIcon,
+    Settings as SettingsIcon,
+} from '@mui/icons-material';
 
 export const elementType = {
     DIRECTORY: 'DIRECTORY',

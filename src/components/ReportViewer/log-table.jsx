@@ -6,10 +6,9 @@
  */
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { TableCell } from '@mui/material';
+import { TableCell, useTheme } from '@mui/material';
 import { styled } from '@mui/system';
 import MuiVirtualizedTable from '../MuiVirtualizedTable';
-import { useTheme } from '@mui/material';
 import { FilterButton } from './filter-button';
 
 const SEVERITY_COLUMN_FIXED_WIDTH = 115;

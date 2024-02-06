@@ -6,13 +6,18 @@
  */
 
 import React, { useState } from 'react';
-import { DialogTitle } from '@mui/material';
-import { DialogActions } from '@mui/material';
-import { Button } from '@mui/material';
-import { Fullscreen as FullscreenIcon } from '@mui/icons-material';
-import { FullscreenExit as FullscreenExitIcon } from '@mui/icons-material';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+} from '@mui/material';
+import {
+    Fullscreen as FullscreenIcon,
+    FullscreenExit as FullscreenExitIcon,
+} from '@mui/icons-material';
 import { FormattedMessage } from 'react-intl';
-import { Dialog, DialogContent } from '@mui/material';
 import ReportViewer from '../ReportViewer';
 
 const styles = {

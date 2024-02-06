@@ -5,9 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import React from 'react';
-import { Menu } from '@mui/material';
-import { MenuItem } from '@mui/material';
-import { Checkbox, FormControlLabel } from '@mui/material';
+import { Checkbox, FormControlLabel, Menu, MenuItem } from '@mui/material';
 
 const styles = {
     label: {

@@ -13,8 +13,10 @@ import React, {
     useState,
 } from 'react';
 import TreeView from '@mui/lab/TreeView/TreeView.js';
-import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
-import { ArrowRight as ArrowRightIcon } from '@mui/icons-material';
+import {
+    ArrowDropDown as ArrowDropDownIcon,
+    ArrowRight as ArrowRightIcon,
+} from '@mui/icons-material';
 import ReportItem from './report-item';
 import LogReport from './log-report';
 import { Grid } from '@mui/material';
