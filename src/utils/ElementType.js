@@ -18,6 +18,8 @@ export const elementType = {
     MODIFICATION: 'MODIFICATION',
     CONTINGENCY_LIST: 'CONTINGENCY_LIST',
     VOLTAGE_INIT_PARAMETERS: 'VOLTAGE_INIT_PARAMETERS',
+    SECURITY_ANALYSIS_PARAMETERS: 'SECURITY_ANALYSIS_PARAMETERS',
+    LOADFLOW_PARAMETERS: 'LOADFLOW_PARAMETERS',
 };
 
 export function getFileIcon(type, style) {
@@ -31,6 +33,8 @@ export function getFileIcon(type, style) {
         case elementType.FILTER:
             return <ArticleIcon sx={style} />;
         case elementType.VOLTAGE_INIT_PARAMETERS:
+        case elementType.SECURITY_ANALYSIS_PARAMETERS:
+        case elementType.LOADFLOW_PARAMETERS:
             return <SettingsIcon sx={style} />;
         case elementType.DIRECTORY:
             // to easily use in TreeView we do not give icons for directories
