@@ -26,9 +26,7 @@
         "memoize-one": "^6.0.0",
         "oidc-client": "^1.10.1",
         "prop-types": "^15.7.2",
-        "react-csv-downloader": "^2.7.0",
         "react-request-fullscreen": "^1.1.2",
-        "react-virtualized": "9.22.5",
         "uuid": "^9.0.1"
     },
     "peerDependencies": {
@@ -44,6 +42,8 @@
         "react-dom": "^18.0.0",
         "react-intl": "^6.0.0",
         "react-hook-form": "^7.41.0",
+        "react-csv-downloader": "^2.7.0",
+        "react-virtualized": "^9.22.5",
         "yup": "^1.0.0"
     },
     "devDependencies": {
@@ -82,6 +82,8 @@
         "react-intl": "^6.0.0",
         "react-resizable": "^3.0.4",
         "react-router-dom": "^6.0.0",
+        "react-csv-downloader": "^2.7.0",
+        "react-virtualized": "^9.22.5",
         "ts-node": "^10.9.2",
         "type-fest": "^2.0.0",
         "typescript": "^5.3.3",
