@@ -25,9 +25,7 @@ export default defineConfig({
         dts(),
         svgr({ include: '**/*.svg' }), // default is { include: "**/*.svg?react" }
         reactVirtualized(),
-        externalizeDeps({
-            deps: false // to avoid import issues with CRA
-        }),
+        externalizeDeps(),
     ],
 
     build: {
@@ -35,9 +33,14 @@ export default defineConfig({
             entry: resolve(__dirname, 'src/index.js'),
             name: 'Commons ui',
             // the proper extensions will be added
-            fileName: 'commons-ui',
+            fileName: () => {
+                // from https://github.com/vitejs/vite/discussions/1736#discussioncomment-4997467
+                // in this way, we can have a .js output file without having to add 'type: module' in the package.json which introduce breaking changes
+                return `commons-ui.js`;
+            },
             formats: ['es'],
         },
+        minify: false // easier to debug on the apps using this lib
     },
 });
 

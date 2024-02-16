@@ -6,7 +6,6 @@
         "npm": ">=9",
         "node": ">=18"
     },
-    "type": "module",
     "files": [
         "dist"
     ],
@@ -16,7 +15,7 @@
         "watch": "vite watch",
         "build": "npm install; vite build; npm prune --production",
         "test": "jest",
-        "start": "vite demo/ --config vite.config.ts",
+        "start": "vite demo/ --config vite.config.mts",
         "lint": "eslint . --ext js,jsx,ts,tsx"
     },
     "dependencies": {
