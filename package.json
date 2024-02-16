@@ -9,7 +9,7 @@
     "files": [
         "dist"
     ],
-    "main": "./dist/commons-ui.js",
+    "module": "./dist/commons-ui.js",
     "exports": "./dist/commons-ui.js",
     "scripts": {
         "watch": "vite watch",
