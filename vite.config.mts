@@ -16,7 +16,7 @@ import * as fs from 'fs/promises';
 import * as url from 'url';
 import { createRequire } from 'node:module';
 import svgr from 'vite-plugin-svgr';
-import { externalizeDeps } from 'vite-plugin-externalize-deps'
+import { externalizeDeps } from 'vite-plugin-externalize-deps';
 
 export default defineConfig({
     plugins: [
@@ -25,7 +25,9 @@ export default defineConfig({
         dts(),
         svgr({ include: '**/*.svg' }), // default is { include: "**/*.svg?react" }
         reactVirtualized(),
-        externalizeDeps(),
+        externalizeDeps({
+            include: [/^react-is(?:\/.*)?$/, /^@mui\/styled-engine(?:\/.*)?$/],
+        }),
     ],
 
     build: {
@@ -39,7 +41,7 @@ export default defineConfig({
             },
             formats: ['es'],
         },
-        minify: false // easier to debug on the apps using this lib
+        minify: false, // easier to debug on the apps using this lib
     },
 });
 
