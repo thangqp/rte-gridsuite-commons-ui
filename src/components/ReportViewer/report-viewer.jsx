@@ -12,14 +12,12 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { TreeView } from '@mui/lab';
-import {
-    ArrowDropDown as ArrowDropDownIcon,
-    ArrowRight as ArrowRightIcon,
-} from '@mui/icons-material';
+import TreeView from '@mui/lab/TreeView';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ReportItem from './report-item';
 import LogReport from './log-report';
-import { Grid } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import LogTable from './log-table';
 import ReportTreeViewContext from './report-tree-view-context';
 import LogReportItem from './log-report-item';

@@ -9,8 +9,6 @@ import React, { useCallback, useState } from 'react';
 import {
     Autocomplete,
     Chip,
-    Divider,
-    IconButton,
     List,
     ListItem,
     MenuItem,
@@ -19,8 +17,10 @@ import {
     TextField,
     Tooltip,
     Typography,
+    Divider,
+    IconButton,
 } from '@mui/material';
-import { Tune as TuneIcon } from '@mui/icons-material';
+import TuneIcon from '@mui/icons-material/Tune';
 import { FormattedMessage, useIntl } from 'react-intl';
 import MultipleSelectionDialog from '../MultipleSelectionDialog/MultipleSelectionDialog';
 

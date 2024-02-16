@@ -5,19 +5,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {
-    Button,
-    Checkbox,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControlLabel,
-    Grid,
-    List,
-} from '@mui/material';
+import { Dialog, DialogContent, List } from '@mui/material';
+import DialogTitle from '@mui/material/DialogTitle';
 import { FormattedMessage } from 'react-intl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import React, { useState } from 'react';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 
 const MultipleSelectionDialog = ({
     options,

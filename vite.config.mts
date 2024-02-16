@@ -16,7 +16,7 @@ import * as fs from 'fs/promises';
 import * as url from 'url';
 import { createRequire } from 'node:module';
 import svgr from 'vite-plugin-svgr';
-import { externalizeDeps } from 'vite-plugin-externalize-deps'
+import { externalizeDeps } from 'vite-plugin-externalize-deps';
 
 export default defineConfig({
     plugins: [
@@ -27,7 +27,7 @@ export default defineConfig({
         reactVirtualized(),
         externalizeDeps({
             devDeps: true,
-            include: [/.+\.test\.[cm]?[jt]sx?$/i, /^@/],
+            include: [/.+\.test\.[cm]?[jt]sx?$/i, /^@/, /^react-is(?:\/.*)?$/],
         }),
     ],
 
@@ -35,7 +35,6 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, 'src/index.js'),
             name: 'Commons ui',
-            // the proper extensions will be added
             fileName: () => {
                 // from https://github.com/vitejs/vite/discussions/1736#discussioncomment-4997467
                 // in this way, we can have a .js output file without having to add 'type: module' in the package.json which introduce breaking changes
@@ -43,7 +42,7 @@ export default defineConfig({
             },
             formats: ['es'],
         },
-        minify: false // easier to debug on the apps using this lib
+        minify: false, // easier to debug on the apps using this lib
     },
 });
 

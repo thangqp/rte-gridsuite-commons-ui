@@ -18,7 +18,9 @@ import SilentRenewCallbackHandler from '../SilentRenewCallbackHandler';
 import Login from '../Login';
 import Logout from '../Login/Logout';
 
-import { Alert, AlertTitle, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import { FormattedMessage } from 'react-intl';
 
 const AuthenticationRouter = ({

@@ -26,10 +26,17 @@ import {
 import { useSnackMessage } from '../../src/hooks/useSnackMessage';
 
 import {
+    createTheme,
+    makeStyles,
+    styled,
+    StyledEngineProvider,
+    ThemeProvider,
+    withStyles,
+} from '@mui/material/styles';
+import {
     Box,
     Button,
     Checkbox,
-    createTheme,
     CssBaseline,
     FormControl,
     FormControlLabel,
@@ -41,11 +48,8 @@ import {
     Tab,
     Tabs,
     TextField,
-    ThemeProvider,
     Typography,
 } from '@mui/material';
-import { StyledEngineProvider } from '@mui/styled-engine';
-import { makeStyles, styled, withStyles } from '@mui/material/styles';
 
 import { useMatch } from 'react-router';
 import { IntlProvider, useIntl } from 'react-intl';

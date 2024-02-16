@@ -12,7 +12,7 @@ import { FormattedMessage } from 'react-intl';
 import OverflowableText from '../OverflowableText';
 import React from 'react';
 import { EQUIPMENT_TYPE } from '../../utils/EquipmentType';
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 import { mergeSx } from '../../utils/styles';
 
 export const EquipmentItem = ({

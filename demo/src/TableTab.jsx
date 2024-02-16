@@ -9,17 +9,11 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { DEFAULT_CELL_PADDING, KeyedColumnsRowIndexer } from '../../src';
 import { styled, withStyles } from '@mui/material/styles';
 
-import {
-    Box,
-    Button,
-    FormControlLabel,
-    Stack,
-    Switch,
-    TextField,
-} from '@mui/material';
+import { Box, FormControlLabel, Stack, Switch, TextField } from '@mui/material';
 import MuiVirtualizedTable, {
     generateMuiVirtualizedTableClass,
 } from '../../src/components/MuiVirtualizedTable';
+import Button from '@mui/material/Button';
 import { CHANGE_WAYS } from '../../src/components/MuiVirtualizedTable/KeyedColumnsRowIndexer';
 
 import { toNestedGlobalSelectors } from '../../src/utils/styles';

@@ -22,13 +22,13 @@ import {
     TextField,
 } from '@mui/material';
 import { styled } from '@mui/system';
-import { GetApp as GetAppIcon } from '@mui/icons-material';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import CsvDownloader from 'react-csv-downloader';
 import OverflowableText from '../OverflowableText/overflowable-text';
 import {
-    makeComposeClasses,
     toNestedGlobalSelectors,
+    makeComposeClasses,
 } from '../../utils/styles';
 import {
     CHANGE_WAYS,

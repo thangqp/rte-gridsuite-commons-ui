@@ -6,11 +6,11 @@
  */
 
 import React, { useState } from 'react';
-import { MoreVert as ResizePanelHandleIcon } from '@mui/icons-material';
+import ResizePanelHandleIcon from '@mui/icons-material/MoreVert';
 import { ResizableBox } from 'react-resizable';
 import { useWindowWidth } from '@react-hook/window-size';
 import PropTypes from 'prop-types';
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
 import { mergeSx } from '../../src/utils/styles';
 
