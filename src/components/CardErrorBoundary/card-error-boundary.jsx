@@ -9,22 +9,18 @@
 //    https://reactjs.org/docs/error-boundaries.html
 //    https://mui.com/material-ui/react-card/#complex-interaction
 
-import React from 'react';
-import {
-    Box,
-    Card,
-    CardActions,
-    CardContent,
-    CardHeader,
-    Collapse,
-    IconButton,
-    styled,
-    Typography,
-} from '@mui/material';
-import {
-    ExpandMore as ExpandMoreIcon,
-    Replay as ReplayIcon,
-} from '@mui/icons-material';
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ReplayIcon from '@mui/icons-material/Replay';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
 import { FormattedMessage } from 'react-intl';
 
 const ExpandMore = styled((props) => {

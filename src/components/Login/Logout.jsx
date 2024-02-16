@@ -6,15 +6,13 @@
  */
 
 import React from 'react';
-import {
-    Avatar,
-    Box,
-    Button,
-    Container,
-    Link,
-    Typography,
-} from '@mui/material';
-import { LogoutOutlined as LogoutOutlinedIcon } from '@mui/icons-material';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
+import Box from '@mui/material/Box';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 import { FormattedMessage } from 'react-intl';
 
 const styles = {

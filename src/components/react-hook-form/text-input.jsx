@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
-import { Clear as ClearIcon } from '@mui/icons-material';
+import ClearIcon from '@mui/icons-material/Clear';
 import { useController, useFormContext } from 'react-hook-form';
 import TextFieldWithAdornment from './utils/text-field-with-adornment';
 import FieldLabel from './utils/field-label';

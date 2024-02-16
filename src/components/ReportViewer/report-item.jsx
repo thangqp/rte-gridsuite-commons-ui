@@ -6,12 +6,14 @@
  */
 
 import React, { useContext } from 'react';
-import { Box, Typography } from '@mui/material';
-import { alpha, styled } from '@mui/system';
+import Box from '@mui/material/Box';
+import { styled } from '@mui/system';
 import PropTypes from 'prop-types';
-import { TreeItem } from '@mui/lab';
-import { Label } from '@mui/icons-material';
+import TreeItem from '@mui/lab/TreeItem';
+import Typography from '@mui/material/Typography';
+import Label from '@mui/icons-material/Label';
 import ReportTreeViewContext from './report-tree-view-context';
+import { alpha } from '@mui/system';
 
 const styles = {
     root: (theme) => ({
