@@ -27,8 +27,7 @@ export default defineConfig({
         reactVirtualized(),
         externalizeDeps({
             devDeps: true,
-            include: [/^(?!\.\.?\/).+$/],
-            except: [resolve(__dirname, 'src/index.js')]
+            include: [/.+\.test\.[cm]?[jt]sx?$/i, /^@/],
         }),
     ],
 
