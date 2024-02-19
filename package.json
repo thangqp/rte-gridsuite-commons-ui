@@ -6,17 +6,19 @@
         "npm": ">=9",
         "node": ">=18"
     },
-    "exports": "./dist/commons-ui.js",
-    "module": "./dist/commons-ui.js",
+    "exports": "./dist/index.js",
+    "module": "./dist/index.js",
     "files": [
         "dist"
     ],
     "scripts": {
-        "watch": "vite watch",
-        "build": "npm install; vite build; npm prune --production",
-        "test": "jest",
         "start": "vite demo/ --config vite.config.mts",
-        "lint": "eslint . --ext js,jsx,ts,tsx"
+        "build": "npm install; vite build; npm prune --production",
+        "build:only": "vite build",
+        "prepublishOnly": "npm run build",
+        "test": "jest",
+        "test:coverage": "jest --coverage",
+        "test:watch": "jest --watch"
     },
     "dependencies": {
         "autosuggest-highlight": "^3.2.0",
@@ -85,7 +87,6 @@
         "@react-hook/window-size": "^3.1.1",
         "react-resizable": "^3.0.4",
         "vite": "^5.0.11",
-        "vite-plugin-dts": "^3.7.1",
         "vite-plugin-eslint": "^1.8.1",
         "vite-plugin-externalize-deps": "^0.8.0",
         "vite-plugin-svgr": "^4.2.0",
