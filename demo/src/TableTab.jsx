@@ -7,7 +7,8 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { DEFAULT_CELL_PADDING, KeyedColumnsRowIndexer } from '../../src';
-import { styled, withStyles } from '@mui/material/styles';
+import { styled } from '@mui/system';
+import withStyles from '@mui/styles/withStyles';
 
 import { Box, FormControlLabel, Stack, Switch, TextField } from '@mui/material';
 import MuiVirtualizedTable, {

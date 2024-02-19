@@ -27,12 +27,11 @@ import { useSnackMessage } from '../../src/hooks/useSnackMessage';
 
 import {
     createTheme,
-    makeStyles,
-    styled,
     StyledEngineProvider,
     ThemeProvider,
-    withStyles,
 } from '@mui/material/styles';
+import { makeStyles, withStyles } from '@mui/styles';
+import { styled } from '@mui/system';
 import {
     Box,
     Button,
