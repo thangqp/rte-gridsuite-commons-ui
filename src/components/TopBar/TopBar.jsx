@@ -13,6 +13,7 @@ import {
     Box,
     Button,
     ClickAwayListener,
+    darken,
     IconButton,
     ListItemIcon,
     ListItemText,
@@ -40,9 +41,7 @@ import {
     Settings as SettingsIcon,
     WbSunny as WbSunnyIcon,
 } from '@mui/icons-material';
-import { darken } from '@mui/material/styles';
 import { styled } from '@mui/system';
-
 import PropTypes from 'prop-types';
 import FullScreen, { fullScreenSupported } from 'react-request-fullscreen';
 

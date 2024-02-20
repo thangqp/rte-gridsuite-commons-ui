@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useMemo } from 'react';
-import { debounce } from '@mui/material/utils';
+import { debounce } from '@mui/material';
 
 export const useDebounce = (func, delay = 700) => {
     const debouncedChangeHandler = useMemo(

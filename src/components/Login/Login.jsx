@@ -6,13 +6,15 @@
  */
 
 import React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+import {
+    Avatar,
+    Box,
+    Button,
+    Container,
+    Link,
+    Typography,
+} from '@mui/material';
+import { LockOutlined as LockOutlinedIcon } from '@mui/icons-material';
 import { FormattedMessage } from 'react-intl';
 
 const styles = {

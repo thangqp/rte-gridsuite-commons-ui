@@ -7,13 +7,15 @@
 import React from 'react';
 
 /* Icons for customization*/
-import FlashOnIcon from '@mui/icons-material/FlashOn';
-import WhatshotIcon from '@mui/icons-material/Whatshot';
-import WavesIcon from '@mui/icons-material/Waves';
-import CoronavirusIcon from '@mui/icons-material/Coronavirus';
-import AcUnitIcon from '@mui/icons-material/AcUnit';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import FiberNewIcon from '@mui/icons-material/FiberNew';
+import {
+    AcUnit as AcUnitIcon,
+    Coronavirus as CoronavirusIcon,
+    FiberNew as FiberNewIcon,
+    FlashOn as FlashOnIcon,
+    FolderOpen as FolderOpenIcon,
+    Waves as WavesIcon,
+    Whatshot as WhatshotIcon,
+} from '@mui/icons-material';
 
 var PokemonTree = [
     {

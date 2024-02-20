@@ -7,12 +7,14 @@
 
 import React, { useRef } from 'react';
 
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import {
+    ArrowDownward as ArrowDownwardIcon,
+    ArrowUpward as ArrowUpwardIcon,
+    FilterAltOutlined as FilterAltOutlinedIcon,
+} from '@mui/icons-material';
 
 import { styled } from '@mui/system';
-import Box from '@mui/material/Box';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { Box } from '@mui/material';
 import { mergeSx } from '../../utils/styles';
 
 const styles = {
