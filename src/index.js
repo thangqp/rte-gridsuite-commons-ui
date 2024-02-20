@@ -5,22 +5,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-export TreeViewFinder from './components/TreeViewFinder';
-export TopBar from './components/TopBar';
-export AboutDialog from './components/TopBar/AboutDialog';
-export SnackbarProvider from './components/SnackbarProvider';
-export AuthenticationRouter from './components/AuthenticationRouter';
-export MuiVirtualizedTable from './components/MuiVirtualizedTable';
+export { default as TreeViewFinder } from './components/TreeViewFinder';
+export { default as TopBar } from './components/TopBar';
+export { default as AboutDialog } from './components/TopBar/AboutDialog';
+export { default as SnackbarProvider } from './components/SnackbarProvider';
+export { default as AuthenticationRouter } from './components/AuthenticationRouter';
+export { default as MuiVirtualizedTable } from './components/MuiVirtualizedTable';
 export {
     KeyedColumnsRowIndexer,
     CHANGE_WAYS,
 } from './components/MuiVirtualizedTable';
-export ReportViewer from './components/ReportViewer';
-export ReportViewerDialog from './components/ReportViewerDialog';
-export OverflowableText from './components/OverflowableText';
-export ElementSearchDialog from './components/ElementSearchDialog';
-export FlatParameters from './components/FlatParameters';
-export MultipleSelectionDialog from './components/MultipleSelectionDialog';
+export { default as ReportViewer } from './components/ReportViewer';
+export { default as ReportViewerDialog } from './components/ReportViewerDialog';
+export { default as OverflowableText } from './components/OverflowableText';
+export { default as ElementSearchDialog } from './components/ElementSearchDialog';
+export { default as FlatParameters } from './components/FlatParameters';
+export { default as MultipleSelectionDialog } from './components/MultipleSelectionDialog';
 
 export {
     EQUIPMENT_TYPE,
@@ -62,51 +62,51 @@ export {
     RESET_AUTHENTICATION_ROUTER_ERROR,
     SHOW_AUTH_INFO_LOGIN,
 } from './utils/actions';
-export report_viewer_en from './components/translations/report-viewer-en';
-export report_viewer_fr from './components/translations/report-viewer-fr';
-export login_en from './components/translations/login-en';
-export login_fr from './components/translations/login-fr';
-export top_bar_en from './components/translations/top-bar-en';
-export top_bar_fr from './components/translations/top-bar-fr';
-export table_en from './components/translations/table-en';
-export table_fr from './components/translations/table-fr';
-export treeview_finder_en from './components/translations/treeview-finder-en';
-export treeview_finder_fr from './components/translations/treeview-finder-fr';
-export element_search_en from './components/translations/element-search-en';
-export element_search_fr from './components/translations/element-search-fr';
-export equipment_search_en from './components/translations/equipment-search-en';
-export equipment_search_fr from './components/translations/equipment-search-fr';
-export card_error_boundary_en from './components/translations/card-error-boundary-en';
-export card_error_boundary_fr from './components/translations/card-error-boundary-fr';
-export flat_parameters_en from './components/translations/flat-parameters-en';
-export flat_parameters_fr from './components/translations/flat-parameters-fr';
-export multiple_selection_dialog_en from './components/translations/multiple-selection-dialog-en';
-export multiple_selection_dialog_fr from './components/translations/multiple-selection-dialog-fr';
-export common_button_en from './components/translations/common-button-en';
-export common_button_fr from './components/translations/common-button-fr';
+export { default as report_viewer_en } from './components/translations/report-viewer-en';
+export { default as report_viewer_fr } from './components/translations/report-viewer-fr';
+export { default as login_en } from './components/translations/login-en';
+export { default as login_fr } from './components/translations/login-fr';
+export { default as top_bar_en } from './components/translations/top-bar-en';
+export { default as top_bar_fr } from './components/translations/top-bar-fr';
+export { default as table_en } from './components/translations/table-en';
+export { default as table_fr } from './components/translations/table-fr';
+export { default as treeview_finder_en } from './components/translations/treeview-finder-en';
+export { default as treeview_finder_fr } from './components/translations/treeview-finder-fr';
+export { default as element_search_en } from './components/translations/element-search-en';
+export { default as element_search_fr } from './components/translations/element-search-fr';
+export { default as equipment_search_en } from './components/translations/equipment-search-en';
+export { default as equipment_search_fr } from './components/translations/equipment-search-fr';
+export { default as card_error_boundary_en } from './components/translations/card-error-boundary-en';
+export { default as card_error_boundary_fr } from './components/translations/card-error-boundary-fr';
+export { default as flat_parameters_en } from './components/translations/flat-parameters-en';
+export { default as flat_parameters_fr } from './components/translations/flat-parameters-fr';
+export { default as multiple_selection_dialog_en } from './components/translations/multiple-selection-dialog-en';
+export { default as multiple_selection_dialog_fr } from './components/translations/multiple-selection-dialog-fr';
+export { default as common_button_en } from './components/translations/common-button-en';
+export { default as common_button_fr } from './components/translations/common-button-fr';
 
 export { TagRenderer } from './components/ElementSearchDialog';
 export { EquipmentItem } from './components/ElementSearchDialog/equipment-item';
-export CardErrorBoundary from './components/CardErrorBoundary';
+export { default as CardErrorBoundary } from './components/CardErrorBoundary';
 export { useIntlRef } from './hooks/useIntlRef';
 export { useSnackMessage } from './hooks/useSnackMessage';
 export { useDebounce } from './hooks/useDebounce';
-export AutocompleteInput from './components/react-hook-form/autocomplete-input';
-export TextInput from './components/react-hook-form/text-input';
-export RadioInput from './components/react-hook-form/radio-input';
-export SliderInput from './components/react-hook-form/slider-input';
-export FloatInput from './components/react-hook-form/numbers/float-input';
-export IntegerInput from './components/react-hook-form/numbers/integer-input';
-export SelectInput from './components/react-hook-form/select-input';
-export CheckboxInput from './components/react-hook-form/booleans/checkbox-input';
-export SwitchInput from './components/react-hook-form/booleans/switch-input';
-export ErrorInput from './components/react-hook-form/error-management/error-input';
-export FieldErrorAlert from './components/react-hook-form/error-management/field-error-alert';
-export MidFormError from './components/react-hook-form/error-management/mid-form-error';
-export TextFieldWithAdornment from './components/react-hook-form/utils/text-field-with-adornment';
-export FieldLabel from './components/react-hook-form/utils/field-label';
-export SubmitButton from './components/react-hook-form/utils/submit-button';
-export CancelButton from './components/react-hook-form/utils/cancel-button';
+export { default as AutocompleteInput } from './components/react-hook-form/autocomplete-input';
+export { default as TextInput } from './components/react-hook-form/text-input';
+export { default as RadioInput } from './components/react-hook-form/radio-input';
+export { default as SliderInput } from './components/react-hook-form/slider-input';
+export { default as FloatInput } from './components/react-hook-form/numbers/float-input';
+export { default as IntegerInput } from './components/react-hook-form/numbers/integer-input';
+export { default as SelectInput } from './components/react-hook-form/select-input';
+export { default as CheckboxInput } from './components/react-hook-form/booleans/checkbox-input';
+export { default as SwitchInput } from './components/react-hook-form/booleans/switch-input';
+export { default as ErrorInput } from './components/react-hook-form/error-management/error-input';
+export { default as FieldErrorAlert } from './components/react-hook-form/error-management/field-error-alert';
+export { default as MidFormError } from './components/react-hook-form/error-management/mid-form-error';
+export { default as TextFieldWithAdornment } from './components/react-hook-form/utils/text-field-with-adornment';
+export { default as FieldLabel } from './components/react-hook-form/utils/field-label';
+export { default as SubmitButton } from './components/react-hook-form/utils/submit-button';
+export { default as CancelButton } from './components/react-hook-form/utils/cancel-button';
 export {
     genHelperPreviousValue,
     genHelperError,
