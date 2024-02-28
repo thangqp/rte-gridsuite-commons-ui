@@ -2,6 +2,8 @@ import type { FunctionComponent, ReactElement } from 'react';
 import type { AutocompleteProps } from '@mui/material/Autocomplete/Autocomplete';
 import type {
     ButtonProps,
+    SwitchProps,
+    CheckboxProps,
     RadioGroupProps,
     SxProps,
     TextFieldProps,
@@ -10,10 +12,6 @@ import type {
 /**
  * Section to export generated type declarations of .ts or .tsx files
  */
-
-//TODO FM to remove (for the review)
-export { useTest } from './hooks/useTest';
-export { Test } from './utils/Test';
 
 export { useIntlRef } from './hooks/useIntlRef';
 
@@ -28,12 +26,12 @@ export function logout(
     userManagerInstance: any
 ): Promise<any | undefined>;
 
-export const DARK_THEME: String, LIGHT_THEME: String;
+export const DARK_THEME: string, LIGHT_THEME: string;
 
 interface SnackInputs {
     messageTxt?: string;
     messageId?: string;
-    messageValues?: { [key: string]: string };
+    messageValues?: Record<string, string>;
     headerTxt?: string;
     headerId?: string;
     headerValues?: Record<string, string>;
@@ -48,15 +46,12 @@ interface UseSnackMessageReturn {
 export function useSnackMessage(): UseSnackMessageReturn;
 
 type Input = string | number;
-type Options = Array<{
-    id: string;
-    label: string;
-}>;
+type Option = string | { id: string; label: string };
 
 interface AutocompleteInputProps
     extends Omit<
         AutocompleteProps<
-            string | { id: string; label: string },
+            Option,
             boolean | undefined,
             boolean | undefined,
             boolean | undefined
@@ -65,14 +60,10 @@ interface AutocompleteInputProps
         'value' | 'onChange' | 'renderInput'
     > {
     name: string;
-    options: ({ id: string; label: string } | string)[];
+    options: Option[];
     label?: string;
-    outputTransform?: (
-        value: { id: string; label: string } | string
-    ) => { id: string; label: string } | string;
-    inputTransform?: (
-        value: { id: string; label: string } | string
-    ) => { id: string; label: string } | string;
+    outputTransform?: (value: Option) => Option;
+    inputTransform?: (value: Option) => Option;
     readOnly?: boolean;
     previousValue?: string;
     allowNewValue?: boolean;
@@ -152,7 +143,10 @@ interface RadioInputProps {
     name: string;
     label?: string;
     id?: string;
-    options: Options;
+    options: Array<{
+        id: string;
+        label: string;
+    }>;
     formProps?: Omit<RadioGroupProps, 'value' | 'onChange'>;
 }
 
@@ -161,10 +155,18 @@ export const RadioInput: FunctionComponent<RadioInputProps>;
 interface SwitchInputProps {
     name: string;
     label?: string;
-    formProps?: Omit<SwitchInputProps, 'disabled'>;
+    formProps?: Omit<SwitchProps, 'disabled'>;
 }
 
 export const SwitchInput: FunctionComponent<SwitchInputProps>;
+
+interface CheckboxInputProps {
+    name: string;
+    label?: string;
+    formProps?: Omit<CheckboxProps, 'disabled'>;
+}
+
+export const CheckboxInput: FunctionComponent<CheckboxInputProps>;
 
 export const SubmitButton: FunctionComponent<ButtonProps>;
 
@@ -208,25 +210,16 @@ interface OverflowableTextProps {
     text?: string | ReactElement;
 }
 
-// Don't do that (imported from gridstudy)
-// @ts-ignore
-export const elementType = {
-    DIRECTORY: 'DIRECTORY',
-    STUDY: 'STUDY',
-    FILTER: 'FILTER',
-    MODIFICATION: 'MODIFICATION',
-    CONTINGENCY_LIST: 'CONTINGENCY_LIST',
-    VOLTAGE_INIT_PARAMETERS: 'VOLTAGE_INIT_PARAMETERS',
-    SECURITY_ANALYSIS_PARAMETERS: 'SECURITY_ANALYSIS_PARAMETERS',
-    LOADFLOW_PARAMETERS: 'LOADFLOW_PARAMETERS',
-};
-
 export const OverflowableText: FunctionComponent<OverflowableTextProps>;
 
-interface CheckboxInputProps {
-    name: string;
-    label?: string;
-    formProps?: Omit<CheckboxInputProps, 'disabled'>;
+export enum elementType {
+    DIRECTORY = 'DIRECTORY',
+    STUDY = 'STUDY',
+    FILTER = 'FILTER',
+    MODIFICATION = 'MODIFICATION',
+    CONTINGENCY_LIST = 'CONTINGENCY_LIST',
+    VOLTAGE_INIT_PARAMETERS = 'VOLTAGE_INIT_PARAMETERS',
+    SECURITY_ANALYSIS_PARAMETERS = 'SECURITY_ANALYSIS_PARAMETERS',
+    LOADFLOW_PARAMETERS = 'LOADFLOW_PARAMETERS',
+    SENSITIVITY_PARAMETERS = 'SENSITIVITY_PARAMETERS',
 }
-
-export const CheckboxInput: FunctionComponent<CheckboxInputProps>;
