@@ -21,7 +21,8 @@
         "test": "jest",
         "test:coverage": "jest --coverage",
         "test:watch": "jest --watch",
-        "lint": "eslint . --ext js,mjs,jsx,ts,mts,tsx --max-warnings 0"
+        "lint": "eslint . --ext js,mjs,jsx,ts,mts,tsx --max-warnings 0",
+        "licenses-check": "license-checker --summary --production --onlyAllow \"MPL-2.0; MIT; BSD-3-Clause; BSD-2-Clause; 0BSD; Apache-2.0; ISC; Apache-Style; CC-BY-3.0; CC0-1.0; MIT AND CC-BY-3.0; MIT OR CC0-1.0; Artistic-2.0\""
     },
     "dependencies": {
         "autosuggest-highlight": "^3.2.0",
@@ -81,6 +82,7 @@
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
         "jest-svg-transformer": "^1.0.0",
+        "license-checker": "^25.0.1",
         "notistack": "^3.0.0",
         "prettier": "^2.0.0",
         "react": "^18.0.0",
