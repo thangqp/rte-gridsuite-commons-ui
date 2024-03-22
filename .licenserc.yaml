@@ -1,0 +1,18 @@
+header:
+  license:
+    spdx-id: MPL-2.0
+    copyright-owner: RTE (http://www.rte-france.com)
+
+  paths-ignore:
+    - 'dist'
+    - 'licenses'
+    - '**/*.md'
+    - 'LICENSE'
+    - 'NOTICE'
+
+  comment: on-failure
+
+# If you don't want to check dependencies' license compatibility, remove the following part
+dependency:
+  files:
+    - package.json      # If this is a npm project.
