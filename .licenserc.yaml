@@ -2,7 +2,6 @@ header:
   license:
     spdx-id: MPL-2.0
     copyright-owner: RTE (http://www.rte-france.com)
-    copyright-year: '2024'
     software-name: commons-ui
 
   paths-ignore:
@@ -19,9 +18,3 @@ header:
 
 
   comment: on-failure
-
-# If you don't want to check dependencies' license compatibility, remove the following part
-dependency:
-  files:
-    - package.json      # If this is a npm project.
-  threshold: 50
