@@ -2,6 +2,8 @@ header:
   license:
     spdx-id: MPL-2.0
     copyright-owner: RTE (http://www.rte-france.com)
+    copyright-year: '2024'
+    software-name: commons-ui
 
   paths-ignore:
     - 'dist'
@@ -9,6 +11,12 @@ header:
     - '**/*.md'
     - 'LICENSE'
     - 'NOTICE'
+    - '**/.*'
+    - '**/*.json'
+    - '**/*.yaml'
+    - '**/*.yml'
+    - '**/*.svg'
+
 
   comment: on-failure
 
