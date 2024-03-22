@@ -24,6 +24,7 @@ jobs:
           - name: Check license dependencies
             uses: daynin/nodejs-license-checker@v0.2.0
             with:
+              summary: true
               exclude-private-packages: true
               allow-only:  |
                 MPL-2.0
