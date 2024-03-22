@@ -15,12 +15,7 @@ jobs:
               run: |
                   echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
-            - name: Build
-              run: |
-                  npm install
-                  npm run lint
-                  npm run test
-                  npm run build
+            
             
             - name: Check License Header
               uses: apache/skywalking-eyes/header@main      # always prefer to use a revision instead of `main`.
@@ -37,3 +32,10 @@ jobs:
                   # config: .licenserc.yaml # optional: set the config file. The default value is `.licenserc.yaml`.
                   # mode: # optional: Which mode License-Eye should be run in. Choices are `check` or `resolve`. The default value is `check`.
                   # flags: # optional: Extra flags appended to the command, for example, `--summary=path/to/template.tmpl`
+
+            - name: Build
+              run: |
+                  npm install
+                  npm run lint
+                  npm run test
+                  npm run build
