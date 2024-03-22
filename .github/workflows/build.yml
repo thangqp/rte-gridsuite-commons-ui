@@ -8,39 +8,40 @@ jobs:
 
         steps:
           - uses: actions/setup-node@v3
-            - name: Checkout sources
-              uses: actions/checkout@v2
-              with:
-                  persist-credentials: false
+          - name: Checkout sources
+            uses: actions/checkout@v2
+            with:
+                persist-credentials: false
 
-            - name: Check License Header
-              uses: apache/skywalking-eyes/header@main      # always prefer to use a revision instead of `main`.
-              # with:
-                  # log: debug # optional: set the log level. The default value is `info`.
-                  # config: .licenserc.yaml # optional: set the config file. The default value is `.licenserc.yaml`.
-                  # token: # optional: the token that license eye uses when it needs to comment on the pull request. Set to empty ("") to disable commenting on pull request. The default value is ${{ github.token }}
-                  # mode: # optional: Which mode License-Eye should be run in. Choices are `check` or `fix`. The default value is `check`.
+          - name: Check License Header
+            uses: apache/skywalking-eyes/header@main      # always prefer to use a revision instead of `main`.
+            # with:
+                # log: debug # optional: set the log level. The default value is `info`.
+                # config: .licenserc.yaml # optional: set the config file. The default value is `.licenserc.yaml`.
+                # token: # optional: the token that license eye uses when it needs to comment on the pull request. Set to empty ("") to disable commenting on pull request. The default value is ${{ github.token }}
+                # mode: # optional: Which mode License-Eye should be run in. Choices are `check` or `fix`. The default value is `check`.
 
-            - uses: daynin/nodejs-license-checker@v0.2.0
-              with:
-                exclude-private-packages: true
-                allow-only:  |
-                  MPL-2.0
-                  MIT
-                  BSD-3-Clause
-                  BSD-2-Clause
-                  0BSD
-                  Apache-2.0
-                  ISC
-                  Apache-Style
-                  CC-BY-3.0
-                  CC-BY-4.0
-                  CC0-1.0
-                  MIT AND CC-BY-3.0
-                  MIT OR CC0-1.0
-                  Artistic-2.0
-                  Python-2.0
-                  Unlicense
+          - name: Check license dependencies
+            uses: daynin/nodejs-license-checker@v0.2.0
+            with:
+              exclude-private-packages: true
+              allow-only:  |
+                MPL-2.0
+                MIT
+                BSD-3-Clause
+                BSD-2-Clause
+                0BSD
+                Apache-2.0
+                ISC
+                Apache-Style
+                CC-BY-3.0
+                CC-BY-4.0
+                CC0-1.0
+                MIT AND CC-BY-3.0
+                MIT OR CC0-1.0
+                Artistic-2.0
+                Python-2.0
+                Unlicense
     build:
         runs-on: ubuntu-latest
         steps:
