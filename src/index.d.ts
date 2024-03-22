@@ -47,7 +47,7 @@ export {
     getPreLoginPath,
 } from './utils/AuthService';
 
-export { getFileIcon } from './utils/ElementType';
+export { getFileIcon } from './utils/ElementIcon';
 
 export {
     DEFAULT_CELL_PADDING,
@@ -118,6 +118,9 @@ export {
     ExpandingTextFieldProps,
     ExpandingTextField,
 } from './components/react-hook-form/expanding-text-field';
+
+export { ElementType } from './utils/ElementType';
+
 /**
  * Section to export manual type declarations of .js and .jsx files
  */
@@ -314,15 +317,3 @@ interface OverflowableTextProps {
 }
 
 export const OverflowableText: FunctionComponent<OverflowableTextProps>;
-
-export enum elementType {
-    DIRECTORY = 'DIRECTORY',
-    STUDY = 'STUDY',
-    FILTER = 'FILTER',
-    MODIFICATION = 'MODIFICATION',
-    CONTINGENCY_LIST = 'CONTINGENCY_LIST',
-    VOLTAGE_INIT_PARAMETERS = 'VOLTAGE_INIT_PARAMETERS',
-    SECURITY_ANALYSIS_PARAMETERS = 'SECURITY_ANALYSIS_PARAMETERS',
-    LOADFLOW_PARAMETERS = 'LOADFLOW_PARAMETERS',
-    SENSITIVITY_PARAMETERS = 'SENSITIVITY_PARAMETERS',
-}
