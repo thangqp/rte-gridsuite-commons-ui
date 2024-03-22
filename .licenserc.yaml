@@ -24,3 +24,4 @@ header:
 dependency:
   files:
     - package.json      # If this is a npm project.
+  threshold: 50
