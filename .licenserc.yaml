@@ -27,4 +27,10 @@ header:
     - '**/*.svg'
 
 
-  comment: on-failure
+  comment: never
+
+  language:
+      JSX:
+        extensions:
+          - ".jsx"
+        comment_style_id: SlashAsterisk

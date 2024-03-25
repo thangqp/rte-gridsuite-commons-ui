@@ -15,11 +15,55 @@ jobs:
 
           - name: Check License Header
             uses: apache/skywalking-eyes/header@v0.5.0
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
-              log: debug
-              token : ${{ secrets.GITHUB_TOKEN }}
+              mode : fix
+
+          - name: Get current Pull Request number
+            uses: actions/github-script@v7
+            id: get_issue_number
+            with:
+              script: |
+                if (context.issue.number) {
+                  // Return issue number if present
+                  return context.issue.number;
+                } else {
+                  // Otherwise return issue number from commit
+                  return (
+                    await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                      commit_sha: context.sha,
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                    })
+                  ).data[0].number;
+                }
+              result-encoding: string
+
+          - name: Create Pull Request if necessary
+            uses: peter-evans/create-pull-request@v6
+            id: cpr
+            if: github.ref != 'refs/heads/main' && ${{ steps.get_issue_number.outputs.result }} != ''
+            with:
+              commit-message: License header fix(es)
+              title: Fixes by Check License Header action
+              body: This is an auto-generated PR with fixes by Check License Header.
+              branch: "license-header-check/${{ github.ref_name }}"
+          
+          - name: Comment original Pull Request
+            uses: actions/github-script@v7
+            if: github.ref != 'refs/heads/main' && ${{ steps.cpr.outputs.pull-request-operation }} == 'created'
+            with:
+              script: |
+                github.rest.issues.createComment({
+                  issue_number: ${{ steps.get_issue_number.outputs.result }},
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: `:warning: 👋 © Please add missing license headers! PR : ${{ steps.cpr.outputs.pull-request-url }}`
+                })
+
+          # Because fix mode doesn't fail, must rerun in check mode to fail CI if necessary
+          - name: Check License Header
+            uses: apache/skywalking-eyes/header@v0.5.0
+            with:
               mode : check
           
           - name: Check license dependencies
