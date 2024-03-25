@@ -31,14 +31,14 @@ jobs:
           #     message: 'Automatic application of license header'
 
           - name: Create Pull Request
-            # if: steps.autopep8.outputs.exit-code == 2
+            if: github.ref != 'refs/heads/main'
             uses: peter-evans/create-pull-request@v6
             with:
               commit-message: License header fix(es)
               title: Fixes by Check License Header action
               body: This is an auto-generated PR with fixes by Check License Header.
               # labels: automated pr
-              branch: "license-header-check/${{ github.head_ref }}"
+              branch: "license-header-check/${{ github.ref_name }}"
 
           - name: Check license dependencies
             uses: daynin/nodejs-license-checker@v0.2.0
