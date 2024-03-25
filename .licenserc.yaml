@@ -19,6 +19,7 @@ header:
     - 'licenses'
     - '**/*.md'
     - 'LICENSE'
+    - 'license_white_list.txt'
     - 'NOTICE'
     - '**/.*'
     - '**/*.json'
