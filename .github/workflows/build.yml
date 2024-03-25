@@ -13,7 +13,13 @@ jobs:
             with:
                 persist-credentials: false
 
-          - uses: actions/github-script@v6
+          - name: Check License Header
+            uses: apache/skywalking-eyes/header@v0.5.0
+            with:
+              mode : fix
+
+          - name: Get current Pull Request number
+            uses: actions/github-script@v7
             id: get_issue_number
             with:
               script: |
@@ -32,22 +38,18 @@ jobs:
                 }
               result-encoding: string
 
-          - name: Check License Header
-            uses: apache/skywalking-eyes/header@main      # always prefer to use a revision instead of `main`.
-            with:
-              mode : fix
-
-          - name: Create Pull Request
+          - name: Create Pull Request if necessary
+            uses: peter-evans/create-pull-request@v6
             id: cpr
             if: github.ref != 'refs/heads/main' && ${{ steps.get_issue_number.outputs.result }} != ''
-            uses: peter-evans/create-pull-request@v6
             with:
               commit-message: License header fix(es)
               title: Fixes by Check License Header action
               body: This is an auto-generated PR with fixes by Check License Header.
               branch: "license-header-check/${{ github.ref_name }}"
           
-          - uses: actions/github-script@v7
+          - name: Comment original Pull Request
+            uses: actions/github-script@v7
             if: github.ref != 'refs/heads/main' && ${{ steps.cpr.outputs.pull-request-operation }} == 'created'
             with:
               script: |
@@ -55,12 +57,14 @@ jobs:
                   issue_number: ${{ steps.get_issue_number.outputs.result }},
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  body: `👋 Please add missing license headers! PR:${{ steps.cpr.outputs.pull-request-url }}`
+                  body: `:warning: 👋 © :copyright: Please add missing license headers! PR : ${{ steps.cpr.outputs.pull-request-url }}`
                 })
 
-          - name: Check if fail
-            if: ${{ steps.cpr.outputs.pull-request-operation }} == 'created' || ${{ steps.cpr.outputs.pull-request-operation }} == 'updated'
-            run: exit 1
+          # Because fix mode doesn't fail, must rerun in check mode to fail CI if necessary
+          - name: Check License Header
+            uses: apache/skywalking-eyes/header@v0.5.0
+            with:
+              mode : check
           
           - name: Check license dependencies
             uses: daynin/nodejs-license-checker@v0.2.0
