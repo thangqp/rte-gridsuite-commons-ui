@@ -68,13 +68,15 @@ jobs:
           
           - name: Read License WhiteList
             id: get_license_white_list
-            run: echo "::set-output name=white_list::$(cat license_white_list.txt)"
+            run: echo "white_list=$(cat license_white_list.txt)" >> "$GITHUB_OUTPUT"
           
           - name: Check license dependencies
             uses: daynin/nodejs-license-checker@v0.2.0
+            env:
+              WHITE_LIST: ${{ steps.get_license_white_list.outputs.white_list }}
             with:
               exclude-private-packages: true
-              allow-only:  ${{ steps.get_license_white_list.outputs.white_list }}
+              allow-only:  $WHITE_LIST
     build:
         runs-on: ubuntu-latest
         steps:
