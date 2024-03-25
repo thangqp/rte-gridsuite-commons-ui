@@ -73,7 +73,7 @@ jobs:
           - name: Check license dependencies
             run: |
               npm install
-              npm run licenses-check -- --onlyAllow "\"${{ steps.get_license_white_list.outputs.white_list }}\"" --excludePackages "\"@mapbox/jsonlint-lines-primitives@2.0.2;cartocolor@4.0.2\""
+              npm run licenses-check -- --onlyAllow "${{ steps.get_license_white_list.outputs.white_list }}" --excludePackages "@mapbox/jsonlint-lines-primitives@2.0.2;cartocolor@4.0.2"
 
     build:
         runs-on: ubuntu-latest
