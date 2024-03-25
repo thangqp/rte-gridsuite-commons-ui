@@ -66,27 +66,15 @@ jobs:
             with:
               mode : check
           
+          - name: Read License WhiteList
+            id: get_license_white_list
+            run: echo "::set-output name=white_list::$(cat license_white_list.txt)"
+          
           - name: Check license dependencies
             uses: daynin/nodejs-license-checker@v0.2.0
             with:
               exclude-private-packages: true
-              allow-only:  |
-                MPL-2.0
-                MIT
-                BSD-3-Clause
-                BSD-2-Clause
-                0BSD
-                Apache-2.0
-                ISC
-                Apache-Style
-                CC-BY-3.0
-                CC-BY-4.0
-                CC0-1.0
-                MIT AND CC-BY-3.0
-                MIT OR CC0-1.0
-                Artistic-2.0
-                Python-2.0
-                Unlicense
+              allow-only:  ${{ steps.get_license_white_list.outputs.white_list }}
     build:
         runs-on: ubuntu-latest
         steps:
