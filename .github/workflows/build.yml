@@ -18,7 +18,8 @@ jobs:
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
-              token : $GITHUB_TOKEN
+              log: debug
+              token : ${{ secrets.GITHUB_TOKEN }}
               mode : check
           
           - name: Check license dependencies
