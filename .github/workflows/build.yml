@@ -57,7 +57,7 @@ jobs:
                   issue_number: ${{ steps.get_issue_number.outputs.result }},
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  body: `:warning: 👋 © :copyright: Please add missing license headers! PR : ${{ steps.cpr.outputs.pull-request-url }}`
+                  body: `:warning: 👋 © Please add missing license headers! PR : ${{ steps.cpr.outputs.pull-request-url }}`
                 })
 
           # Because fix mode doesn't fail, must rerun in check mode to fail CI if necessary
