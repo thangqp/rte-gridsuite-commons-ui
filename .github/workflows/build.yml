@@ -21,14 +21,24 @@ jobs:
                 # config: .licenserc.yaml # optional: set the config file. The default value is `.licenserc.yaml`.
                 # token: # optional: the token that license eye uses when it needs to comment on the pull request. Set to empty ("") to disable commenting on pull request. The default value is ${{ github.token }}
                 # mode: # optional: Which mode License-Eye should be run in. Choices are `check` or `fix`. The default value is `check`.
-          - name: Apply Changes
-            uses: EndBug/add-and-commit@v4
-            env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # - name: Apply Changes
+          #   uses: EndBug/add-and-commit@v4
+          #   env:
+          #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #   with:
+          #     author_name: License Bot
+          #     author_email: license_bot@github.com
+          #     message: 'Automatic application of license header'
+
+          - name: Create Pull Request
+            # if: steps.autopep8.outputs.exit-code == 2
+            uses: peter-evans/create-pull-request@v6
             with:
-              author_name: License Bot
-              author_email: license_bot@github.com
-              message: 'Automatic application of license header'
+              commit-message: License header fix(es)
+              title: Fixes by Check License Header action
+              body: This is an auto-generated PR with fixes by Check License Header.
+              # labels: automated pr
+              branch: "license-header-check/${{ github.head_ref }}"
 
           - name: Check license dependencies
             uses: daynin/nodejs-license-checker@v0.2.0
