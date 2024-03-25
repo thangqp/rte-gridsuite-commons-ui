@@ -13,44 +13,50 @@ jobs:
             with:
                 persist-credentials: false
 
+          - uses: actions/github-script@v6
+            id: get_issue_number
+            with:
+              script: |
+                if (context.issue.number) {
+                  // Return issue number if present
+                  return context.issue.number;
+                } else {
+                  // Otherwise return issue number from commit
+                  return (
+                    await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                      commit_sha: context.sha,
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                    })
+                  ).data[0].number;
+                }
+              result-encoding: string
+
           - name: Check License Header
             uses: apache/skywalking-eyes/header@main      # always prefer to use a revision instead of `main`.
             with:
               mode : fix
-                # log: debug # optional: set the log level. The default value is `info`.
-                # config: .licenserc.yaml # optional: set the config file. The default value is `.licenserc.yaml`.
-                # token: # optional: the token that license eye uses when it needs to comment on the pull request. Set to empty ("") to disable commenting on pull request. The default value is ${{ github.token }}
-                # mode: # optional: Which mode License-Eye should be run in. Choices are `check` or `fix`. The default value is `check`.
-          # - name: Apply Changes
-          #   uses: EndBug/add-and-commit@v4
-          #   env:
-          #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #   with:
-          #     author_name: License Bot
-          #     author_email: license_bot@github.com
-          #     message: 'Automatic application of license header'
 
           - name: Create Pull Request
-            if: github.ref != 'refs/heads/main'
+            id: cpr
+            if: github.ref != 'refs/heads/main' && ${{ steps.get_issue_number.outputs.result }} != ''
             uses: peter-evans/create-pull-request@v6
             with:
               commit-message: License header fix(es)
               title: Fixes by Check License Header action
               body: This is an auto-generated PR with fixes by Check License Header.
-              # labels: automated pr
               branch: "license-header-check/${{ github.ref_name }}"
           
           - uses: actions/github-script@v7
-            if: ${{ steps.cpr.outputs.pull-request-operation }} == 'created'
+            if: github.ref != 'refs/heads/main' && ${{ steps.cpr.outputs.pull-request-operation }} == 'created'
             with:
               script: |
                 github.rest.issues.createComment({
-                  issue_number: `${{ steps.cpr.outputs.pull-request-number }}`,
+                  issue_number: ${{ steps.get_issue_number.outputs.result }},
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   body: `👋 Please add missing license headers! PR:${{ steps.cpr.outputs.pull-request-url }}`
                 })
-                console.log(context)
 
           - name: Check if fail
             if: ${{ steps.cpr.outputs.pull-request-operation }} == 'created' || ${{ steps.cpr.outputs.pull-request-operation }} == 'updated'
