@@ -44,7 +44,7 @@ jobs:
             if: ${{ steps.cpr.outputs.pull-request-operation }} == 'created'
             with:
               script: |
-                github.rest.pulls.createComment({
+                github.rest.issues.createComment({
                   issue_number: `${{ steps.cpr.outputs.pull-request-number }}`,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
