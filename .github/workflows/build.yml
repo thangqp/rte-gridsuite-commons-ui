@@ -72,11 +72,9 @@ jobs:
           
           - name: Check license dependencies
             uses: daynin/nodejs-license-checker@v0.2.0
-            env:
-              WHITE_LIST: ${{ steps.get_license_white_list.outputs.white_list }}
             with:
               exclude-private-packages: true
-              allow-only:  "$WHITE_LIST"
+              allow-only:  ${{ steps.get_license_white_list.outputs.white_list }}
     build:
         runs-on: ubuntu-latest
         steps:
