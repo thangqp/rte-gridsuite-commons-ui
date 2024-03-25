@@ -47,28 +47,18 @@ jobs:
               title: Fixes by Check License Header action
               body: This is an auto-generated PR with fixes by Check License Header.
               branch: "license-header-check/${{ github.ref_name }}"
-          
-          - name: Check outputs
+
+          - name: Check outputs main + operation
+            if: ${{ github.ref != 'refs/heads/main' && steps.cpr.outputs.pull-request-operation == 'created' }}
             run: |
-              echo "Pull Request Operation - ${{ steps.cpr.outputs.pull-request-operation }}"
-              echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-              echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
-          
-          - name: Check outputs main
-            if: github.ref != 'refs/heads/main'
-            run: |
-              echo "main"
-          - name: Check outputs operation
-            if: ${{ steps.cpr.outputs.pull-request-operation == 'created' }}
-            run: |
-              echo "created"
+              echo "main + created"
           - name: Check outputs number
             if: ${{ steps.cpr.outputs.pull-request-number }}
             run: |
               echo "${{ steps.cpr.outputs.pull-request-number }}"
 
           - name: Comment original Pull Request
-            if: github.ref != 'refs/heads/main' && ${{ steps.cpr.outputs.pull-request-operation == 'created' }} && ${{ steps.cpr.outputs.pull-request-number }}
+            if: ${{ github.ref != 'refs/heads/main' && steps.cpr.outputs.pull-request-operation == 'created' && steps.cpr.outputs.pull-request-number }}
             uses: actions/github-script@v7
             with:
               script: |
