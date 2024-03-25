@@ -76,7 +76,7 @@ jobs:
               WHITE_LIST: ${{ steps.get_license_white_list.outputs.white_list }}
             with:
               exclude-private-packages: true
-              allow-only:  $WHITE_LIST
+              allow-only:  "$WHITE_LIST"
     build:
         runs-on: ubuntu-latest
         steps:
