@@ -27,4 +27,4 @@ header:
     - '**/*.svg'
 
 
-  comment: never # will be done manually with PR url
+  comment: on-failure
