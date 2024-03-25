@@ -59,7 +59,7 @@ jobs:
             run: |
               echo "main"
           - name: Check outputs operation
-            if: ${{ steps.cpr.outputs.pull-request-operation }} == 'created'
+            if: ${{ steps.cpr.outputs.pull-request-operation == 'created' }}
             run: |
               echo "created"
           - name: Check outputs number
@@ -68,7 +68,7 @@ jobs:
               echo "${{ steps.cpr.outputs.pull-request-number }}"
 
           - name: Comment original Pull Request
-            if: github.ref != 'refs/heads/main' && ${{ steps.cpr.outputs.pull-request-operation }} == 'created' && ${{ steps.cpr.outputs.pull-request-number }}
+            if: github.ref != 'refs/heads/main' && ${{ steps.cpr.outputs.pull-request-operation == 'created' }} && ${{ steps.cpr.outputs.pull-request-number }}
             uses: actions/github-script@v7
             with:
               script: |
