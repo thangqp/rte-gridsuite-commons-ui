@@ -71,10 +71,8 @@ jobs:
             run: echo "white_list=$(cat license_white_list.txt)" >> "$GITHUB_OUTPUT"
           
           - name: Check license dependencies
-            uses: daynin/nodejs-license-checker@v0.2.0
-            with:
-              exclude-private-packages: true
-              allow-only:  ${{ steps.get_license_white_list.outputs.white_list }}
+            run: npm run licenses-check -- --onlyAllow "${{ steps.get_license_white_list.outputs.white_list }}" --excludePackages "@mapbox/jsonlint-lines-primitives@2.0.2;cartocolor@4.0.2"
+
     build:
         runs-on: ubuntu-latest
         steps:
