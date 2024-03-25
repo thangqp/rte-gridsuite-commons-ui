@@ -45,13 +45,13 @@ jobs:
             with:
               script: |
                 github.rest.pulls.createComment({
-                  issue_number: ${{ steps.cpr.outputs.pull-request-number }},
+                  issue_number: `${{ steps.cpr.outputs.pull-request-number }}`,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  body: '👋 Please add missing license headers! PR:${{ steps.cpr.outputs.pull-request-url }}'
+                  body: `👋 Please add missing license headers! PR:${{ steps.cpr.outputs.pull-request-url }}`
                 })
                 console.log(context)
-                
+
           - name: Check if fail
             if: ${{ steps.cpr.outputs.pull-request-operation }} == 'created' || ${{ steps.cpr.outputs.pull-request-operation }} == 'updated'
             run: exit 1
