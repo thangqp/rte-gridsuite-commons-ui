@@ -35,7 +35,7 @@ interface DirectoryItemSelectorProps {
     fetchElementsInfos: (
         ids: UUID[],
         elementTypes: string[],
-        equipmentTypes?: string[]
+        equipmentTypes: string[]
     ) => Promise<any>;
     classes?: any;
     contentText?: string;
