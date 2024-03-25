@@ -59,6 +59,7 @@ jobs:
                   repo: context.repo.repo,
                   body: `:warning: 👋 © Please add missing license headers! PR : ${{ steps.cpr.outputs.pull-request-url }}`
                 })
+                console.log(steps)
 
           # Because fix mode doesn't fail, must rerun in check mode to fail CI if necessary
           - name: Check License Header (Check Mode)
