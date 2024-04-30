@@ -89,10 +89,10 @@ function makeSnackbar(
         snackInputs.headerId,
         snackInputs.headerValues
     );
-    if (message !== null && header !== null) {
+    if (message !== null) {
         displayMessageWithSnackbar(
             message,
-            header,
+            header ?? '',
             enqueueSnackbar,
             level,
             persistent
