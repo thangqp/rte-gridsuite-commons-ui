@@ -123,6 +123,7 @@ export { default as DirectoryItemsInput } from './components/react-hook-form/dir
 export { default as DirectoryItemSelector } from './components/DirectoryItemSelector/directory-item-selector';
 export { RawReadOnlyInput } from './components/react-hook-form/raw-read-only-input';
 export { UserManagerMock } from './utils/UserManagerMock';
+export { default as CheckboxList } from './components/CheckBoxList/checkbox-list';
 
 export {
     ExpandingTextFieldProps,
