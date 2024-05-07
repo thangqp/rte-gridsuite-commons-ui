@@ -47,7 +47,7 @@ const CheckboxList = ({
     isDragDisable,
     draggableProps,
     secondaryAction,
-    enableSecondaryActionOnHover,
+    enableSecondaryActionOnHover = true,
     ...props
 }) => {
     const {
@@ -88,6 +88,22 @@ const CheckboxList = ({
         if (enableKeyboardSelection) {
             handleShiftAndCtrlClick(event, getValueId(item));
         }
+    };
+
+    const handleSecondaryAction = (item) => {
+        if (!secondaryAction) {
+            return undefined;
+        }
+
+        if (!enableSecondaryActionOnHover) {
+            return secondaryAction(item);
+        }
+
+        if (hover) {
+            return secondaryAction(item);
+        }
+
+        return undefined;
     };
 
     return (
@@ -143,14 +159,9 @@ const CheckboxList = ({
                                                 checked={isChecked(item)}
                                                 getLabel={getValueLabel(item)}
                                                 onClick={handleCheckBoxClicked}
-                                                secondaryAction={(item) => {
-                                                    if (hover) {
-                                                        return secondaryAction(
-                                                            item
-                                                        );
-                                                    }
-                                                    return undefined;
-                                                }}
+                                                secondaryAction={
+                                                    handleSecondaryAction
+                                                }
                                                 labelSx={labelSx}
                                             />
                                         </ListItem>
@@ -164,6 +175,8 @@ const CheckboxList = ({
                                 checked={isChecked(item)}
                                 getLabel={getValueLabel(item)}
                                 onClick={handleCheckBoxClicked}
+                                secondaryAction={handleSecondaryAction}
+                                labelSx={labelSx}
                             />
                         )}
                         {index !== values.length - 1 && <Divider />}
