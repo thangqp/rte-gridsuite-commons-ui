@@ -89,15 +89,13 @@ function makeSnackbar(
         snackInputs.headerId,
         snackInputs.headerValues
     );
-    if (message !== null) {
-        displayMessageWithSnackbar(
-            message,
-            header ?? '',
-            enqueueSnackbar,
-            level,
-            persistent
-        );
-    }
+    displayMessageWithSnackbar(
+        message,
+        header,
+        enqueueSnackbar,
+        level,
+        persistent
+    );
 }
 
 function checkAndTranslateIfNecessary(
@@ -127,8 +125,8 @@ function checkInputs(txt?: string, id?: string, values?: any) {
 }
 
 function displayMessageWithSnackbar(
-    message: string,
-    header: string,
+    message: string | null,
+    header: string | null,
     enqueueSnackbar: EnqueueSnackbar,
     level: BaseVariant,
     persistent: boolean
