@@ -13,23 +13,23 @@ import {
     Theme,
     Tooltip,
 } from '@mui/material';
-import OverflowableText from '../../OverflowableText';
 import FieldLabel from './utils/field-label';
 import FolderIcon from '@mui/icons-material/Folder';
 import { FunctionComponent, useCallback, useMemo, useState } from 'react';
 import { useController, useFieldArray } from 'react-hook-form';
 import { useIntl } from 'react-intl';
-import MidFormError from '../react-hook-form/error-management/mid-form-error.jsx';
 import { RawReadOnlyInput } from './raw-read-only-input';
-import { mergeSx } from '../../../utils/styles.js';
-import DirectoryItemSelector from '../../DirectoryItemSelector/directory-item-selector';
 import { UUID } from 'crypto';
-import { TreeViewFinderNodeProps } from '../../TreeViewFinder/TreeViewFinder';
 import { useCustomFormContext } from './provider/use-custom-form-context';
 import { isFieldRequired } from './utils/functions';
 import ErrorInput from './error-management/error-input';
 import { useSnackMessage } from '../../../hooks/useSnackMessage';
-import { fetchDirectoryElementPath } from '../../../services/directory.ts';
+import { fetchDirectoryElementPath } from '../../../services/directory';
+import { TreeViewFinderNodeProps } from '../../TreeViewFinder';
+import { mergeSx } from '../../../utils/styles';
+import OverflowableText from '../../OverflowableText';
+import MidFormError from './autocomplete-inputs/error-management/mid-form-error';
+import DirectoryItemSelector from '../../DirectoryItemSelector/directory-item-selector';
 
 export const NAME = 'name';
 
@@ -197,6 +197,7 @@ const DirectoryItemsInput: FunctionComponent<DirectoryItemsInputProps> = ({
             <FormControl
                 sx={mergeSx(
                     styles.formDirectoryElements1,
+                    //@ts-ignore
                     error?.message && styles.formDirectoryElementsError
                 )}
                 error={!!error?.message}

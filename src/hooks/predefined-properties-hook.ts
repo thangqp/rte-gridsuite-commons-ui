@@ -7,8 +7,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { mapEquipmentTypeForPredefinedProperties } from '../utils/equipment-types-for-predefined-properties-mapper';
 import { useSnackMessage } from './useSnackMessage';
-import { EquipmentType, PredefinedProperties } from '../utils/types.ts';
-import { fetchAppsAndUrls } from '../services/apps-metadata.ts';
+import { fetchAppsAndUrls } from '../services/apps-metadata';
+import { EquipmentType, PredefinedProperties } from '../utils/types';
 
 interface Metadata {
     name: string;

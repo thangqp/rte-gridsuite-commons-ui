@@ -8,7 +8,8 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { validate as uuidValidate } from 'uuid';
 import { DirectoryItemsInput, useCustomFormContext } from '../../../index';
-import { fetchElementsInfos } from '../../../services/explore.ts';
+import { fetchElementsInfos } from '../../../services/explore';
+
 
 interface ElementValueEditorProps {
     name: string;

@@ -24,7 +24,7 @@ import { v4 as uuid4 } from 'uuid';
 import { noSelectionForCopy } from '../../../utils/equipment-types';
 import { UUID } from 'crypto';
 import { FilterType } from '../constants/filter-constants';
-import { FetchStatus } from '../../../utils/FetchStatus.ts';
+import { FetchStatus } from '../../../utils/FetchStatus';
 
 const formSchema = yup
     .object()
