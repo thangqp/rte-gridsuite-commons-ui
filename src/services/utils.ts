@@ -12,19 +12,19 @@ export const backendFetch = (url: string, init: any, token?: string) => {
     return safeFetch(url, initCopy);
 };
 
-export const backendFetchJson = (url: string, init: any, token?: string) => {
+export const backendFetchJson = (url: string, init?: any, token?: string) => {
     return backendFetch(url, init, token).then((safeResponse) =>
         safeResponse.status === 204 ? null : safeResponse.json()
     );
 };
 
-export const backendFetchText = (url: string, init: any, token?: string) => {
+export const backendFetchText = (url: string, init?: any, token?: string) => {
     return backendFetch(url, init, token).then((safeResponse) =>
         safeResponse.text()
     );
 };
 
-export const backendFetchFile = (url: string, init: any, token?: string) => {
+export const backendFetchFile = (url: string, init?: any, token?: string) => {
     return backendFetch(url, init, token).then((safeResponse) =>
         safeResponse.blob()
     );
