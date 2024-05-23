@@ -35,11 +35,13 @@ export function fetchRootFolders(types: string[]) {
     });
 }
 
-export function fetchDirectoryContent(directoryUuid: UUID, types: string[]) {
+export function fetchDirectoryContent(directoryUuid: UUID, types?: string[]) {
     console.info("Fetching Folder content '%s'", directoryUuid);
 
     // Add params to Url
-    const typesParams = getRequestParamFromList(types, 'elementTypes');
+    const typesParams = types
+        ? getRequestParamFromList(types, 'elementTypes')
+        : [];
     const urlSearchParams = new URLSearchParams(typesParams);
 
     const fetchDirectoryContentUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/directories/${directoryUuid}/elements?${urlSearchParams}`;

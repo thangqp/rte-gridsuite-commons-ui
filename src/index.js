@@ -228,3 +228,10 @@ export {
     downloadZipFile,
 } from './services/utils';
 export { fetchAppsAndUrls, fetchEnv } from './services/apps-metadata';
+export { fetchElementsInfos } from './services/explore';
+export {
+    fetchRootFolders,
+    fetchDirectoryContent,
+    fetchDirectoryElementPath,
+    elementExists,
+} from './services/directory';
