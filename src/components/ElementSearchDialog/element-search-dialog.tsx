@@ -5,29 +5,31 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { ReactNode, useCallback, useMemo } from 'react';
-import {
-    Autocomplete,
-    Dialog,
-    DialogContent,
-    TextField,
-    AutocompleteInputChangeReason,
-    AutocompleteChangeReason,
-} from '@mui/material';
+import { HTMLAttributes, ReactNode, useCallback, useMemo } from 'react';
+import { Autocomplete, Dialog, DialogContent, TextField } from '@mui/material';
 import { Search, SearchOff } from '@mui/icons-material';
 import { useIntl } from 'react-intl';
 import { EquipmentInfos } from '../../index';
 import * as React from 'react';
+import { OptionalExceptFor } from '../../utils/type';
 
-interface ElementSearchDialogProps {
+export type SearchElement = OptionalExceptFor<EquipmentInfos, 'label'>;
+
+export type RenderElementProps = HTMLAttributes<HTMLLIElement> & {
+    element: SearchElement;
+    inputValue: string;
+    onClose: () => void;
+};
+
+export interface ElementSearchDialogProps {
     open: boolean;
     onClose: () => void;
     searchingLabel?: string;
     searchTerm: string;
     onSearchTermChange: (searchTerm: string) => void;
-    onSelectionChange: (selection: EquipmentInfos) => void;
-    elementsFound: EquipmentInfos[];
-    renderElement: (props: any) => ReactNode;
+    onSelectionChange: (selection: SearchElement) => void;
+    elementsFound: SearchElement[];
+    renderElement: (props: RenderElementProps) => ReactNode;
     searchTermDisabled?: boolean;
     searchTermDisableReason?: string;
     isLoading: boolean;
@@ -52,10 +54,10 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
         loadingText,
     } = props;
 
-    const displayedValue = useMemo(() => {
+    const displayedValue = useMemo((): SearchElement => {
         return searchTermDisabled || searchTermDisableReason
-            ? searchTermDisableReason
-            : searchTerm;
+            ? { label: searchTermDisableReason ?? 'search disabled' }
+            : { label: searchTerm ?? '' };
     }, [searchTerm, searchTermDisabled, searchTermDisableReason]);
 
     const handleClose = useCallback(() => {
@@ -77,48 +79,21 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
                     id="element-search"
                     forcePopupIcon={false}
                     fullWidth
-                    freeSolo
-                    onInputChange={(
-                        _event: React.SyntheticEvent,
-                        value: string,
-                        reason: AutocompleteInputChangeReason
-                    ) => {
-                        // if reason is equal to "reset", it means it programmatically changed (by selecting a result)
-                        // we don't want to change "searchTerm" when clicking a result
-                        if (!searchTermDisabled && reason !== 'reset') {
+                    onInputChange={(_event, value) => {
+                        if (!searchTermDisabled) {
                             onSearchTermChange(value);
                         }
                     }}
-                    onChange={(
-                        _event: React.SyntheticEvent,
-                        newValue: string | EquipmentInfos | null,
-                        reason?: AutocompleteChangeReason
-                    ) => {
+                    onChange={(_event, newValue, reason) => {
                         // when calling this method with reason == "selectOption", newValue can't be null or of type "string", since an option has been clicked on
-                        if (
-                            newValue != null &&
-                            typeof newValue !== 'string' &&
-                            reason === 'selectOption'
-                        ) {
+                        if (newValue !== null && reason === 'selectOption') {
                             onSelectionChange(newValue);
                         }
                     }}
-                    getOptionLabel={(option: EquipmentInfos | string) =>
-                        typeof option === 'string' ? option : option.label
+                    getOptionLabel={(option) => option.label}
+                    isOptionEqualToValue={(option, value) =>
+                        option.id === value.id
                     }
-                    isOptionEqualToValue={(
-                        option: EquipmentInfos | string,
-                        value: EquipmentInfos | string
-                    ) => {
-                        if (
-                            typeof option === 'string' ||
-                            typeof value === 'string'
-                        ) {
-                            return option === value;
-                        } else {
-                            return option.id === value.id;
-                        }
-                    }}
                     options={isLoading ? [] : elementsFound}
                     loading={isLoading}
                     loadingText={loadingText}
@@ -126,11 +101,7 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
                     noOptionsText={intl.formatMessage({
                         id: 'element_search/noResult',
                     })}
-                    renderOption={(
-                        optionProps: any,
-                        element: EquipmentInfos | string,
-                        { inputValue }: { inputValue: string }
-                    ) =>
+                    renderOption={(optionProps, element, { inputValue }) =>
                         renderElement({
                             ...optionProps,
                             element,
@@ -161,7 +132,7 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
                                     </>
                                 ),
                             }}
-                            value={displayedValue ?? ''}
+                            value={displayedValue}
                         />
                     )}
                     disabled={searchTermDisabled}
