@@ -4,17 +4,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import {
-    Dispatch,
-    SetStateAction,
-    useContext,
-    useEffect,
-    useState,
-} from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { mapEquipmentTypeForPredefinedProperties } from '../utils/equipment-types-for-predefined-properties-mapper';
 import { useSnackMessage } from './useSnackMessage';
-import { FilterContext } from '../components/filter/filter-context';
 import { EquipmentType, PredefinedProperties } from '../utils/types.ts';
+import { fetchAppsAndUrls } from '../services/apps-metadata.ts';
 
 interface Metadata {
     name: string;
@@ -61,10 +55,9 @@ export const usePredefinedProperties = (
     const [equipmentPredefinedProps, setEquipmentPredefinedProps] =
         useState<PredefinedProperties>({});
     const { snackError } = useSnackMessage();
-    const { fetchAppsAndUrls } = useContext(FilterContext);
 
     useEffect(() => {
-        if (fetchAppsAndUrls && type !== null) {
+        if (type !== null) {
             fetchPredefinedProperties(type, fetchAppsAndUrls)
                 .then((p) => {
                     if (p !== undefined) {
@@ -77,7 +70,7 @@ export const usePredefinedProperties = (
                     });
                 });
         }
-    }, [type, setEquipmentPredefinedProps, snackError, fetchAppsAndUrls]);
+    }, [type, setEquipmentPredefinedProps, snackError]);
 
     return [equipmentPredefinedProps, setType];
 };

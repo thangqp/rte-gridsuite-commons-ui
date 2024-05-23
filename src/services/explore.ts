@@ -6,7 +6,11 @@
  */
 
 import { UUID } from 'crypto';
-import { backendFetch } from './utils';
+import {
+    backendFetch,
+    backendFetchJson,
+    getRequestParamFromList,
+} from './utils';
 
 const PREFIX_EXPLORE_SERVER_QUERIES =
     import.meta.env.VITE_API_GATEWAY + '/explore';
@@ -52,4 +56,41 @@ export function saveFilter(filter: any, name: string, token?: string) {
         },
         token
     );
+}
+
+export function fetchElementsInfos(
+    ids: UUID[],
+    elementTypes?: string[],
+    equipmentTypes?: string[]
+) {
+    console.info('Fetching elements metadata');
+
+    // Add params to Url
+    const idsParams = getRequestParamFromList(
+        ids.filter((id) => id), // filter falsy elements
+        'ids'
+    );
+
+    const equipmentTypesParams = equipmentTypes
+        ? getRequestParamFromList(equipmentTypes, 'equipmentTypes')
+        : [];
+
+    const elementTypesParams = elementTypes
+        ? getRequestParamFromList(elementTypes, 'elementTypes')
+        : [];
+
+    const params = [
+        ...idsParams,
+        ...equipmentTypesParams,
+        ...elementTypesParams,
+    ];
+
+    const urlSearchParams = new URLSearchParams(params);
+
+    const url = `${PREFIX_EXPLORE_SERVER_QUERIES}/v1/explore/elements/metadata?${urlSearchParams}`;
+    console.debug(url);
+    return backendFetchJson(url, {
+        method: 'get',
+        headers: { 'Content-Type': 'application/json' },
+    });
 }

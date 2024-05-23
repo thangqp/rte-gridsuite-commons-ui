@@ -216,3 +216,15 @@ export {
 } from './components/filter/criteria-based/criteria-based-filter-utils';
 
 export { setCommonStore } from './redux/commonStore';
+export {
+    backendFetch,
+    backendFetchJson,
+    backendFetchFile,
+    backendFetchText,
+    FetchStatus,
+    getWsBase,
+    getRequestParamFromList,
+    getQueryParamsList,
+    downloadZipFile,
+} from './services/utils';
+export { fetchAppsAndUrls, fetchEnv } from './services/apps-metadata';

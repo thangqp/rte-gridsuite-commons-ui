@@ -32,13 +32,9 @@ import {
     getExpertFilterEmptyFormData,
 } from './expert/expert-filter-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { elementExistsType } from './criteria-based/criteria-based-filter-edition-dialog';
 import { UUID } from 'crypto';
-import { StudyMetadata } from '../../hooks/predefined-properties-hook.ts';
 
-import { FilterContext } from './filter-context';
 import { FilterType } from './constants/filter-constants';
-import { ElementAttributes } from '../../utils/types.ts';
 
 const emptyFormData = {
     [FieldConstants.NAME]: '',
@@ -70,20 +66,7 @@ export interface FilterCreationDialogProps {
     open: boolean;
     onClose: () => void;
     activeDirectory?: UUID;
-    fetchAppsAndUrls: () => Promise<StudyMetadata[]>;
-    elementExists?: elementExistsType;
     language?: string;
-    fetchDirectoryContent?: (
-        directoryUuid: UUID,
-        elementTypes: string[]
-    ) => Promise<ElementAttributes[]>;
-    fetchRootFolders?: (types: string[]) => Promise<ElementAttributes[]>;
-    fetchElementsInfos?: (
-        ids: UUID[],
-        elementTypes?: string[],
-        equipmentTypes?: string[]
-    ) => Promise<ElementAttributes[]>;
-    fetchPath?: (elementUuid: UUID) => Promise<ElementAttributes[]>;
     sourceFilterForExplicitNamingConversion?: {
         id: UUID;
         equipmentType: string;
@@ -94,13 +77,7 @@ const FilterCreationDialog: FunctionComponent<FilterCreationDialogProps> = ({
     open,
     onClose,
     activeDirectory,
-    fetchAppsAndUrls,
-    elementExists,
     language,
-    fetchDirectoryContent,
-    fetchRootFolders,
-    fetchElementsInfos,
-    fetchPath,
     sourceFilterForExplicitNamingConversion = undefined,
 }) => {
     const { snackError } = useSnackMessage();
@@ -191,24 +168,13 @@ const FilterCreationDialog: FunctionComponent<FilterCreationDialogProps> = ({
             disabledSave={!!nameError || !!isValidating}
             language={language}
         >
-            <FilterContext.Provider
-                value={{
-                    fetchDirectoryContent: fetchDirectoryContent,
-                    fetchRootFolders: fetchRootFolders,
-                    fetchElementsInfos: fetchElementsInfos,
-                    fetchAppsAndUrls: fetchAppsAndUrls,
-                    fetchPath: fetchPath,
-                }}
-            >
-                <FilterForm
-                    creation
-                    activeDirectory={activeDirectory}
-                    elementExists={elementExists}
-                    sourceFilterForExplicitNamingConversion={
-                        sourceFilterForExplicitNamingConversion
-                    }
-                />
-            </FilterContext.Provider>
+            <FilterForm
+                creation
+                activeDirectory={activeDirectory}
+                sourceFilterForExplicitNamingConversion={
+                    sourceFilterForExplicitNamingConversion
+                }
+            />
         </CustomMuiDialog>
     );
 };
