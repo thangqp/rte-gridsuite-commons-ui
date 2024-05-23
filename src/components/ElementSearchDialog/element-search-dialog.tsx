@@ -76,8 +76,8 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
                     id="element-search"
                     forcePopupIcon={false}
                     fullWidth
-                    onInputChange={(_event, value) => {
-                        if (!searchTermDisabled) {
+                    onInputChange={(_event, value, reason) => {
+                        if (!searchTermDisabled && reason !== 'reset') {
                             onSearchTermChange(value);
                         }
                     }}
