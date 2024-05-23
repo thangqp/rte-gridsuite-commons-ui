@@ -11,12 +11,9 @@ import { Search, SearchOff } from '@mui/icons-material';
 import { useIntl } from 'react-intl';
 import { EquipmentInfos } from '../../index';
 import * as React from 'react';
-import { OptionalExceptFor } from '../../utils/type';
-
-export type SearchElement = OptionalExceptFor<EquipmentInfos, 'label'>;
 
 export type RenderElementProps = HTMLAttributes<HTMLLIElement> & {
-    element: SearchElement;
+    element: EquipmentInfos;
     inputValue: string;
     onClose: () => void;
 };
@@ -27,8 +24,8 @@ export interface ElementSearchDialogProps {
     searchingLabel?: string;
     searchTerm: string;
     onSearchTermChange: (searchTerm: string) => void;
-    onSelectionChange: (selection: SearchElement) => void;
-    elementsFound: SearchElement[];
+    onSelectionChange: (selection: EquipmentInfos) => void;
+    elementsFound: EquipmentInfos[];
     renderElement: (props: RenderElementProps) => ReactNode;
     searchTermDisabled?: boolean;
     searchTermDisableReason?: string;
@@ -54,10 +51,10 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
         loadingText,
     } = props;
 
-    const displayedValue = useMemo((): SearchElement => {
+    const displayedValue = useMemo(() => {
         return searchTermDisabled || searchTermDisableReason
-            ? { label: searchTermDisableReason ?? 'search disabled' }
-            : { label: searchTerm ?? '' };
+            ? searchTermDisableReason ?? 'search disabled'
+            : searchTerm ?? '';
     }, [searchTerm, searchTermDisabled, searchTermDisableReason]);
 
     const handleClose = useCallback(() => {
