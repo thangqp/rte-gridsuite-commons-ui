@@ -116,7 +116,7 @@ const parseError = (text: string) => {
 };
 
 export const getRequestParamFromList = (
-    params: string[],
+    params: string[] | undefined,
     paramName: string
 ) => {
     return new URLSearchParams(
