@@ -9,13 +9,13 @@ import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 import { Autocomplete, TextField } from '@mui/material';
 import { AutocompleteProps } from '@mui/material/Autocomplete/Autocomplete';
-import FieldLabel from '../react-hook-form/utils/field-label';
+import FieldLabel from '../inputs/react-hook-form/utils/field-label';
 
-type Option = { id: string; label?: string };
+type SelectOption = { id: string; label?: string };
 
 interface SelectClearableProps
     extends Omit<
-        AutocompleteProps<Option, false, false, false>,
+        AutocompleteProps<SelectOption, false, false, false>,
         'value' | 'onChange' | 'renderInput'
     > {
     value: string | null;
@@ -35,7 +35,7 @@ const SelectClearable: FunctionComponent<SelectClearableProps> = (props) => {
         );
     };
 
-    const outputTransform = (option: Option | null) => {
+    const outputTransform = (option: SelectOption | null) => {
         return option?.id ?? null;
     };
 
