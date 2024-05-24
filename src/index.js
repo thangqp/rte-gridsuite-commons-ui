@@ -21,6 +21,7 @@ export { default as OverflowableText } from './components/OverflowableText';
 export { default as ElementSearchDialog } from './components/ElementSearchDialog';
 export { default as FlatParameters } from './components/FlatParameters';
 export { default as MultipleSelectionDialog } from './components/MultipleSelectionDialog';
+export { default as CheckboxList } from './components/CheckBoxList';
 
 export { ElementType } from './utils/ElementType';
 

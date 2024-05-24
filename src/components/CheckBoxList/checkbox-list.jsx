@@ -31,9 +31,7 @@ const styles = {
 };
 const CheckboxList = ({
     itemRenderer,
-    values,
-    onChecked,
-    checkedValues,
+    values = [],
     itemComparator = areIdsEqual,
     isAllSelected,
     setIsAllSelected,
@@ -59,7 +57,7 @@ const CheckboxList = ({
     } = useMultiselect(values.map((v) => getValueId(v)));
 
     const isChecked = (item) =>
-        checkedValues.some((checkedItem) => itemComparator(checkedItem, item));
+        selectedIds.some((checkedItem) => itemComparator(checkedItem, item));
 
     const [hover, setHover] = useState(false);
 
@@ -190,17 +188,13 @@ const CheckboxList = ({
 export default CheckboxList;
 
 CheckboxList.propTypes = {
-    itemRenderer: PropTypes.func.isRequired,
-    onChecked: PropTypes.func.isRequired,
-    checkedValues: PropTypes.array.isRequired,
+    itemRenderer: PropTypes.func,
     values: PropTypes.array,
     itemComparator: PropTypes.func,
     setIsAllSelected: PropTypes.func,
     setIsPartiallySelected: PropTypes.func,
     getValueId: PropTypes.func,
     getValueLabel: PropTypes.func,
-    checkboxListSx: PropTypes.object,
-    labelSx: PropTypes.object,
     enableKeyboardSelection: PropTypes.bool,
     secondaryAction: PropTypes.func,
     isCheckBoxDraggable: PropTypes.bool,
