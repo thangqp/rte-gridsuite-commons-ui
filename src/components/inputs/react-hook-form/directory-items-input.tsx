@@ -28,7 +28,7 @@ import { fetchDirectoryElementPath } from '../../../services/directory';
 import { TreeViewFinderNodeProps } from '../../TreeViewFinder';
 import { mergeSx } from '../../../utils/styles';
 import OverflowableText from '../../OverflowableText';
-import MidFormError from './autocomplete-inputs/error-management/mid-form-error';
+import MidFormError from './error-management/mid-form-error';
 import DirectoryItemSelector from '../../DirectoryItemSelector/directory-item-selector';
 
 export const NAME = 'name';
