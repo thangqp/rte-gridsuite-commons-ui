@@ -25,8 +25,8 @@ import { useSnackMessage } from '../../hooks/useSnackMessage';
 import {
     fetchDirectoryContent,
     fetchRootFolders,
-} from '../../services/directory.ts';
-import { fetchElementsInfos } from '../../services/explore.ts';
+} from '../../services/directory';
+import { fetchElementsInfos } from '../../services/explore';
 
 const styles = {
     icon: (theme: Theme) => ({

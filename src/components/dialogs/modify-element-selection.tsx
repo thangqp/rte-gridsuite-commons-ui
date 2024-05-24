@@ -5,16 +5,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Grid, Typography } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useController } from 'react-hook-form';
 import { UUID } from 'crypto';
 import { TreeViewFinderNodeProps } from '../TreeViewFinder';
-import { FieldConstants } from '../../utils/field-constants.ts';
-import DirectoryItemSelector from '../DirectoryItemSelector/directory-item-selector.tsx';
-import { ElementType } from '../../utils/ElementType.ts';
-import { fetchDirectoryElementPath } from '../../services/directory.ts';
+import { FieldConstants } from '../../utils/field-constants';
+import { ElementType } from '../../utils/ElementType';
+import { fetchDirectoryElementPath } from '../../services/directory';
+import DirectoryItemSelector from '../DirectoryItemSelector/directory-item-selector';
 
 export interface ModifyElementSelectionProps {
     elementType: ElementType;

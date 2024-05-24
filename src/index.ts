@@ -235,3 +235,4 @@ export {
     fetchDirectoryElementPath,
     elementExists,
 } from './services/directory';
+export type { EquipmentInfos } from './utils/EquipmentType';

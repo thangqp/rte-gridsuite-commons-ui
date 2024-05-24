@@ -9,7 +9,7 @@ import {
     backendFetch,
     backendFetchJson,
     getRequestParamFromList,
-} from './utils.ts';
+} from './utils';
 import { UUID } from 'crypto';
 
 const PREFIX_DIRECTORY_SERVER_QUERIES =

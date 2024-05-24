@@ -10,7 +10,7 @@ import { useSnackMessage } from './useSnackMessage';
 import { fetchAppsAndUrls } from '../services/apps-metadata';
 import { EquipmentType, PredefinedProperties } from '../utils/types';
 
-interface Metadata {
+export interface Metadata {
     name: string;
     url: string;
     appColor: string;
