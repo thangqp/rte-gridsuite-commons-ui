@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import { PredefinedProperties } from '../utils/types';
-import { fetchAppsMetadata } from './apps-metadata';
+import { fetchAppsMetadata, MetadataJson } from './apps-metadata';
 
 export interface Metadata {
     name: string;
@@ -23,13 +23,13 @@ export interface StudyMetadata extends Metadata {
     defaultCountry?: string;
 }
 
-const isStudyMetadata = (metadata: Metadata): metadata is StudyMetadata => {
+const isStudyMetadata = (metadata: MetadataJson): metadata is StudyMetadata => {
     return metadata.name === 'Study';
 };
 
 export function fetchStudyMetadata() {
     console.info(`Fetching study metadata...`);
-    return fetchAppsMetadata().then((res: [Metadata]) => {
+    return fetchAppsMetadata().then((res) => {
         const studyMetadata = res.filter(isStudyMetadata);
         if (!studyMetadata) {
             return Promise.reject('Study entry could not be found in metadata');
