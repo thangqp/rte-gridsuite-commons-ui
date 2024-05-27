@@ -17,8 +17,7 @@ export async function backendFetchJson(
     init?: any,
     token?: string
 ) {
-    let safeResponse = await backendFetch(url, init, token);
-    return safeResponse.status === 204 ? null : safeResponse.json();
+    return (await backendFetch(url, init, token)).json();
 }
 
 export async function backendFetchText(
