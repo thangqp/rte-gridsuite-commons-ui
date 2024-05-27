@@ -79,15 +79,13 @@ export function fetchElementsInfos(
         ? getRequestParamFromList(elementTypes, 'elementTypes')
         : [];
 
-    const params = [
+    const params = new URLSearchParams([
         ...idsParams,
         ...equipmentTypesParams,
         ...elementTypesParams,
-    ];
+    ]).toString();
 
-    const urlSearchParams = new URLSearchParams(params);
-
-    const url = `${PREFIX_EXPLORE_SERVER_QUERIES}/v1/explore/elements/metadata?${urlSearchParams}`;
+    const url = `${PREFIX_EXPLORE_SERVER_QUERIES}/v1/explore/elements/metadata?${params}`;
     console.debug(url);
     return backendFetchJson(url, {
         method: 'get',

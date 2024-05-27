@@ -7,45 +7,19 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { mapEquipmentTypeForPredefinedProperties } from '../utils/equipment-types-for-predefined-properties-mapper';
 import { useSnackMessage } from './useSnackMessage';
-import { fetchAppsAndUrls } from '../services/apps-metadata';
 import { EquipmentType, PredefinedProperties } from '../utils/types';
-
-export interface Metadata {
-    name: string;
-    url: string;
-    appColor: string;
-    hiddenInAppsMenu: boolean;
-    resources: unknown;
-}
-
-export interface StudyMetadata extends Metadata {
-    name: 'Study';
-    predefinedEquipmentProperties: {
-        [networkElementType: string]: PredefinedProperties;
-    };
-}
-
-const isStudyMetadata = (metadata: Metadata): metadata is StudyMetadata => {
-    return metadata.name === 'Study';
-};
+import { fetchStudyMetadata } from '../services/metadata';
 
 const fetchPredefinedProperties = async (
-    equipmentType: EquipmentType,
-    fetchAppsAndUrls: () => Promise<StudyMetadata[]>
+    equipmentType: EquipmentType
 ): Promise<PredefinedProperties | undefined> => {
     const networkEquipmentType =
         mapEquipmentTypeForPredefinedProperties(equipmentType);
     if (networkEquipmentType === undefined) {
         return Promise.resolve(undefined);
     }
-    const res = await fetchAppsAndUrls();
-    const studyMetadata = res.filter(isStudyMetadata);
-    if (!studyMetadata) {
-        return Promise.reject('Study entry could not be found in metadata');
-    }
-    return studyMetadata[0].predefinedEquipmentProperties?.[
-        networkEquipmentType
-    ];
+    const studyMetadata = await fetchStudyMetadata();
+    return studyMetadata.predefinedEquipmentProperties?.[networkEquipmentType];
 };
 
 export const usePredefinedProperties = (
@@ -58,7 +32,7 @@ export const usePredefinedProperties = (
 
     useEffect(() => {
         if (type !== null) {
-            fetchPredefinedProperties(type, fetchAppsAndUrls)
+            fetchPredefinedProperties(type)
                 .then((p) => {
                     if (p !== undefined) {
                         setEquipmentPredefinedProps(p);

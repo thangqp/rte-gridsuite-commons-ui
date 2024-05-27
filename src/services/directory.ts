@@ -39,10 +39,9 @@ export function fetchDirectoryContent(directoryUuid: UUID, types?: string[]) {
     console.info("Fetching Folder content '%s'", directoryUuid);
 
     // Add params to Url
-    const typesParams = types
+    const urlSearchParams = types
         ? getRequestParamFromList(types, 'elementTypes')
         : [];
-    const urlSearchParams = new URLSearchParams(typesParams);
 
     const fetchDirectoryContentUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/directories/${directoryUuid}/elements?${urlSearchParams}`;
     return backendFetchJson(fetchDirectoryContentUrl, {
@@ -65,12 +64,12 @@ export function elementExists(
     directoryUuid: UUID,
     elementName: string,
     type: string
-) {
+): Promise<boolean> {
     const existsElementUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/directories/${directoryUuid}/elements/${elementName}/types/${type}`;
 
     console.debug(existsElementUrl);
     return backendFetch(existsElementUrl, { method: 'head' }).then(
-        (response) => {
+        (response: Response) => {
             return response.status !== 204; // HTTP 204 : No-content
         }
     );

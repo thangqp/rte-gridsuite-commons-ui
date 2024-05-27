@@ -12,34 +12,42 @@ export const backendFetch = (url: string, init: any, token?: string) => {
     return safeFetch(url, initCopy);
 };
 
-export const backendFetchJson = (url: string, init?: any, token?: string) => {
-    return backendFetch(url, init, token).then((safeResponse) =>
-        safeResponse.status === 204 ? null : safeResponse.json()
-    );
-};
+export async function backendFetchJson(
+    url: string,
+    init?: any,
+    token?: string
+) {
+    let safeResponse = await backendFetch(url, init, token);
+    return safeResponse.status === 204 ? null : safeResponse.json();
+}
 
-export const backendFetchText = (url: string, init?: any, token?: string) => {
-    return backendFetch(url, init, token).then((safeResponse) =>
-        safeResponse.text()
-    );
-};
+export async function backendFetchText(
+    url: string,
+    init?: any,
+    token?: string
+) {
+    return (await backendFetch(url, init, token)).text();
+}
 
-export const backendFetchFile = (url: string, init?: any, token?: string) => {
-    return backendFetch(url, init, token).then((safeResponse) =>
-        safeResponse.blob()
-    );
-};
+export async function backendFetchFile(
+    url: string,
+    init?: any,
+    token?: string
+) {
+    return (await backendFetch(url, init, token)).blob();
+}
 
-const FILE_TYPE = {
-    ZIP: 'ZIP',
-};
+export enum FileType {
+    ZIP,
+}
+
 export const downloadZipFile = (blob: Blob, fileName: string) => {
-    downloadFile(blob, fileName, FILE_TYPE.ZIP);
+    downloadFile(blob, fileName, FileType.ZIP);
 };
 
-const downloadFile = (blob: Blob, filename: string, type: string) => {
+const downloadFile = (blob: Blob, filename: string, type?: FileType) => {
     let contentType;
-    if (type === FILE_TYPE.ZIP) {
+    if (type === FileType.ZIP) {
         contentType = 'application/octet-stream';
     }
     const href = window.URL.createObjectURL(
@@ -134,13 +142,4 @@ export const FetchStatus = {
     FAILED: 'FAILED',
     IDLE: 'IDLE',
     RUNNING: 'RUNNING',
-};
-
-export const getQueryParamsList = (params: string[], paramName: string) => {
-    if (params !== undefined && params.length > 0) {
-        const urlSearchParams = new URLSearchParams();
-        params.forEach((id) => urlSearchParams.append(paramName, id));
-        return urlSearchParams.toString();
-    }
-    return '';
 };

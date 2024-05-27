@@ -16,7 +16,7 @@ import TextField from '@mui/material/TextField';
 import { FieldConstants } from '../../../utils/field-constants';
 import { ElementType } from '../../../utils/ElementType';
 import { UUID } from 'crypto';
-import { elementExists } from '../../../services/directory';
+import { elementExists } from '../../../services';
 
 interface UniqueNameInputProps {
     name: string;

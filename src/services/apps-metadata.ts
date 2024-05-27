@@ -9,7 +9,7 @@ export function fetchEnv() {
     return fetch('env.json').then((res) => res.json());
 }
 
-export function fetchAppsAndUrls() {
+export function fetchAppsMetadata() {
     console.info(`Fetching apps and urls...`);
     return fetchEnv()
         .then((env) => fetch(env.appsMetadataServerUrl + '/apps-metadata.json'))

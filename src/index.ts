@@ -216,23 +216,5 @@ export {
 
 export { mergeSx } from './utils/styles';
 export { setCommonStore } from './redux/commonStore';
-export {
-    backendFetch,
-    backendFetchJson,
-    backendFetchFile,
-    backendFetchText,
-    FetchStatus,
-    getWsBase,
-    getRequestParamFromList,
-    getQueryParamsList,
-    downloadZipFile,
-} from './services/utils';
-export { fetchAppsAndUrls, fetchEnv } from './services/apps-metadata';
-export { fetchElementsInfos } from './services/explore';
-export {
-    fetchRootFolders,
-    fetchDirectoryContent,
-    fetchDirectoryElementPath,
-    elementExists,
-} from './services/directory';
+export * from './services';
 export type { EquipmentInfos } from './utils/EquipmentType';
