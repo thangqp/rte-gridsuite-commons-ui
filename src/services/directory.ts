@@ -25,9 +25,10 @@ export function fetchRootFolders(types: string[]) {
     console.info('Fetching Root Directories');
 
     // Add params to Url
-    const typesParams = getRequestParamFromList(types, 'elementTypes');
-    const urlSearchParams = new URLSearchParams(typesParams);
-
+    const urlSearchParams = getRequestParamFromList(
+        types,
+        'elementTypes'
+    ).toString();
     const fetchRootFoldersUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/root-directories?${urlSearchParams}`;
     return backendFetchJson(fetchRootFoldersUrl, {
         method: 'get',
@@ -39,10 +40,10 @@ export function fetchDirectoryContent(directoryUuid: UUID, types?: string[]) {
     console.info("Fetching Folder content '%s'", directoryUuid);
 
     // Add params to Url
-    const urlSearchParams = types
-        ? getRequestParamFromList(types, 'elementTypes')
-        : [];
-
+    const urlSearchParams = getRequestParamFromList(
+        types,
+        'elementTypes'
+    ).toString();
     const fetchDirectoryContentUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/directories/${directoryUuid}/elements?${urlSearchParams}`;
     return backendFetchJson(fetchDirectoryContentUrl, {
         method: 'get',

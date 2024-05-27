@@ -71,21 +71,23 @@ export function fetchElementsInfos(
         'ids'
     );
 
-    const equipmentTypesParams = equipmentTypes
-        ? getRequestParamFromList(equipmentTypes, 'equipmentTypes')
-        : [];
+    const equipmentTypesParams = getRequestParamFromList(
+        equipmentTypes,
+        'equipmentTypes'
+    );
 
-    const elementTypesParams = elementTypes
-        ? getRequestParamFromList(elementTypes, 'elementTypes')
-        : [];
+    const elementTypesParams = getRequestParamFromList(
+        elementTypes,
+        'elementTypes'
+    );
 
-    const params = new URLSearchParams([
+    const urlSearchParams = new URLSearchParams([
         ...idsParams,
         ...equipmentTypesParams,
         ...elementTypesParams,
     ]).toString();
 
-    const url = `${PREFIX_EXPLORE_SERVER_QUERIES}/v1/explore/elements/metadata?${params}`;
+    const url = `${PREFIX_EXPLORE_SERVER_QUERIES}/v1/explore/elements/metadata?${urlSearchParams}`;
     console.debug(url);
     return backendFetchJson(url, {
         method: 'get',

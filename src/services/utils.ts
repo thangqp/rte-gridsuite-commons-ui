@@ -124,12 +124,10 @@ const parseError = (text: string) => {
 };
 
 export const getRequestParamFromList = (
-    params: string[],
+    params: string[] = [],
     paramName: string
 ) => {
-    return new URLSearchParams(
-        params?.length ? params.map((param) => [paramName, param]) : []
-    );
+    return new URLSearchParams(params.map((param) => [paramName, param]));
 };
 
 export const getWsBase = () =>
