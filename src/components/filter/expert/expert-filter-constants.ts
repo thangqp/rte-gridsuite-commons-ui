@@ -363,25 +363,25 @@ export const FIELDS_OPTIONS = {
     },
     NOMINAL_VOLTAGE_1: {
         name: FieldType.NOMINAL_VOLTAGE_1,
-        label: 'nominalVoltage1Or',
+        label: 'nominalVoltage1KV',
         dataType: DataType.NUMBER,
         inputType: 'number',
     },
     NOMINAL_VOLTAGE_2: {
         name: FieldType.NOMINAL_VOLTAGE_2,
-        label: 'nominalVoltage2Ex',
+        label: 'nominalVoltage2KV',
         dataType: DataType.NUMBER,
         inputType: 'number',
     },
     RATED_VOLTAGE_1: {
         name: FieldType.RATED_VOLTAGE_1,
-        label: 'ratedVoltage1Or',
+        label: 'ratedVoltage1KV',
         dataType: DataType.NUMBER,
         inputType: 'number',
     },
     RATED_VOLTAGE_2: {
         name: FieldType.RATED_VOLTAGE_2,
-        label: 'ratedVoltage2Ex',
+        label: 'ratedVoltage2KV',
         dataType: DataType.NUMBER,
         inputType: 'number',
     },
@@ -541,27 +541,6 @@ export const FIELDS_OPTIONS = {
         valueEditorType: 'select',
         defaultValue: '',
     },
-    VOLTAGE_LEVEL_PROPERTY: {
-        name: FieldType.VOLTAGE_LEVEL_PROPERTY,
-        label: 'voltageLevelProperty',
-        dataType: DataType.PROPERTY,
-        valueEditorType: 'select',
-        defaultValue: '',
-    },
-    VOLTAGE_LEVEL_PROPERTY_1: {
-        name: FieldType.VOLTAGE_LEVEL_PROPERTY_1,
-        label: 'voltageLevelProperty1',
-        dataType: DataType.PROPERTY,
-        valueEditorType: 'select',
-        defaultValue: '',
-    },
-    VOLTAGE_LEVEL_PROPERTY_2: {
-        name: FieldType.VOLTAGE_LEVEL_PROPERTY_2,
-        label: 'voltageLevelProperty2',
-        dataType: DataType.PROPERTY,
-        valueEditorType: 'select',
-        defaultValue: '',
-    },
 };
 
 export const fields: Record<string, Field[]> = {
@@ -601,8 +580,6 @@ export const fields: Record<string, Field[]> = {
         FIELDS_OPTIONS.PROPERTY,
         FIELDS_OPTIONS.SUBSTATION_PROPERTY_1,
         FIELDS_OPTIONS.SUBSTATION_PROPERTY_2,
-        FIELDS_OPTIONS.VOLTAGE_LEVEL_PROPERTY_1,
-        FIELDS_OPTIONS.VOLTAGE_LEVEL_PROPERTY_2,
     ],
     TWO_WINDINGS_TRANSFORMER: [
         FIELDS_OPTIONS.ID,
@@ -633,8 +610,6 @@ export const fields: Record<string, Field[]> = {
         FIELDS_OPTIONS.PROPERTY,
         FIELDS_OPTIONS.SUBSTATION_PROPERTY_1,
         FIELDS_OPTIONS.SUBSTATION_PROPERTY_2,
-        FIELDS_OPTIONS.VOLTAGE_LEVEL_PROPERTY_1,
-        FIELDS_OPTIONS.VOLTAGE_LEVEL_PROPERTY_2,
     ],
     GENERATOR: [
         FIELDS_OPTIONS.ID,
@@ -657,7 +632,6 @@ export const fields: Record<string, Field[]> = {
         FIELDS_OPTIONS.FORCED_OUTAGE_RATE,
         FIELDS_OPTIONS.PROPERTY,
         FIELDS_OPTIONS.SUBSTATION_PROPERTY,
-        FIELDS_OPTIONS.VOLTAGE_LEVEL_PROPERTY,
     ],
     LOAD: [
         FIELDS_OPTIONS.ID,
@@ -671,7 +645,6 @@ export const fields: Record<string, Field[]> = {
         FIELDS_OPTIONS.Q0,
         FIELDS_OPTIONS.PROPERTY,
         FIELDS_OPTIONS.SUBSTATION_PROPERTY,
-        FIELDS_OPTIONS.VOLTAGE_LEVEL_PROPERTY,
     ],
     BATTERY: [
         FIELDS_OPTIONS.ID,
@@ -686,7 +659,6 @@ export const fields: Record<string, Field[]> = {
         FIELDS_OPTIONS.TARGET_Q,
         FIELDS_OPTIONS.PROPERTY,
         FIELDS_OPTIONS.SUBSTATION_PROPERTY,
-        FIELDS_OPTIONS.VOLTAGE_LEVEL_PROPERTY,
     ],
     SHUNT_COMPENSATOR: [
         FIELDS_OPTIONS.ID,
@@ -704,6 +676,5 @@ export const fields: Record<string, Field[]> = {
         FIELDS_OPTIONS.SWITCHED_ON_SUSCEPTANCE,
         FIELDS_OPTIONS.PROPERTY,
         FIELDS_OPTIONS.SUBSTATION_PROPERTY,
-        FIELDS_OPTIONS.VOLTAGE_LEVEL_PROPERTY,
     ],
 };
