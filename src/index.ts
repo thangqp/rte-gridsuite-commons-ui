@@ -48,6 +48,10 @@ export {
     Substation,
     noSelectionForCopy,
 } from './utils/equipment-types';
+export type {
+    TreeViewFinderProps,
+    TreeViewFinderNodeProps,
+} from './components/TreeViewFinder';
 
 export { FieldConstants } from './utils/field-constants';
 

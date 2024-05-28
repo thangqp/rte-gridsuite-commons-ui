@@ -14,7 +14,11 @@ export interface ErrorWithStatus extends Error {
     status?: number;
 }
 
-export const backendFetch = (url: string, init: any, token?: string) => {
+export const backendFetch = (
+    url: string,
+    init: any,
+    token?: string
+): Promise<any> => {
     const initCopy = prepareRequest(init, token);
     return safeFetch(url, initCopy);
 };

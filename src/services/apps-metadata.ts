@@ -20,6 +20,7 @@ export type MetadataCommon = {
     url: Url;
     appColor: string;
     hiddenInAppsMenu: boolean;
+    defaultCountry?: string;
 };
 
 export type MetadataStudy = MetadataCommon & {
