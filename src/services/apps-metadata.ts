@@ -1,11 +1,11 @@
-import { PredefinedProperties } from '../utils/types';
-
 /**
  * Copyright (c) 2024, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import { PredefinedProperties } from '../utils/types';
+
 // https://github.com/gridsuite/deployment/blob/main/docker-compose/docker-compose.base.yml
 // https://github.com/gridsuite/deployment/blob/main/k8s/resources/common/config/apps-metadata.json
 export type MetadataJson = MetadataCommon | MetadataStudy;

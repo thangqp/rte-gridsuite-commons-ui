@@ -18,7 +18,7 @@ export const backendFetch = (
     url: string,
     init: any,
     token?: string
-): Promise<any> => {
+): Promise<unknown> => {
     const initCopy = prepareRequest(init, token);
     return safeFetch(url, initCopy);
 };
