@@ -173,7 +173,7 @@ const DirectoryItemSelector: FunctionComponent<DirectoryItemSelectorProps> = ({
                             equipmentTypes
                         ).then((childrenWithMetadata) => {
                             const children = itemFilter
-                                ? childrenWithMetadata.filter((val: any) => {
+                                ? childrenWithMetadata.filter((val) => {
                                       // Accept every directory
                                       if (val.type === ElementType.DIRECTORY) {
                                           return true;

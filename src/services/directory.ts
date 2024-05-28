@@ -11,17 +11,14 @@ import {
     getRequestParamFromList,
 } from './utils';
 import { UUID } from 'crypto';
+import { ElementAttributes } from '../utils/ElementAttributes';
 
 const PREFIX_DIRECTORY_SERVER_QUERIES =
     import.meta.env.VITE_API_GATEWAY + '/directory';
 
-function getPathUrl(elementUuid: UUID) {
-    return `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/elements/${encodeURIComponent(
-        elementUuid
-    )}/path`;
-}
-
-export function fetchRootFolders(types: string[]) {
+export function fetchRootFolders(
+    types: string[]
+): Promise<ElementAttributes[]> {
     console.info('Fetching Root Directories');
 
     // Add params to Url
@@ -36,7 +33,10 @@ export function fetchRootFolders(types: string[]) {
     });
 }
 
-export function fetchDirectoryContent(directoryUuid: UUID, types?: string[]) {
+export function fetchDirectoryContent(
+    directoryUuid: UUID,
+    types?: string[]
+): Promise<ElementAttributes[]> {
     console.info("Fetching Folder content '%s'", directoryUuid);
 
     // Add params to Url
@@ -44,16 +44,24 @@ export function fetchDirectoryContent(directoryUuid: UUID, types?: string[]) {
         types,
         'elementTypes'
     ).toString();
-    const fetchDirectoryContentUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/directories/${directoryUuid}/elements?${urlSearchParams}`;
+
+    let fetchDirectoryContentUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/directories/${directoryUuid}/elements`;
+    if (urlSearchParams.length > 0) {
+        fetchDirectoryContentUrl += `?${urlSearchParams}`;
+    }
     return backendFetchJson(fetchDirectoryContentUrl, {
         method: 'get',
         headers: { 'Content-Type': 'application/json' },
     });
 }
 
-export function fetchDirectoryElementPath(elementUuid: UUID) {
+export function fetchDirectoryElementPath(
+    elementUuid: UUID
+): Promise<ElementAttributes[]> {
     console.info(`Fetching element '${elementUuid}' and its parents info ...`);
-    const fetchPathUrl = getPathUrl(elementUuid);
+    const fetchPathUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/elements/${encodeURIComponent(
+        elementUuid
+    )}/path`;
     console.debug(fetchPathUrl);
     return backendFetchJson(fetchPathUrl, {
         method: 'get',
