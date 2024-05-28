@@ -14,21 +14,21 @@ export interface ErrorWithStatus extends Error {
     status?: number;
 }
 
-export const backendFetch = (
+export function backendFetch<T>(
     url: string,
     init: any,
     token?: string
-): Promise<any> => {
+): Promise<T> {
     const initCopy = prepareRequest(init, token);
     return safeFetch(url, initCopy);
-};
+}
 
 export async function backendFetchJson(
     url: string,
     init?: any,
     token?: string
 ) {
-    return (await backendFetch(url, init, token)).json();
+    return (await backendFetch<Response>(url, init, token)).json();
 }
 
 export async function backendFetchText(
@@ -36,7 +36,7 @@ export async function backendFetchText(
     init?: any,
     token?: string
 ) {
-    return (await backendFetch(url, init, token)).text();
+    return (await backendFetch<Response>(url, init, token)).text();
 }
 
 export async function backendFetchFile(
@@ -44,7 +44,7 @@ export async function backendFetchFile(
     init?: any,
     token?: string
 ) {
-    return (await backendFetch(url, init, token)).blob();
+    return (await backendFetch<Response>(url, init, token)).blob();
 }
 
 export enum FileType {
@@ -80,11 +80,11 @@ function prepareRequest(init?: InitRequest, token?: Token): RequestInit {
     return initCopy;
 }
 
-const safeFetch = (url: string, initCopy: any) => {
+function safeFetch<T>(url: string, initCopy: any): Promise<T> {
     return fetch(url, initCopy).then((response) =>
         response.ok ? response : handleError(response)
-    );
-};
+    ) as Promise<T>;
+}
 
 function handleError(response: Response): Promise<never> {
     return response.text().then((text: string) => {

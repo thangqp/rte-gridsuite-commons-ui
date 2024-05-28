@@ -77,8 +77,8 @@ export function elementExists(
     const existsElementUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/directories/${directoryUuid}/elements/${elementName}/types/${type}`;
 
     console.debug(existsElementUrl);
-    return backendFetch(existsElementUrl, { method: 'head' }).then(
-        (response: Response) => {
+    return backendFetch<Response>(existsElementUrl, { method: 'head' }).then(
+        (response) => {
             return response.status !== 204; // HTTP 204 : No-content
         }
     );
