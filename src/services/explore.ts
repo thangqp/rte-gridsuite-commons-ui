@@ -82,11 +82,11 @@ export function fetchElementsInfos(
         'elementTypes'
     );
 
-    const urlSearchParams = new URLSearchParams({
-        ...Object.fromEntries(idsParams),
-        ...Object.fromEntries(equipmentTypesParams),
-        ...Object.fromEntries(elementTypesParams),
-    }).toString();
+    const urlSearchParams = new URLSearchParams([
+        ...idsParams,
+        ...equipmentTypesParams,
+        ...elementTypesParams,
+    ]).toString();
 
     const url = `${PREFIX_EXPLORE_SERVER_QUERIES}/v1/explore/elements/metadata?${urlSearchParams}`;
     console.debug(url);
