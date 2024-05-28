@@ -73,7 +73,7 @@ function prepareRequest(init?: InitRequest, token?: Token): RequestInit {
             `Argument 2 of backendFetch is not an object ${typeof init}`
         );
     }
-    const initCopy: RequestInit = { ...init };
+    const initCopy: RequestInit = Object.assign({}, init);
     initCopy.headers = new Headers(initCopy.headers || {});
     const tokenCopy = token ?? getUserToken();
     initCopy.headers.append('Authorization', 'Bearer ' + tokenCopy);
@@ -121,11 +121,7 @@ export const getRequestParamFromList = (
     return new URLSearchParams(params.map((param) => [paramName, param]));
 };
 
-export function getWsBase(): string {
-    // We use the `baseURI` (from `<base/>` in index.html) to build the URL, which is corrected by httpd/nginx
-    return (
-        document.baseURI
-            .replace(/^http(s?):\/\//, 'ws$1://')
-            .replace(/\/+$/, '') + import.meta.env.VITE_WS_GATEWAY
-    );
-}
+export const getWsBase = () =>
+    document.baseURI
+        .replace(/^http:\/\//, 'ws://')
+        .replace(/^https:\/\//, 'wss://');
