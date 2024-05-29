@@ -91,14 +91,19 @@ function handleError(response: Response): Promise<never> {
         const errorName = 'HttpResponseError : ';
         let error: ErrorWithStatus;
         const errorJson = parseError(text);
-        if (errorJson?.status && errorJson?.error && errorJson?.message) {
+        if (
+            errorJson &&
+            errorJson.status &&
+            errorJson.error &&
+            errorJson.message
+        ) {
             error = new Error(
                 `${errorName}${errorJson.status} ${errorJson.error}, message : ${errorJson.message}`
             ) as ErrorWithStatus;
             error.status = errorJson.status;
         } else {
             error = new Error(
-                `${errorName}${response.status} ${response.statusText}`
+                `${errorName}${response.status} ${response.statusText}, message : ' ${text}`
             ) as ErrorWithStatus;
             error.status = response.status;
         }

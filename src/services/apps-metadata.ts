@@ -8,7 +8,7 @@ import { PredefinedProperties } from '../utils/types';
 
 // https://github.com/gridsuite/deployment/blob/main/docker-compose/docker-compose.base.yml
 // https://github.com/gridsuite/deployment/blob/main/k8s/resources/common/config/apps-metadata.json
-export type MetadataJson = MetadataCommon | MetadataStudy;
+export type Metadata = MetadataCommon | MetadataStudy;
 export type Url = string | URL;
 
 export function fetchEnv() {
@@ -20,7 +20,6 @@ export type MetadataCommon = {
     url: Url;
     appColor: string;
     hiddenInAppsMenu: boolean;
-    defaultCountry?: string;
 };
 
 export type MetadataStudy = MetadataCommon & {
@@ -37,16 +36,17 @@ export type MetadataStudy = MetadataCommon & {
         enableDeveloperMode?: string; //maybe 'true'|'false' type?
         mapManualRefresh?: string; //maybe 'true'|'false' type?
     };
+    defaultCountry?: string;
 };
 
-export function fetchAppsMetadata(): Promise<MetadataJson[]> {
+export function fetchAppsMetadata(): Promise<Metadata[]> {
     console.info(`Fetching apps and urls...`);
     return fetchEnv()
         .then((env) => fetch(env.appsMetadataServerUrl + '/apps-metadata.json'))
         .then((response) => response.json());
 }
 
-const isStudyMetadata = (metadata: MetadataJson): metadata is MetadataStudy => {
+const isStudyMetadata = (metadata: Metadata): metadata is MetadataStudy => {
     return metadata.name === 'Study';
 };
 
