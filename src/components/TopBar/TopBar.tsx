@@ -48,7 +48,7 @@ import GridLogo, { GridLogoProps } from './GridLogo';
 import AboutDialog, { AboutDialogProps } from './AboutDialog';
 import { LogoutProps } from '../Login/Logout';
 import { User } from 'oidc-client';
-import { Metadata } from '../../hooks/predefined-properties-hook';
+import { Metadata } from '../../services';
 
 const styles = {
     grow: {
@@ -309,7 +309,7 @@ const TopBar = ({
                                         <Box
                                             component="a"
                                             key={item.name}
-                                            href={item.url}
+                                            href={item.url as string}
                                             sx={styles.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
