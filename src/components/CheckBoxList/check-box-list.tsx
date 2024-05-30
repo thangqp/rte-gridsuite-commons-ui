@@ -5,31 +5,57 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import PropTypes from 'prop-types';
-import { List, ListItem } from '@mui/material';
-import { useEffect, useState } from 'react';
-import IconButton from '@mui/material/IconButton';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator.js';
-import Divider from '@mui/material/Divider';
+import React, {
+    useEffect,
+    useState,
+    MouseEvent,
+    FunctionComponent,
+} from 'react';
+import { List, ListItem, IconButton, Divider, Box } from '@mui/material';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Draggable } from 'react-beautiful-dnd';
-import React from 'react';
-import { useMultiselect } from './use-multiselect.ts';
-import { Box } from '@mui/system';
-import CheckBoxItem from './check-box-item.tsx';
+import { useMultiselect } from './use-multiselect';
+import CheckBoxItem, { HasId } from './check-box-item';
 
-export const areIdsEqual = (val1, val2) => {
+interface CheckboxListProps {
+    itemRenderer?: (params: {
+        item: any;
+        index: number;
+        checked: boolean;
+        toggleSelection: (id: any) => void;
+    }) => React.ReactNode;
+    values: any[];
+    itemComparator?: (val1: any, val2: any) => boolean;
+    isAllSelected: boolean;
+    setIsAllSelected: (value: boolean) => void;
+    setIsPartiallySelected: (value: boolean) => void;
+    getValueId: (value: any) => any;
+    getValueLabel?: (value: any) => string;
+    checkboxListSx?: any;
+    labelSx?: any;
+    enableKeyboardSelection?: boolean;
+    isCheckBoxDraggable?: boolean;
+    isDragDisable?: boolean;
+    draggableProps?: any;
+    secondaryAction?: (item: HasId) => React.ReactElement;
+    enableSecondaryActionOnHover?: boolean;
+    [key: string]: any;
+}
+
+export const areIdsEqual = (val1: any, val2: any) => {
     return val1.id === val2.id;
 };
 
 const styles = {
-    dragIcon: (theme) => ({
+    dragIcon: (theme: any) => ({
         padding: theme.spacing(0),
         border: theme.spacing(1),
         borderRadius: theme.spacing(0),
         zIndex: 90,
     }),
 };
-const CheckboxList = ({
+
+const CheckboxList: FunctionComponent<CheckboxListProps> = ({
     itemRenderer,
     values = [],
     itemComparator = areIdsEqual,
@@ -56,8 +82,10 @@ const CheckboxList = ({
         handleShiftAndCtrlClick,
     } = useMultiselect(values.map((v) => getValueId(v)));
 
-    const isChecked = (item) =>
-        selectedIds.some((checkedItem) => itemComparator(checkedItem, item));
+    const isChecked = (item: any) =>
+        selectedIds.some((checkedItem: any) =>
+            itemComparator(checkedItem, item)
+        );
 
     const [hover, setHover] = useState(false);
 
@@ -81,14 +109,17 @@ const CheckboxList = ({
         }
     }, [selectedIds, values, setIsAllSelected, setIsPartiallySelected]);
 
-    const handleCheckBoxClicked = (event, item) => {
+    const handleCheckBoxClicked = (
+        event: MouseEvent<HTMLButtonElement>,
+        item: any
+    ) => {
         toggleSelection(getValueId(item));
         if (enableKeyboardSelection) {
             handleShiftAndCtrlClick(event, getValueId(item));
         }
     };
 
-    const handleSecondaryAction = (item) => {
+    const handleSecondaryAction = (item: any) => {
         if (!secondaryAction) {
             return undefined;
         }
@@ -116,14 +147,14 @@ const CheckboxList = ({
                     });
                 }
                 return (
-                    <>
+                    <React.Fragment key={getValueId(item)}>
                         {isCheckBoxDraggable && (
                             <Draggable
-                                draggableId={getValueId(item)}
+                                draggableId={String(getValueId(item))}
                                 index={index}
                                 isDragDisabled={isDragDisable}
                             >
-                                {(provided) => (
+                                {(provided: any) => (
                                     <Box
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
@@ -132,14 +163,13 @@ const CheckboxList = ({
                                         {...draggableProps}
                                     >
                                         <ListItem
-                                            key={getValueId(item)}
                                             {...props}
                                             sx={checkboxListSx}
                                         >
                                             <IconButton
                                                 {...provided.dragHandleProps}
                                                 sx={styles.dragIcon}
-                                                size={'small'}
+                                                size="small"
                                                 style={{
                                                     opacity:
                                                         hover && !isDragDisable
@@ -147,19 +177,23 @@ const CheckboxList = ({
                                                             : '0',
                                                 }}
                                             >
-                                                <DragIndicatorIcon
-                                                    edge="start"
-                                                    spacing={0}
-                                                />
+                                                <DragIndicatorIcon />
                                             </IconButton>
                                             <CheckBoxItem
                                                 item={item}
                                                 checked={isChecked(item)}
                                                 getLabel={getValueLabel(item)}
-                                                onClick={handleCheckBoxClicked}
-                                                secondaryAction={
-                                                    handleSecondaryAction
+                                                onClick={(
+                                                    e: MouseEvent<HTMLButtonElement>
+                                                ) =>
+                                                    handleCheckBoxClicked(
+                                                        e,
+                                                        item
+                                                    )
                                                 }
+                                                secondaryAction={handleSecondaryAction(
+                                                    item
+                                                )}
                                                 labelSx={labelSx}
                                             />
                                         </ListItem>
@@ -172,13 +206,15 @@ const CheckboxList = ({
                                 item={item}
                                 checked={isChecked(item)}
                                 getLabel={getValueLabel(item)}
-                                onClick={handleCheckBoxClicked}
-                                secondaryAction={handleSecondaryAction}
+                                onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                                    handleCheckBoxClicked(e, item)
+                                }
+                                secondaryAction={handleSecondaryAction(item)}
                                 labelSx={labelSx}
                             />
                         )}
                         {index !== values.length - 1 && <Divider />}
-                    </>
+                    </React.Fragment>
                 );
             })}
         </List>
@@ -186,18 +222,3 @@ const CheckboxList = ({
 };
 
 export default CheckboxList;
-
-CheckboxList.propTypes = {
-    itemRenderer: PropTypes.func,
-    values: PropTypes.array,
-    itemComparator: PropTypes.func,
-    setIsAllSelected: PropTypes.func,
-    setIsPartiallySelected: PropTypes.func,
-    getValueId: PropTypes.func,
-    getValueLabel: PropTypes.func,
-    enableKeyboardSelection: PropTypes.bool,
-    secondaryAction: PropTypes.func,
-    isCheckBoxDraggable: PropTypes.bool,
-    isDragDisable: PropTypes.bool,
-    draggableProps: PropTypes.object,
-};

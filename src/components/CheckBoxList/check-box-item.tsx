@@ -19,7 +19,7 @@ export interface CheckBoxItemProps {
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
         id: HasId
     ) => void;
-    secondaryAction?: (item: HasId) => React.ReactElement;
+    secondaryAction?: React.ReactElement | undefined;
 }
 
 const CheckBoxItem: FunctionComponent<CheckBoxItemProps> = ({
@@ -45,7 +45,7 @@ const CheckBoxItem: FunctionComponent<CheckBoxItemProps> = ({
                 />
             </ListItemIcon>
             <OverflowableText sx={labelSx} text={getLabel(item)} />
-            {secondaryAction && secondaryAction(item)}
+            {secondaryAction && secondaryAction}
         </>
     );
 };
