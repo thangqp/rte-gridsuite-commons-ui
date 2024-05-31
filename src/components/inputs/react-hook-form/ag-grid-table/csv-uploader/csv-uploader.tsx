@@ -21,6 +21,11 @@ import { useWatch } from 'react-hook-form';
 import { CancelButton } from '../../../../../index';
 import { FieldConstants } from '../../../../../utils/field-constants';
 
+interface CsvConfigProps {
+    delimiter?: string;
+    delimitersToGuess?: string[];
+}
+
 interface CsvUploaderProps {
     name: string;
     onClose: () => void;
@@ -32,6 +37,7 @@ interface CsvUploaderProps {
     validateData: (rows: string[][]) => boolean;
     getDataFromCsv: any;
     useFieldArrayOutput: any;
+    csvConfig?: CsvConfigProps;
 }
 
 const CsvUploader: FunctionComponent<CsvUploaderProps> = ({
@@ -45,6 +51,10 @@ const CsvUploader: FunctionComponent<CsvUploaderProps> = ({
     validateData = (_rows) => true,
     getDataFromCsv,
     useFieldArrayOutput,
+    csvConfig = {
+        delimiter: ',',
+        delimitersToGuess: [',', '	', '|', ';'],
+    },
 }) => {
     const watchTableValues = useWatch({ name });
     const { append, replace } = useFieldArrayOutput;
@@ -215,6 +225,7 @@ const CsvUploader: FunctionComponent<CsvUploaderProps> = ({
                                         setImportedData([...results.data]);
                                         setCreateError('');
                                     }}
+                                    config={csvConfig}
                                 >
                                     {({ getRootProps, acceptedFile }: any) => (
                                         <>
