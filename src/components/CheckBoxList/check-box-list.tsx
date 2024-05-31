@@ -10,6 +10,7 @@ import React, {
     useState,
     MouseEvent,
     FunctionComponent,
+    useCallback,
 } from 'react';
 import { List, ListItem, IconButton, Divider, Box } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -82,15 +83,25 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
         handleShiftAndCtrlClick,
     } = useMultiselect(values.map((v) => getValueId(v)));
 
-    const isChecked = (item: any) =>
-        selectedIds.some((checkedItem: any) =>
-            itemComparator(checkedItem, item)
-        );
+    const isChecked = useCallback(
+        (item: any) => {
+            console.log('testing is selectedIds : ', selectedIds);
+            console.log('testing is item : ', item);
 
-    const [hover, setHover] = useState(false);
+            const check = selectedIds.some((checkedItem: any) =>
+                itemComparator(checkedItem, item)
+            );
+            console.log('testing is checked : ', check);
+
+            return check;
+        },
+        [selectedIds, itemComparator]
+    );
+
+    const [hover, setHover] = useState(null);
 
     useEffect(() => {
-        if (isAllSelected === true) {
+        if (isAllSelected) {
             toggleSelectAll();
         } else {
             clearSelection();
@@ -98,8 +109,8 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
     }, [isAllSelected, clearSelection, toggleSelectAll]);
 
     useEffect(() => {
-        if (selectedIds?.length > 0) {
-            if (selectedIds.length === values?.length) {
+        if (selectedIds.length > 0) {
+            if (selectedIds.length === values.length) {
                 setIsAllSelected(true);
             } else {
                 setIsPartiallySelected(true);
@@ -107,7 +118,7 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
         } else {
             setIsAllSelected(false);
         }
-    }, [selectedIds, values, setIsAllSelected, setIsPartiallySelected]);
+    }, [selectedIds, values.length, setIsAllSelected, setIsPartiallySelected]);
 
     const handleCheckBoxClicked = (
         event: MouseEvent<HTMLButtonElement>,
@@ -128,7 +139,7 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
             return secondaryAction(item);
         }
 
-        if (hover) {
+        if (hover === getValueId(item)) {
             return secondaryAction(item);
         }
 
@@ -158,8 +169,10 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
                                     <Box
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
-                                        onMouseEnter={() => setHover(true)}
-                                        onMouseLeave={() => setHover(false)}
+                                        onMouseEnter={() =>
+                                            setHover(getValueId(item))
+                                        }
+                                        onMouseLeave={() => setHover(null)}
                                         {...draggableProps}
                                     >
                                         <ListItem
@@ -172,7 +185,9 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
                                                 size="small"
                                                 style={{
                                                     opacity:
-                                                        hover && !isDragDisable
+                                                        hover ===
+                                                            getValueId(item) &&
+                                                        !isDragDisable
                                                             ? '1'
                                                             : '0',
                                                 }}
@@ -182,7 +197,7 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
                                             <CheckBoxItem
                                                 item={item}
                                                 checked={isChecked(item)}
-                                                getLabel={getValueLabel(item)}
+                                                getLabel={getValueLabel}
                                                 onClick={(
                                                     e: MouseEvent<HTMLButtonElement>
                                                 ) =>

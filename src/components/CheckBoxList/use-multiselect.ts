@@ -1,10 +1,4 @@
-/**
- * Copyright (c) 2024, RTE (http://www.rte-france.com)
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * Hook to deal with list of components multiselection
@@ -13,7 +7,6 @@ import React, { useCallback, useEffect, useState } from 'react';
  */
 export const useMultiselect = (elementIds: string[]) => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    // used for shift clicking selection, stores last clicked element for selection
     const [lastSelectedElementId, setLastSelectedElementId] = useState<
         string | null
     >(null);
@@ -24,67 +17,54 @@ export const useMultiselect = (elementIds: string[]) => {
 
     useEffect(() => {
         clearSelection();
+        console.log(lastSelectedElementId);
         setLastSelectedElementId(null);
-    }, [elementIds]);
+    }, [elementIds, lastSelectedElementId]);
 
-    /**
-     * toggle selection for one element
-     * @param elementId id of element to toggle
-     * @param forceState if defined, it will force element state instead of toggling (false -> unselect element ; true -> select element)
-     */
     const toggleSelection = useCallback(
         (elementToToggleId: string) => {
-            let element = elementIds?.find((id) => id === elementToToggleId);
-            if (element === undefined) {
-                return;
-            }
-
-            const elementToToggleIdIndex =
-                selectedIds.indexOf(elementToToggleId);
-            // if element to toggle is not selected, we select it
-            if (elementToToggleIdIndex < 0) {
-                selectedIds.push(elementToToggleId);
+            const elementIndex = selectedIds.indexOf(elementToToggleId);
+            let newSelectedIds;
+            if (elementIndex < 0) {
+                newSelectedIds = [...selectedIds, elementToToggleId];
             } else {
-                selectedIds.splice(elementToToggleIdIndex, 1);
+                newSelectedIds = selectedIds.filter(
+                    (id) => id !== elementToToggleId
+                );
             }
-
-            setSelectedIds([...selectedIds]);
+            setSelectedIds(newSelectedIds);
             setLastSelectedElementId(elementToToggleId);
         },
-        [selectedIds, elementIds]
+        [selectedIds]
     );
 
-    const addElementsToSelection = useCallback(
+    /*const addElementsToSelection = useCallback(
         (elementsToSelectIds: string[]) => {
-            elementsToSelectIds
-                .filter(
-                    (elementToSelectId) =>
-                        !selectedIds.includes(elementToSelectId)
-                )
-                .forEach((elementToSelectId) => {
-                    selectedIds.push(elementToSelectId);
-                });
-            setSelectedIds([...selectedIds]);
+            const newSelectedIds = [
+                ...selectedIds,
+                ...elementsToSelectIds.filter(
+                    (id) => !selectedIds.includes(id)
+                ),
+            ];
+            setSelectedIds(newSelectedIds);
         },
         [selectedIds]
-    );
+    );*/
 
-    const removeElementsFromSelection = useCallback(
-        (elementsToUnselectIds: string[]) =>
-            setSelectedIds([
-                ...selectedIds.filter(
-                    (id) => !elementsToUnselectIds.includes(id)
-                ),
-            ]),
+    /*const removeElementsFromSelection = useCallback(
+        (elementsToUnselectIds: string[]) => {
+            const newSelectedIds = selectedIds.filter(
+                (id) => !elementsToUnselectIds.includes(id)
+            );
+            setSelectedIds(newSelectedIds);
+        },
         [selectedIds]
-    );
+    ); */
 
-    const handleShiftClick = useCallback(
+    /*const handleShiftClick = useCallback(
         (clickedElementId: string) => {
-            // remove text selection due to shift clicking
             window.getSelection()?.empty();
 
-            // sorted list of displayed elements
             const lastSelectedIdIndex = lastSelectedElementId
                 ? elementIds.indexOf(lastSelectedElementId)
                 : -1;
@@ -94,23 +74,19 @@ export const useMultiselect = (elementIds: string[]) => {
                 return;
             }
 
-            // if no lastSelectedId is found (first click, or unknown id), we only toggle clicked element
             if (lastSelectedIdIndex < 0) {
                 toggleSelection(clickedElementId);
                 return;
             }
 
-            // list of elements between lastClickedElement and clickedElement, both included
             const elementsToToggle = elementIds.slice(
                 Math.min(lastSelectedIdIndex, clickedElementIdIndex),
                 Math.max(lastSelectedIdIndex, clickedElementIdIndex) + 1
             );
 
             if (selectedIds.includes(clickedElementId)) {
-                // if clicked element is checked, we unchecked all elements between last clicked element and clicked element
                 removeElementsFromSelection(elementsToToggle);
             } else {
-                // if clicked element is unchecked, we check all elements between last clicked element and clicked element
                 addElementsToSelection(elementsToToggle);
             }
             setLastSelectedElementId(clickedElementId);
@@ -123,39 +99,30 @@ export const useMultiselect = (elementIds: string[]) => {
             removeElementsFromSelection,
             toggleSelection,
         ]
-    );
+    );*/
 
     const handleShiftAndCtrlClick = (
         clickEvent: React.MouseEvent<HTMLButtonElement, MouseEvent>,
         clickedElementId: string
     ) => {
         if (clickEvent.shiftKey) {
-            // if component is clicked while shift is pressed, range of components selection is toggled, depending on clicked element state
-            handleShiftClick(clickedElementId);
-            // nothing else happens, hence the return
+            //handleShiftClick(clickedElementId);
             return;
         }
 
         if (clickEvent.ctrlKey) {
-            // if component is clicked while ctrl is pressed, component selection is toggled
             toggleSelection(clickedElementId);
-            // nothing else happens, hence the return
             return;
         }
     };
 
-    /**
-     * toggle selection for all element depending on current selectedIds
-     * @param elementsToSelectIds if defined, it will toggle only elementsToSelectIds instead of all elementIds
-     * @param forceSelectedIds if true, it will set selection to elementsToSelectIds/elementIds without checking current selectedIds
-     */
-    function toggleSelectAll() {
+    const toggleSelectAll = () => {
         if (selectedIds.length === 0) {
             setSelectedIds([...elementIds]);
         } else {
             setSelectedIds([]);
         }
-    }
+    };
 
     return {
         selectedIds,
