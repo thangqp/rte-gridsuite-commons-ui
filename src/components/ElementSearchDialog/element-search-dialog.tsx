@@ -53,9 +53,12 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
 
     const displayedValue = useMemo(() => {
         return searchTermDisabled || searchTermDisableReason
-            ? searchTermDisableReason ?? 'search disabled'
+            ? searchTermDisableReason ??
+                  intl.formatMessage({
+                      id: 'element_search/searchDisabled',
+                  })
             : searchTerm ?? '';
-    }, [searchTerm, searchTermDisabled, searchTermDisableReason]);
+    }, [searchTermDisabled, searchTermDisableReason, intl, searchTerm]);
 
     const handleClose = useCallback(() => {
         onSearchTermChange('');
