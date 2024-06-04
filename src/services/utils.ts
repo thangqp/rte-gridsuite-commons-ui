@@ -6,6 +6,7 @@
  */
 
 import { getUserToken } from '../redux/commonStore';
+import { fetchEnv, fetchStudyMetadata } from '@gridsuite/commons-ui';
 
 export type InitRequest = Partial<RequestInit>;
 export type Token = string;
@@ -14,11 +15,7 @@ export interface ErrorWithStatus extends Error {
     status?: number;
 }
 
-export function backendFetch<T>(
-    url: string,
-    init: any,
-    token?: string
-): Promise<T> {
+export function backendFetch(url: string, init: any, token?: string) {
     const initCopy = prepareRequest(init, token);
     return safeFetch(url, initCopy);
 }
@@ -28,7 +25,7 @@ export async function backendFetchJson(
     init?: any,
     token?: string
 ) {
-    return (await backendFetch<Response>(url, init, token)).json();
+    return (await backendFetch(url, init, token)).json();
 }
 
 export async function backendFetchText(
@@ -36,7 +33,7 @@ export async function backendFetchText(
     init?: any,
     token?: string
 ) {
-    return (await backendFetch<Response>(url, init, token)).text();
+    return (await backendFetch(url, init, token)).text();
 }
 
 export async function backendFetchFile(
@@ -44,7 +41,7 @@ export async function backendFetchFile(
     init?: any,
     token?: string
 ) {
-    return (await backendFetch<Response>(url, init, token)).blob();
+    return (await backendFetch(url, init, token)).blob();
 }
 
 export enum FileType {
@@ -80,10 +77,10 @@ function prepareRequest(init?: InitRequest, token?: Token): RequestInit {
     return initCopy;
 }
 
-function safeFetch<T>(url: string, initCopy: any): Promise<T> {
+function safeFetch(url: string, initCopy: any) {
     return fetch(url, initCopy).then((response) =>
         response.ok ? response : handleError(response)
-    ) as Promise<T>;
+    );
 }
 
 function handleError(response: Response): Promise<never> {
@@ -130,3 +127,61 @@ export const getWsBase = () =>
     document.baseURI
         .replace(/^http:\/\//, 'ws://')
         .replace(/^https:\/\//, 'wss://');
+
+export function fetchIdpSettings() {
+    return fetch('idpSettings.json');
+}
+
+export function fetchAuthorizationCodeFlowFeatureFlag() {
+    console.info(`Fetching authorization code flow feature flag...`);
+    return fetchEnv()
+        .then((env) =>
+            fetch(env.appsMetadataServerUrl + '/authentication.json')
+        )
+        .then((res) => res.json())
+        .then((res) => {
+            console.log(
+                `Authorization code flow is ${
+                    res.authorizationCodeFlowFeatureFlag
+                        ? 'enabled'
+                        : 'disabled'
+                }`
+            );
+            return res.authorizationCodeFlowFeatureFlag;
+        })
+        .catch((error) => {
+            console.error(error);
+            console.warn(
+                `Something wrong happened when retrieving authentication.json: authorization code flow will be disabled`
+            );
+            return false;
+        });
+}
+
+export function fetchVersion() {
+    console.info(`Fetching global metadata...`);
+    return fetchEnv()
+        .then((env) => fetch(env.appsMetadataServerUrl + '/version.json'))
+        .then((response) => response.json())
+        .catch((reason) => {
+            console.error('Error while fetching the version : ' + reason);
+            return reason;
+        });
+}
+
+export const fetchDefaultParametersValues = () => {
+    return fetchStudyMetadata().then((studyMetadata) => {
+        console.info(
+            'fecthing default parameters values from apps-metadata file'
+        );
+        return studyMetadata.defaultParametersValues;
+    });
+};
+
+export function getUrlWithToken(baseUrl: string) {
+    if (baseUrl.includes('?')) {
+        return baseUrl + '&access_token=' + getUserToken();
+    } else {
+        return baseUrl + '?access_token=' + getUserToken();
+    }
+}
