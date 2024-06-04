@@ -8,21 +8,30 @@ import { PredefinedProperties } from '../utils/types';
 
 // https://github.com/gridsuite/deployment/blob/main/docker-compose/docker-compose.base.yml
 // https://github.com/gridsuite/deployment/blob/main/k8s/resources/common/config/apps-metadata.json
-export type Metadata = MetadataCommon | MetadataStudy;
 export type Url = string | URL;
 
-export function fetchEnv() {
-    return fetch('env.json').then((res) => res.json());
+export type Env = {
+    appsMetadataServerUrl?: Url;
+    mapBoxToken?: string;
+    // https://github.com/gridsuite/deployment/blob/main/docker-compose/env.json
+    // https://github.com/gridsuite/deployment/blob/main/k8s/live/azure-dev/env.json
+    // https://github.com/gridsuite/deployment/blob/main/k8s/live/azure-integ/env.json
+    // https://github.com/gridsuite/deployment/blob/main/k8s/live/local/env.json
+    //[key: string]: string;
+};
+
+export async function fetchEnv(): Promise<Env> {
+    return (await fetch('env.json')).json();
 }
 
-export type MetadataCommon = {
+export type CommonMetadata = {
     name: string;
     url: Url;
     appColor: string;
     hiddenInAppsMenu: boolean;
 };
 
-export type MetadataStudy = MetadataCommon & {
+export type StudyMetadata = CommonMetadata & {
     readonly name: 'Study';
     resources?: {
         types: string[];
@@ -39,24 +48,25 @@ export type MetadataStudy = MetadataCommon & {
     defaultCountry?: string;
 };
 
-export function fetchAppsMetadata(): Promise<Metadata[]> {
+export async function fetchAppsMetadata(): Promise<CommonMetadata[]> {
     console.info(`Fetching apps and urls...`);
-    return fetchEnv()
-        .then((env) => fetch(env.appsMetadataServerUrl + '/apps-metadata.json'))
-        .then((response) => response.json());
+    const env = await fetchEnv();
+    const res = await fetch(env.appsMetadataServerUrl + '/apps-metadata.json');
+    return res.json();
 }
 
-const isStudyMetadata = (metadata: Metadata): metadata is MetadataStudy => {
+const isStudyMetadata = (
+    metadata: CommonMetadata
+): metadata is StudyMetadata => {
     return metadata.name === 'Study';
 };
 
-export function fetchStudyMetadata(): Promise<MetadataStudy> {
+export async function fetchStudyMetadata(): Promise<StudyMetadata> {
     console.info(`Fetching study metadata...`);
-    return fetchAppsMetadata().then((res) => {
-        const studyMetadata = res.filter(isStudyMetadata);
-        if (!studyMetadata) {
-            return Promise.reject('Study entry could not be found in metadata');
-        }
+    const studyMetadata = (await fetchAppsMetadata()).filter(isStudyMetadata);
+    if (!studyMetadata) {
+        throw new Error('Study entry could not be found in metadata');
+    } else {
         return studyMetadata[0]; // There should be only one study metadata
-    });
+    }
 }

@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Grid, Typography } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useController } from 'react-hook-form';
@@ -13,8 +13,8 @@ import { UUID } from 'crypto';
 import { TreeViewFinderNodeProps } from '../TreeViewFinder';
 import { FieldConstants } from '../../utils/field-constants';
 import { ElementType } from '../../utils/ElementType';
-import { fetchDirectoryElementPath } from '../../services/directory';
 import DirectoryItemSelector from '../DirectoryItemSelector/directory-item-selector';
+import { fetchDirectoryElementPath } from '../../services';
 
 export interface ModifyElementSelectionProps {
     elementType: ElementType;

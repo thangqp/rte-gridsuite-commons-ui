@@ -11,7 +11,7 @@ import {
     backendFetchJson,
     getRequestParamFromList,
 } from './utils';
-import { ElementAttributes } from '../utils/ElementAttributes';
+import { ElementAttributes } from '../utils/types';
 
 const PREFIX_EXPLORE_SERVER_QUERIES =
     import.meta.env.VITE_API_GATEWAY + '/explore';

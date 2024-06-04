@@ -7,8 +7,9 @@
 
 import React, { FunctionComponent, useEffect } from 'react';
 import { validate as uuidValidate } from 'uuid';
-import { DirectoryItemsInput, useCustomFormContext } from '../../../index';
-import { fetchElementsInfos } from '../../../services/explore';
+import { fetchElementsInfos } from '../../../services';
+import { useCustomFormContext } from '../react-hook-form/provider/use-custom-form-context';
+import DirectoryItemsInput from '../react-hook-form/directory-items-input';
 
 interface ElementValueEditorProps {
     name: string;

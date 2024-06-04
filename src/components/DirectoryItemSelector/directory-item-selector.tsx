@@ -23,10 +23,10 @@ import {
 import { UUID } from 'crypto';
 import { useSnackMessage } from '../../hooks/useSnackMessage';
 import {
-    fetchDirectoryContent,
+    fetchElementsInfos,
     fetchRootFolders,
-} from '../../services/directory';
-import { fetchElementsInfos } from '../../services/explore';
+    fetchDirectoryContent,
+} from '../../services';
 
 const styles = {
     icon: (theme: Theme) => ({
