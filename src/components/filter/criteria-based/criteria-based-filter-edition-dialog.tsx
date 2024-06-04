@@ -28,8 +28,7 @@ import { FilterForm } from '../filter-form';
 import { UUID } from 'crypto';
 import { FilterType } from '../constants/filter-constants';
 import { FetchStatus } from '../../../utils/FetchStatus';
-import { ElementType } from '../../../utils/ElementType';
-import { saveFilter } from '../../../services/explore';
+import { saveFilter } from '../../../services';
 
 export type SelectionCopy = {
     sourceItemUuid: UUID | null;
