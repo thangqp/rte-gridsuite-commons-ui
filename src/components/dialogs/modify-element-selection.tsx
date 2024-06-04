@@ -12,8 +12,8 @@ import { useController } from 'react-hook-form';
 import { UUID } from 'crypto';
 import { TreeViewFinderNodeProps } from '../TreeViewFinder';
 import { FieldConstants } from '../../utils/field-constants';
-import { ElementType } from '../../utils/ElementType';
 import DirectoryItemSelector from '../DirectoryItemSelector/directory-item-selector';
+import { ElementType } from '../../utils/ElementType';
 import { fetchDirectoryElementPath } from '../../services';
 
 export interface ModifyElementSelectionProps {

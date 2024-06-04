@@ -23,9 +23,9 @@ import {
 import { UUID } from 'crypto';
 import { useSnackMessage } from '../../hooks/useSnackMessage';
 import {
+    fetchDirectoryContent,
     fetchElementsInfos,
     fetchRootFolders,
-    fetchDirectoryContent,
 } from '../../services';
 
 const styles = {
@@ -173,7 +173,7 @@ const DirectoryItemSelector: FunctionComponent<DirectoryItemSelectorProps> = ({
                             equipmentTypes
                         ).then((childrenWithMetadata) => {
                             const children = itemFilter
-                                ? childrenWithMetadata.filter((val) => {
+                                ? childrenWithMetadata.filter((val: any) => {
                                       // Accept every directory
                                       if (val.type === ElementType.DIRECTORY) {
                                           return true;

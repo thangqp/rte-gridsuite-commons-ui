@@ -6,10 +6,10 @@
  */
 export * from './utils';
 export type * from './utils';
-export * from './apps-metadata';
-export type * from './apps-metadata';
 export * from './explore';
 export type * from './explore';
+export * from './apps-metadata';
+export type * from './apps-metadata';
 export * from './directory';
 export type * from './directory';
 export * from './study';
