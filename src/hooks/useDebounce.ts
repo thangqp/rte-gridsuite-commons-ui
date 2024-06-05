@@ -21,6 +21,7 @@ export const useDebounce = <T extends (...args: any[]) => any>(
 
     useEffect(() => {
         return () => {
+            console.log('CLEARING');
             debouncedChangeHandler.clear();
         };
     }, [debouncedChangeHandler]);
