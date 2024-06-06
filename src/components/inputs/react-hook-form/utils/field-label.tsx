@@ -12,17 +12,22 @@ type FieldLabelProps = {
     optional?: boolean;
     values?: any;
 };
-const FieldLabel = ({
+function FieldLabel({
     label,
     optional = false,
     values = undefined,
-}: FieldLabelProps) => {
+}: Readonly<FieldLabelProps>) {
     return (
         <>
             <FormattedMessage id={label} values={values} />
             {optional && <FormattedMessage id="Optional" />}
         </>
     );
+}
+
+FieldLabel.defaultProps = {
+    optional: false,
+    values: undefined,
 };
 
 export default FieldLabel;

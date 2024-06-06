@@ -11,7 +11,6 @@
 import {
     createRef,
     PureComponent,
-    ReactElement,
     ReactNode,
     MouseEvent,
     KeyboardEvent,
@@ -29,6 +28,7 @@ import {
     TableCell,
     TextField,
 } from '@mui/material';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
 import { GetApp as GetAppIcon } from '@mui/icons-material';
 import {
@@ -40,30 +40,33 @@ import {
     TableCellProps,
 } from 'react-virtualized';
 import CsvDownloader from 'react-csv-downloader';
-import OverflowableText from '../OverflowableText/overflowable-text';
+import { OverflowableText } from '../OverflowableText/overflowable-text';
 import {
     makeComposeClasses,
     toNestedGlobalSelectors,
 } from '../../utils/styles';
 import {
-    CHANGE_WAYS,
+    ChangeWays,
     collectibleHelper,
+    CustomColumnProps,
     getHelper,
     KeyedColumnsRowIndexer,
+    RowProps,
 } from './KeyedColumnsRowIndexer';
-import ColumnHeader from './ColumnHeader';
+import { ColumnHeader } from './ColumnHeader';
+import { on } from 'events';
 
 function getTextWidth(text: any): number {
     // re-use canvas object for better performance
-    let canvas =
-        //@ts-ignore this is questioning
+    const canvas =
+        // @ts-ignore this is questioning
         getTextWidth.canvas ||
-        //@ts-ignore this is questioning
+        // @ts-ignore this is questioning
         (getTextWidth.canvas = document.createElement('canvas'));
-    let context = canvas.getContext('2d');
+    const context = canvas.getContext('2d');
     // TODO find a better way to find Material UI style
     context.font = '14px "Roboto", "Helvetica", "Arial", sans-serif';
-    let metrics = context.measureText(text);
+    const metrics = context.measureText(text);
     return metrics.width;
 }
 
@@ -104,7 +107,7 @@ const defaultStyles = {
     [cssTableRowHover]: {},
     [cssTableCell]: {
         flex: 1,
-        padding: DEFAULT_CELL_PADDING + 'px',
+        padding: `${DEFAULT_CELL_PADDING}px`,
     },
     [cssTableCellColor]: {},
     [cssNoClick]: {
@@ -125,7 +128,7 @@ const defaultTooltipSx = {
     fontSize: '0.9rem',
 };
 
-//TODO do we need to export this to clients (index.js) ?
+// TODO do we need to export this to clients (index.js) ?
 export const generateMuiVirtualizedTableClass = (className: string) =>
     `MuiVirtualizedTable-${className}`;
 const composeClasses = makeComposeClasses(generateMuiVirtualizedTableClass);
@@ -138,7 +141,9 @@ interface AmongChooserProps<T extends ReactNode> {
     id: string;
 }
 
-const AmongChooser = <T extends ReactNode>(props: AmongChooserProps<T>) => {
+function AmongChooser<T extends ReactNode>(
+    props: Readonly<AmongChooserProps<T>>
+) {
     const { options, value, setValue, id, onDropDownVisibility } = props;
 
     return (
@@ -146,20 +151,22 @@ const AmongChooser = <T extends ReactNode>(props: AmongChooserProps<T>) => {
             <Autocomplete
                 id={id}
                 value={value}
-                multiple={true}
+                multiple
                 onChange={(evt, newVal) => {
                     setValue(newVal);
                 }}
                 onClose={() => onDropDownVisibility(false)}
                 onOpen={() => onDropDownVisibility(true)}
                 options={options}
-                renderInput={(props) => <TextField autoFocus {...props} />}
+                renderInput={(inputProps) => (
+                    <TextField autoFocus {...inputProps} />
+                )}
                 renderTags={(val, getTagsProps) => {
                     return val.map((code, index) => {
                         return (
                             <Chip
-                                id={'chip_' + code}
-                                size={'small'}
+                                id={`chip_${code}`}
+                                size="small"
                                 label={code}
                                 {...getTagsProps({ index })}
                             />
@@ -169,7 +176,7 @@ const AmongChooser = <T extends ReactNode>(props: AmongChooserProps<T>) => {
             />
         </span>
     );
-};
+}
 
 function makeIndexRecord(
     viewIndexToModel: number[] | null,
@@ -190,22 +197,6 @@ function makeIndexRecord(
                   return rows[modelIndex];
               },
     };
-}
-
-export interface CustomColumnProps extends ColumnProps {
-    sortable?: boolean;
-    numeric?: boolean;
-    indexer?: KeyedColumnsRowIndexer;
-    label: string;
-    clickable?: boolean;
-    fractionDigits?: number;
-    unit?: number;
-    extra?: ReactElement;
-    nostat?: boolean;
-}
-
-export interface RowProps {
-    notClickable?: boolean;
 }
 
 const initIndexer = (
@@ -229,6 +220,7 @@ const preFilterData = memoize(
         rows,
         filterFromProps,
         indexer,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         filterVersion // filterVersion is unused directly, used only as a workaround just to reset the memoization
     ) => {
         return indexer.preFilterRowMapping(columns, rows, filterFromProps);
@@ -259,7 +251,7 @@ const reorderIndex = memoize(
             : indexer.highestCodedColumn(columns);
         if (sortFromProps && highestCodedColumn) {
             const colIdx = Math.abs(highestCodedColumn) - 1;
-            let reorderedIndex = sortFromProps(
+            const reorderedIndex = sortFromProps(
                 columns[colIdx].dataKey,
                 highestCodedColumn > 0,
                 !!columns[colIdx].numeric
@@ -271,8 +263,8 @@ const reorderIndex = memoize(
                 const viewIndexToModel = sortFromProps(null, false, false);
                 return makeIndexRecord(viewIndexToModel, rows);
             } catch (e) {
-                //some external sort functions may expect to only be called
-                //when the user has select a column. Catch their errors and ignore
+                // some external sort functions may expect to only be called
+                // when the user has select a column. Catch their errors and ignore
                 console.warn(
                     'error in external sort. consider adding support for datakey=null in your external sort function'
                 );
@@ -295,8 +287,8 @@ const reorderIndex = memoize(
         if (filterFromProps) {
             const viewIndexToModel = rows
                 .map((r: unknown, i: number) => [r, i])
-                .filter(([r, _]: [unknown, number]) => filterFromProps(r))
-                .map(([_, j]: [unknown, number]) => j);
+                .filter(([r]: [unknown, number]) => filterFromProps(r))
+                .map(([j]: [unknown, number]) => j);
             return makeIndexRecord(viewIndexToModel, rows);
         }
 
@@ -305,20 +297,20 @@ const reorderIndex = memoize(
 );
 
 export interface MuiVirtualizedTableProps extends CustomColumnProps {
-    headerHeight: number;
+    headerHeight?: number;
     columns: CustomColumnProps[];
     defersFilterChanges: (() => void) | null;
     rows: RowProps[];
     filter: unknown;
     sort: unknown;
-    classes: Record<string, string>;
+    classes?: Record<string, string>;
     onRowClick?: (event: RowMouseEventHandlerParams) => void;
-    rowHeight: number;
+    rowHeight?: number;
     onCellClick: (row: RowProps, column: ColumnProps) => void;
     tooltipSx: SxProps;
     name: string;
     exportCSVDataKeys: unknown[];
-    enableExportCSV: boolean;
+    enableExportCSV?: boolean;
 }
 
 export interface MuiVirtualizedTableState {
@@ -337,95 +329,27 @@ class MuiVirtualizedTable extends PureComponent<
     MuiVirtualizedTableProps,
     MuiVirtualizedTableState
 > {
+    // eslint-disable-next-line react/static-property-placement
     static defaultProps = {
         headerHeight: DEFAULT_HEADER_HEIGHT,
         rowHeight: DEFAULT_ROW_HEIGHT,
         enableExportCSV: false,
         classes: {},
+        onRowClick: undefined,
     };
 
-    headers: MutableRefObject<any>;
-    observer: IntersectionObserver;
-    dropDownVisible: boolean;
-
-    constructor(props: MuiVirtualizedTableProps, context: any) {
-        super(props, context);
-
-        this._computeHeaderSize = this._computeHeaderSize.bind(this);
-        this._registerHeader = this._registerHeader.bind(this);
-        this._registerObserver = this._registerObserver.bind(this);
-        // we shouldn't use createRef here, just defining an object would be enough
-        // We have to type RefObject to MutableRefObject to enable mutability, and TS enables that...
-        this.headers = createRef();
-        this.headers.current = {};
-        let options = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1,
-        };
-        this.observer = new IntersectionObserver(
-            this._computeHeaderSize,
-            options
-        );
-        this.dropDownVisible = false;
-        this.state = {
-            headerHeight: this.props.headerHeight,
-            indexer: initIndexer(props, this.setVersion),
-            indirectionVersion: 0,
-            popoverAnchorEl: null,
-            popoverColKey: null,
-            deferredFilterChange: null,
-        };
-    }
-
-    setVersion = (v: number) => {
-        this.setState({ indirectionVersion: v });
-    };
-
-    componentDidUpdate(oldProps: MuiVirtualizedTableProps) {
-        if (
-            oldProps.indexer !== this.props.indexer ||
-            oldProps.sortable !== this.props.sortable
-        ) {
-            this.setState((state) => {
-                return {
-                    indexer: initIndexer(this.props, this.setVersion),
-                    indirectionVersion: (state?.indirectionVersion ?? 0) + 1,
-                };
-            });
-        }
-        if (oldProps.headerHeight !== this.props.headerHeight) {
-            this._computeHeaderSize();
-        }
-    }
-
-    componentDidMount() {
-        window.addEventListener('resize', this._computeHeaderSize);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', this._computeHeaderSize);
-        this.observer.disconnect();
-    }
-
-    _registerHeader(label: string, header: unknown) {
-        if (this.headers.current) {
-            this.headers.current[label] = header;
-        }
-    }
-
-    _registerObserver(element: Element) {
-        if (element !== null) {
-            this.observer.observe(element);
-        }
-    }
-
-    computeDataWidth = (text: string) => {
+    static readonly computeDataWidth = (text: string) => {
         return getTextWidth(text || '') + 2 * DEFAULT_CELL_PADDING;
     };
 
+    headers: MutableRefObject<any>;
+
+    observer: IntersectionObserver;
+
+    dropDownVisible: boolean;
+
     sizes = memoize((columns, rows, rowGetter) => {
-        let sizes: Record<string, number> = {};
+        const sizes: Record<string, number> = {};
         columns.forEach((col: CustomColumnProps) => {
             if (col.width) {
                 sizes[col.dataKey] = col.width;
@@ -434,14 +358,20 @@ class MuiVirtualizedTable extends PureComponent<
                  * NB : ignores the possible icons
                  */
                 let size = Math.max(
-                    col.minWidth || 0,
-                    this.computeDataWidth(col.label)
+                    col.minWidth ?? 0,
+                    MuiVirtualizedTable.computeDataWidth(col.label)
                 );
                 /* calculate for each row the width, and keep the max  */
-                for (let i = 0; i < rows.length; ++i) {
+                for (let i = 0; i < rows.length; i += 1) {
                     const gotRow = rowGetter(i);
-                    let text = this.getDisplayValue(col, gotRow[col.dataKey]);
-                    size = Math.max(size, this.computeDataWidth(text));
+                    const text = MuiVirtualizedTable.getDisplayValue(
+                        col,
+                        gotRow[col.dataKey]
+                    );
+                    size = Math.max(
+                        size,
+                        MuiVirtualizedTable.computeDataWidth(text)
+                    );
                 }
                 if (col.maxWidth) {
                     size = Math.min(col.maxWidth, size);
@@ -452,8 +382,219 @@ class MuiVirtualizedTable extends PureComponent<
         return sizes;
     });
 
+    csvHeaders = memoize((columns, exportCSVDataKeys) => {
+        const tempHeaders: { displayName: string; id: string }[] = [];
+        columns.forEach((col: CustomColumnProps) => {
+            if (
+                exportCSVDataKeys !== undefined &&
+                exportCSVDataKeys.find((el: string) => el === col.dataKey)
+            ) {
+                tempHeaders.push({
+                    displayName: col.label,
+                    id: col.dataKey,
+                });
+            }
+        });
+        return tempHeaders;
+    });
+
+    constructor(props: MuiVirtualizedTableProps, context: any) {
+        super(props, context);
+
+        this.computeHeaderSize = this.computeHeaderSize.bind(this);
+        this.registerHeader = this.registerHeader.bind(this);
+        this.registerObserver = this.registerObserver.bind(this);
+        // we shouldn't use createRef here, just defining an object would be enough
+        // We have to type RefObject to MutableRefObject to enable mutability, and TS enables that...
+        this.headers = createRef();
+        this.headers.current = {};
+        const options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1,
+        };
+        this.observer = new IntersectionObserver(
+            this.computeHeaderSize,
+            options
+        );
+        this.dropDownVisible = false;
+        const { headerHeight } = this.props;
+        this.state = {
+            headerHeight,
+            indexer: initIndexer(props, this.setVersion),
+            indirectionVersion: 0,
+            popoverAnchorEl: null,
+            popoverColKey: null,
+            deferredFilterChange: null,
+        };
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.computeHeaderSize);
+    }
+
+    componentDidUpdate(oldProps: MuiVirtualizedTableProps) {
+        const { indexer, sortable, headerHeight } = this.props;
+        if (oldProps.indexer !== indexer || oldProps.sortable !== sortable) {
+            this.setState((state) => {
+                return {
+                    indexer: initIndexer(this.props, this.setVersion),
+                    indirectionVersion: (state?.indirectionVersion ?? 0) + 1,
+                };
+            });
+        }
+        if (oldProps.headerHeight !== headerHeight) {
+            this.computeHeaderSize();
+        }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.computeHeaderSize);
+        this.observer.disconnect();
+    }
+
+    handleKeyDownOnPopover = (evt: KeyboardEvent<HTMLDivElement>) => {
+        if (evt.key === 'Enter' && !this.dropDownVisible) {
+            this.closePopover(evt, 'enterKeyDown');
+        }
+    };
+
+    onFilterParamsChange(newVal: unknown[] | null, colKey: string | null) {
+        const { indexer, indirectionVersion } = this.state;
+        const { defersFilterChanges } = this.props;
+        const nonEmpty = newVal?.length === 0 ? null : newVal;
+        if (defersFilterChanges) {
+            this.setState({
+                deferredFilterChange: { newVal, colKey },
+            });
+        } else if (indexer?.setColFilterUserParams(colKey, nonEmpty)) {
+            this.setState({
+                indirectionVersion: indirectionVersion + 1,
+            });
+        }
+    }
+
+    getCSVData = () => {
+        const { rows, columns, filter, sort, exportCSVDataKeys } = this.props;
+        const { indexer, indirectionVersion } = this.state;
+        const reorderedIndex = reorderIndex(
+            indexer,
+            indirectionVersion,
+            rows,
+            columns,
+            filter,
+            sort
+        );
+        const rowsCount =
+            reorderedIndex.viewIndexToModel?.length ?? rows.length;
+
+        const csvData = [];
+        for (let index = 0; index < rowsCount; index += 1) {
+            const myobj: Record<string, any> = {};
+            const sortedRow: any = reorderedIndex.rowGetter(index);
+            const exportedKeys = exportCSVDataKeys;
+            columns.forEach((col) => {
+                if (exportedKeys?.find((el: any) => el === col.dataKey)) {
+                    myobj[col.dataKey] = sortedRow[col.dataKey];
+                }
+            });
+            csvData.push(myobj);
+        }
+
+        return Promise.resolve(csvData);
+    };
+
+    getCSVFilename = () => {
+        const { name, columns } = this.props;
+        if (name?.length > 0) {
+            return name.replace(/\s/g, '_');
+        }
+        const filename = Object.entries(columns)
+            .map((p) => p[1].label)
+            .join('_');
+        return filename;
+    };
+
+    // type check should be increased here
+    static getDisplayValue(column: CustomColumnProps, cellData: any) {
+        let displayedValue: any;
+        if (!column.numeric) {
+            displayedValue = cellData;
+        } else if (Number.isNaN(cellData)) {
+            displayedValue = '';
+        } else if (
+            column.fractionDigits === undefined ||
+            column.fractionDigits === 0
+        ) {
+            displayedValue = Math.round(cellData);
+        } else {
+            displayedValue = Number(cellData).toFixed(column.fractionDigits);
+        }
+
+        if (column.unit !== undefined) {
+            displayedValue += ' ';
+            displayedValue += column.unit;
+        }
+        return displayedValue;
+    }
+
+    makeSizedTable = (
+        height: number,
+        width: number,
+        sizes: Record<string, number>,
+        reorderedIndex: number[] | null,
+        rowGetter: ((index: number) => RowProps) | ((index: number) => number)
+    ) => {
+        const { sort, onRowClick, ...otherProps } = this.props;
+        const { headerHeight } = this.state;
+        return (
+            <Table
+                {...otherProps}
+                height={height}
+                width={width}
+                rowHeight={otherProps.rowHeight ?? DEFAULT_ROW_HEIGHT}
+                gridStyle={{ direction: 'inherit' }}
+                headerHeight={headerHeight}
+                className={composeClasses(otherProps.classes ?? {}, cssTable)}
+                onRowClick={
+                    onRowClick &&
+                    /* The {...otherProps} just above would hold the slot onRowClick */
+                    this.onClickableRowClick
+                }
+                rowCount={reorderedIndex?.length ?? otherProps.rows.length}
+                rowClassName={({ index }) =>
+                    this.getRowClassName({ index, rowGetter })
+                }
+                rowGetter={({ index }) => rowGetter(index)}
+            >
+                {otherProps.columns.map(({ dataKey, ...other }, index) => {
+                    return (
+                        <Column
+                            key={dataKey}
+                            headerRenderer={this.makeHeaderRenderer(
+                                dataKey,
+                                index
+                            )}
+                            className={composeClasses(
+                                otherProps.classes ?? {},
+                                cssFlexContainer
+                            )}
+                            cellRenderer={this.cellRenderer}
+                            dataKey={dataKey}
+                            flexGrow={1}
+                            // @ts-ignore will be overwritten by ...other
+                            width={sizes[dataKey]}
+                            {...other}
+                        />
+                    );
+                })}
+            </Table>
+        );
+    };
+
     openPopover = (popoverTarget: Element, colKey: string) => {
-        const col = this.props.columns.find((c) => c.dataKey === colKey);
+        const { columns } = this.props;
+        const col = columns.find((c) => c.dataKey === colKey);
         if (getHelper(col) !== collectibleHelper) {
             return;
         }
@@ -465,18 +606,12 @@ class MuiVirtualizedTable extends PureComponent<
         });
     };
 
-    handleKeyDownOnPopover = (evt: KeyboardEvent<HTMLDivElement>) => {
-        if (evt.key === 'Enter' && !this.dropDownVisible) {
-            this.closePopover(evt, 'enterKeyDown');
-        }
-    };
-
     closePopover = (_: KeyboardEvent<HTMLDivElement>, reason: string) => {
         let bumpsVersion = false;
         if (reason === 'backdropClick' || reason === 'enterKeyDown') {
-            bumpsVersion = this._commitFilterChange();
+            bumpsVersion = this.commitFilterChange();
         }
-        this.setState((state, _) => {
+        this.setState((state) => {
             return {
                 popoverAnchorEl: null,
                 popoverColKey: null,
@@ -488,32 +623,39 @@ class MuiVirtualizedTable extends PureComponent<
     };
 
     makeColumnFilterEditor = () => {
-        const colKey = this.state.popoverColKey;
-        const outerParams = this.state.indexer?.getColFilterOuterParams(colKey);
+        const { columns, rows, filter, defersFilterChanges } = this.props;
+        const {
+            popoverColKey,
+            indexer,
+            deferredFilterChange,
+            indirectionVersion,
+        } = this.state;
+        const colKey = popoverColKey;
+        const outerParams = indexer?.getColFilterOuterParams(colKey);
         const userParams =
-            !this.props.defersFilterChanges || !this.state.deferredFilterChange
-                ? this.state.indexer?.getColFilterUserParams(colKey)
-                : this.state.deferredFilterChange.newVal ?? undefined;
+            !defersFilterChanges || !deferredFilterChange
+                ? indexer?.getColFilterUserParams(colKey)
+                : deferredFilterChange.newVal ?? undefined;
         const prefiltered = preFilterData(
-            this.props.columns,
-            this.props.rows,
-            this.props.filter,
-            this.state.indexer,
-            this.state.indirectionVersion
+            columns,
+            rows,
+            filter,
+            indexer,
+            indirectionVersion
         );
 
-        let options = [];
+        const options: any[] = [];
         if (outerParams) {
             options.push(...outerParams);
         }
         // @ts-ignore colKey could be null, how to handle this ?
         const colStat = prefiltered?.colsStats?.[colKey];
         if (colStat?.seen) {
-            for (const key of Object.getOwnPropertyNames(colStat.seen)) {
+            Object.keys(colStat.seen).forEach((key) => {
                 if (options.findIndex((o) => o === key) < 0) {
                     options.push(key);
                 }
-            }
+            });
         }
         options.sort();
 
@@ -521,25 +663,26 @@ class MuiVirtualizedTable extends PureComponent<
             <AmongChooser
                 options={options}
                 value={userParams}
-                id={'fielt' + colKey}
+                id={`fielt${colKey}`}
                 setValue={(newVal) => {
                     this.onFilterParamsChange(newVal, colKey);
                 }}
-                onDropDownVisibility={(visible) =>
-                    (this.dropDownVisible = visible)
-                }
+                onDropDownVisibility={(visible) => {
+                    this.dropDownVisible = visible;
+                }}
             />
         );
     };
 
-    _commitFilterChange = () => {
-        if (this.state.deferredFilterChange) {
-            const colKey = this.state.deferredFilterChange.colKey;
-            let newVal = this.state.deferredFilterChange.newVal;
+    commitFilterChange = () => {
+        const { deferredFilterChange, indexer } = this.state;
+        if (deferredFilterChange) {
+            const { colKey } = deferredFilterChange;
+            let { newVal } = deferredFilterChange;
             if (newVal?.length === 0) {
                 newVal = null;
             }
-            if (this.state.indexer?.setColFilterUserParams(colKey, newVal)) {
+            if (indexer?.setColFilterUserParams(colKey, newVal)) {
                 return true;
             }
         }
@@ -547,42 +690,34 @@ class MuiVirtualizedTable extends PureComponent<
         return false;
     };
 
-    onFilterParamsChange(newVal: unknown[] | null, colKey: string | null) {
-        const nonEmpty = newVal?.length === 0 ? null : newVal;
-        if (this.props.defersFilterChanges) {
-            this.setState({
-                deferredFilterChange: { newVal: newVal, colKey },
-            });
-        } else if (
-            this.state.indexer?.setColFilterUserParams(colKey, nonEmpty)
-        ) {
-            this.setState({
-                indirectionVersion: this.state.indirectionVersion + 1,
-            });
-        }
-    }
+    setVersion = (v: number) => {
+        this.setState({ indirectionVersion: v });
+    };
 
     sortClickHandler = (evt: MouseEvent, _: unknown, columnIndex: number) => {
-        const colKey = this.props.columns[columnIndex].dataKey;
+        const { columns } = this.props;
+        const colKey = columns[columnIndex].dataKey;
+
+        const { indexer, indirectionVersion } = this.state;
 
         if (evt.altKey) {
-            //@ts-ignore should be currentTarget maybe ?
+            // @ts-ignore should be currentTarget maybe ?
             this.openPopover(evt.target, colKey);
             return;
         }
 
-        let way = CHANGE_WAYS.SIMPLE;
+        let way = ChangeWays.SIMPLE;
         if (evt.ctrlKey && evt.shiftKey) {
-            way = CHANGE_WAYS.AMEND;
+            way = ChangeWays.AMEND;
         } else if (evt.ctrlKey) {
-            way = CHANGE_WAYS.REMOVE;
+            way = ChangeWays.REMOVE;
         } else if (evt.shiftKey) {
-            way = CHANGE_WAYS.TAIL;
+            way = ChangeWays.TAIL;
         }
 
-        if (this.state.indexer?.updateSortingFromUser(colKey, way)) {
+        if (indexer?.updateSortingFromUser(colKey, way)) {
             this.setState({
-                indirectionVersion: this.state.indirectionVersion + 1,
+                indirectionVersion: indirectionVersion + 1,
             });
         }
     };
@@ -592,11 +727,12 @@ class MuiVirtualizedTable extends PureComponent<
         target: Element | undefined,
         columnIndex: number
     ) => {
+        const { columns } = this.props;
         // ColumnHeader to (header) TableCell
         const retargeted = target?.parentNode ?? target;
 
-        const colKey = this.props.columns[columnIndex].dataKey;
-        //@ts-ignore still not the good types
+        const colKey = columns[columnIndex].dataKey;
+        // @ts-ignore still not the good types
         this.openPopover(retargeted, colKey);
     };
 
@@ -607,17 +743,17 @@ class MuiVirtualizedTable extends PureComponent<
         label: string;
         columnIndex: number;
     }) => {
-        const { columns } = this.props;
-        const indexer = this.state.indexer;
+        const { columns, rows, filter, sort } = this.props;
+        const { indexer } = this.state;
         const colKey = columns[columnIndex].dataKey;
         const signedRank = indexer?.columnSortingSignedRank(colKey);
         const userParams = indexer?.getColFilterUserParams(colKey);
-        const numeric = columns[columnIndex].numeric;
+        const { numeric } = columns[columnIndex];
 
         const prefiltered = preFilterData(
             columns,
-            this.props.rows,
-            this.props.filter,
+            rows,
+            filter,
             indexer,
             indexer?.filterVersion
         );
@@ -639,7 +775,7 @@ class MuiVirtualizedTable extends PureComponent<
         //  - a cellRenderer is defined, as we have no simple way to match for chosen value(s)
         //  - using an external sort, because it would hardly know about the indexer filtering
         const onFilterClick =
-            numeric || this.props.sort || columns[columnIndex].cellRenderer
+            numeric || sort || columns[columnIndex].cellRenderer
                 ? undefined
                 : (ev: MouseEvent<SVGSVGElement>, retargeted?: Element) => {
                       this.filterClickHandler(ev, retargeted, columnIndex);
@@ -647,7 +783,7 @@ class MuiVirtualizedTable extends PureComponent<
         return (
             <ColumnHeader
                 label={label}
-                ref={(e) => this._registerHeader(label, e)}
+                ref={(e) => this.registerHeader(label, e)}
                 sortSignedRank={signedRank}
                 filterLevel={filterLevel}
                 numeric={numeric ?? false}
@@ -666,7 +802,7 @@ class MuiVirtualizedTable extends PureComponent<
         return (
             <div
                 ref={(element) => {
-                    this._registerHeader(label, element);
+                    this.registerHeader(label, element);
                 }}
             >
                 {label}
@@ -697,13 +833,14 @@ class MuiVirtualizedTable extends PureComponent<
     };
 
     onClickableRowClick = (event: RowMouseEventHandlerParams) => {
+        const { onRowClick } = this.props;
         if (
             event.rowData?.notClickable !== true ||
             event.event?.shiftKey ||
             event.event?.ctrlKey
         ) {
-            //@ts-ignore onRowClick is possibly undefined
-            this.props.onRowClick(event);
+            // @ts-ignore onRowClick is possibly undefined
+            onRowClick(event);
         }
     };
 
@@ -711,7 +848,7 @@ class MuiVirtualizedTable extends PureComponent<
         const { columns, classes, rowHeight, onCellClick, rows, tooltipSx } =
             this.props;
 
-        let displayedValue = this.getDisplayValue(
+        const displayedValue = MuiVirtualizedTable.getDisplayValue(
             columns[columnIndex],
             cellData
         );
@@ -758,37 +895,29 @@ class MuiVirtualizedTable extends PureComponent<
             >
                 <OverflowableText
                     text={displayedValue}
-                    //@ts-ignore not really consistent but it should be legacy
+                    // @ts-ignore not really consistent but it should be legacy
                     tooltipStyle={classes.cellTooltip}
                     tooltipSx={{ ...defaultTooltipSx, ...tooltipSx }}
                 />
             </TableCell>
         );
     };
-    // type check should be increased here
-    getDisplayValue(column: CustomColumnProps, cellData: any) {
-        let displayedValue: any;
-        if (!column.numeric) {
-            displayedValue = cellData;
-        } else if (isNaN(cellData)) {
-            displayedValue = '';
-        } else if (
-            column.fractionDigits === undefined ||
-            column.fractionDigits === 0
-        ) {
-            displayedValue = Math.round(cellData);
-        } else {
-            displayedValue = Number(cellData).toFixed(column.fractionDigits);
-        }
 
-        if (column.unit !== undefined) {
-            displayedValue += ' ';
-            displayedValue += column.unit;
+    registerHeader(label: string, header: unknown) {
+        if (this.headers.current) {
+            this.headers.current[label] = header;
         }
-        return displayedValue;
     }
 
-    _computeHeaderSize() {
+    registerObserver(element: Element) {
+        if (element !== null) {
+            this.observer.observe(element);
+        }
+    }
+
+    computeHeaderSize() {
+        const { headerHeight: stateHeaderHeight } = this.state;
+        const { headerHeight: propsHeaderHeight } = this.props;
         const headers = Object.values(this.headers.current);
         if (headers.length === 0) {
             return;
@@ -797,20 +926,21 @@ class MuiVirtualizedTable extends PureComponent<
         // though it can not make a difference from clientHeight,
         // as overflow-y as no scroll value
         const scrollHeights = headers.map((header: any) => header.scrollHeight);
-        let headerHeight = Math.max(
+        const computedHeaderHeight = Math.max(
             Math.max(...scrollHeights) + DEFAULT_CELL_PADDING,
-            this.props.headerHeight
+            propsHeaderHeight
             // hides (most often) padding override by forcing height
         );
-        if (headerHeight !== this.state.headerHeight) {
+        if (computedHeaderHeight !== stateHeaderHeight) {
             this.setState({
-                headerHeight: headerHeight,
+                headerHeight: computedHeaderHeight,
             });
         }
     }
 
     makeHeaderRenderer(dataKey: string, columnIndex: number) {
-        const { columns, classes } = this.props;
+        const { columns, classes, sortable } = this.props;
+        const { indexer, headerHeight } = this.state;
         return (headerProps: any) => {
             return (
                 <TableCell
@@ -822,13 +952,13 @@ class MuiVirtualizedTable extends PureComponent<
                         composeClasses(classes, cssHeader)
                     )}
                     variant="head"
-                    style={{ height: this.state.headerHeight }}
+                    style={{ height: headerHeight }}
                     align={
                         columns[columnIndex].numeric || false ? 'right' : 'left'
                     }
-                    ref={(e: Element) => this._registerObserver(e)}
+                    ref={(e: Element) => this.registerObserver(e)}
                 >
-                    {this.props.sortable && this.state.indexer
+                    {sortable && indexer
                         ? this.sortableHeader({
                               ...headerProps,
                               columnIndex,
@@ -843,134 +973,29 @@ class MuiVirtualizedTable extends PureComponent<
         };
     }
 
-    makeSizedTable = (
-        height: number,
-        width: number,
-        sizes: Record<string, number>,
-        reorderedIndex: number[] | null,
-        rowGetter: ((index: number) => RowProps) | ((index: number) => number)
-    ) => {
-        const { sort, ...otherProps } = this.props;
-
-        return (
-            <Table
-                {...otherProps}
-                height={height}
-                width={width}
-                rowHeight={otherProps.rowHeight}
-                gridStyle={{ direction: 'inherit' }}
-                headerHeight={this.state.headerHeight}
-                className={composeClasses(otherProps.classes, cssTable)}
-                onRowClick={
-                    this.props.onRowClick &&
-                    /* The {...otherProps} just above would hold the slot onRowClick */
-                    this.onClickableRowClick
-                }
-                rowCount={reorderedIndex?.length ?? otherProps.rows.length}
-                rowClassName={({ index }) =>
-                    this.getRowClassName({ index, rowGetter })
-                }
-                rowGetter={({ index }) => rowGetter(index)}
-            >
-                {otherProps.columns.map(({ dataKey, ...other }, index) => {
-                    return (
-                        <Column
-                            key={dataKey}
-                            headerRenderer={this.makeHeaderRenderer(
-                                dataKey,
-                                index
-                            )}
-                            className={composeClasses(
-                                otherProps.classes,
-                                cssFlexContainer
-                            )}
-                            cellRenderer={this.cellRenderer}
-                            dataKey={dataKey}
-                            flexGrow={1}
-                            //@ts-ignore will be overwritten by ...other
-                            width={sizes[dataKey]}
-                            {...other}
-                        />
-                    );
-                })}
-            </Table>
-        );
-    };
-
-    getCSVFilename = () => {
-        if (this.props.name?.length > 0) {
-            return this.props.name.replace(/\s/g, '_');
-        } else {
-            let filename = Object.entries(this.props.columns)
-                .map((p) => p[1].label)
-                .join('_');
-            return filename;
-        }
-    };
-
-    getCSVData = () => {
-        let reorderedIndex = reorderIndex(
-            this.state.indexer,
-            this.state.indirectionVersion,
-            this.props.rows,
-            this.props.columns,
-            this.props.filter,
-            this.props.sort
-        );
-        let rowsCount =
-            reorderedIndex.viewIndexToModel?.length ?? this.props.rows.length;
-
-        const csvData = [];
-        for (let index = 0; index < rowsCount; ++index) {
-            const myobj: Record<string, any> = {};
-            const sortedRow: any = reorderedIndex.rowGetter(index);
-            const exportedKeys = this.props.exportCSVDataKeys;
-            this.props.columns.forEach((col) => {
-                if (exportedKeys?.find((el: any) => el === col.dataKey)) {
-                    myobj[col.dataKey] = sortedRow[col.dataKey];
-                }
-            });
-            csvData.push(myobj);
-        }
-
-        return Promise.resolve(csvData);
-    };
-
-    csvHeaders = memoize((columns, exportCSVDataKeys) => {
-        let tempHeaders: { displayName: string; id: string }[] = [];
-        columns.forEach((col: CustomColumnProps) => {
-            if (
-                exportCSVDataKeys !== undefined &&
-                exportCSVDataKeys.find((el: string) => el === col.dataKey)
-            ) {
-                tempHeaders.push({
-                    displayName: col.label,
-                    id: col.dataKey,
-                });
-            }
-        });
-        return tempHeaders;
-    });
-
     render() {
+        const {
+            rows,
+            columns,
+            filter,
+            sort,
+            exportCSVDataKeys,
+            className,
+            enableExportCSV,
+        } = this.props;
+
+        const { indexer, indirectionVersion, popoverAnchorEl } = this.state;
         const { viewIndexToModel, rowGetter } = reorderIndex(
-            this.state.indexer,
-            this.state.indirectionVersion,
-            this.props.rows,
-            this.props.columns,
-            this.props.filter,
-            this.props.sort
+            indexer,
+            indirectionVersion,
+            rows,
+            columns,
+            filter,
+            sort
         );
 
-        const sizes = this.sizes(
-            this.props.columns,
-            this.props.rows,
-            rowGetter
-        );
-        const csvHeaders = this.csvHeaders(
-            this.props.columns,
-            this.props.exportCSVDataKeys
-        );
+        const sizes = this.sizes(columns, rows, rowGetter);
+        const csvHeaders = this.csvHeaders(columns, exportCSVDataKeys);
 
         return (
             <div
@@ -979,9 +1004,9 @@ class MuiVirtualizedTable extends PureComponent<
                     flexDirection: 'column',
                     height: '100%',
                 }}
-                className={this.props.className}
+                className={className}
             >
-                {this.props.enableExportCSV && (
+                {enableExportCSV && (
                     <div
                         style={{
                             display: 'flex',
@@ -1017,9 +1042,9 @@ class MuiVirtualizedTable extends PureComponent<
                         }
                     </AutoSizer>
                 </div>
-                {this.state.popoverAnchorEl && (
+                {popoverAnchorEl && (
                     <Popover
-                        anchorEl={this.state.popoverAnchorEl}
+                        anchorEl={popoverAnchorEl}
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'left',
@@ -1030,7 +1055,7 @@ class MuiVirtualizedTable extends PureComponent<
                         }}
                         onKeyDownCapture={this.handleKeyDownOnPopover}
                         onClose={this.closePopover}
-                        open={!!this.state.popoverAnchorEl}
+                        open={!!popoverAnchorEl}
                         PaperProps={{ style: { minWidth: '20ex' } }}
                     >
                         {this.makeColumnFilterEditor()}

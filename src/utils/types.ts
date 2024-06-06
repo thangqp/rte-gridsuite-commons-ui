@@ -57,8 +57,7 @@ export type Equipment =
     | typeof TwoWindingTransfo
     | typeof ThreeWindingTransfo
     | typeof ShuntCompensator
-    | typeof VoltageLevel
-    | typeof Substation;
+    | typeof VoltageLevel;
 
 export type EquipmentType = {
     [Type in Equipment['type']]: Type;

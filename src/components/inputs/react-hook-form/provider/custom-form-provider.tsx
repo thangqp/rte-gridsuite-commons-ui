@@ -27,7 +27,7 @@ export const CustomFormContext = createContext<CustomFormContextProps>({
     language: getSystemLanguage(),
 });
 
-const CustomFormProvider = (props: CustomFormProviderProps) => {
+function CustomFormProvider(props: CustomFormProviderProps) {
     const {
         validationSchema,
         removeOptional,
@@ -39,16 +39,24 @@ const CustomFormProvider = (props: CustomFormProviderProps) => {
     return (
         <FormProvider {...formMethods}>
             <CustomFormContext.Provider
-                value={{
-                    validationSchema: validationSchema,
-                    removeOptional: removeOptional,
-                    language: language,
-                }}
+                value={React.useMemo(
+                    () => ({
+                        validationSchema,
+                        removeOptional,
+                        language,
+                    }),
+                    [validationSchema, removeOptional, language]
+                )}
             >
                 {children}
             </CustomFormContext.Provider>
         </FormProvider>
     );
+}
+
+CustomFormProvider.defaultProps = {
+    removeOptional: false,
+    language: undefined,
 };
 
 export default CustomFormProvider;

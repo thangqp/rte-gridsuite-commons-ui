@@ -5,12 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, {
-    FunctionComponent,
-    MutableRefObject,
-    useEffect,
-    useRef,
-} from 'react';
+import React, { MutableRefObject, useEffect, useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useController } from 'react-hook-form';
 
@@ -30,10 +25,7 @@ export interface ErrorInputProps {
     }) => React.ReactNode;
 }
 
-const ErrorInput: FunctionComponent<ErrorInputProps> = ({
-    name,
-    InputField,
-}) => {
+function ErrorInput({ name, InputField }: Readonly<ErrorInputProps>) {
     const {
         fieldState: { error },
         formState: { isSubmitting },
@@ -48,7 +40,8 @@ const ErrorInput: FunctionComponent<ErrorInputProps> = ({
             return {
                 id: errorMsg,
             };
-        } else if (typeof errorMsg === 'object') {
+        }
+        if (typeof errorMsg === 'object') {
             return {
                 id: errorMsg.id,
                 values: {
@@ -64,22 +57,21 @@ const ErrorInput: FunctionComponent<ErrorInputProps> = ({
         if (error && errorRef.current) {
             errorRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSubmitting]);
 
-    return (
-        <>
-            {error?.message && (
-                <div ref={errorRef}>
-                    {InputField({
-                        message: (
-                            <FormattedMessage {...errorProps(error?.message)} />
-                        ),
-                    })}
-                </div>
-            )}
-        </>
-    );
-};
+    if (error?.message) {
+        return (
+            <div ref={errorRef}>
+                {InputField({
+                    message: (
+                        <FormattedMessage {...errorProps(error?.message)} />
+                    ),
+                })}
+            </div>
+        );
+    }
+
+    return null;
+}
 
 export default ErrorInput;

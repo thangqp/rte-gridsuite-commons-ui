@@ -22,6 +22,7 @@ import {
     FilterAltOutlined as FilterAltOutlinedIcon,
 } from '@mui/icons-material';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
 import { Box, BoxProps, Theme } from '@mui/material';
 import { mergeSx } from '../../utils/styles';
@@ -75,7 +76,7 @@ interface SortButtonProps {
 // in the same direction as it will get if clicked (once).
 // signedRank > 0 means sorted by ascending value from lower indices to higher indices
 // so lesser values are at top, so the upward arrow
-const SortButton = ({ signedRank = 0, ...props }: SortButtonProps) => {
+function SortButton({ signedRank = 0, ...props }: Readonly<SortButtonProps>) {
     const sortRank = Math.abs(signedRank);
     const visibilityStyle =
         (!signedRank || undefined) &&
@@ -90,7 +91,7 @@ const SortButton = ({ signedRank = 0, ...props }: SortButtonProps) => {
             {sortRank > 1 && !props.hovered && <sub>{sortRank}</sub>}
         </Box>
     );
-};
+}
 
 interface FilterButtonProps {
     filterLevel: number;
@@ -98,22 +99,22 @@ interface FilterButtonProps {
     onClick: ComponentProps<typeof FilterAltOutlinedIcon>['onClick'];
 }
 
-const FilterButton = (props: FilterButtonProps) => {
+function FilterButton(props: Readonly<FilterButtonProps>) {
+    const { filterLevel, headerHovered, onClick } = props;
     const visibilityStyle =
-        !props.filterLevel &&
-        (props.headerHovered ? styles.hovered : styles.transparent);
+        !filterLevel && (headerHovered ? styles.hovered : styles.transparent);
     return (
         <FilterAltOutlinedIcon
-            onClick={props.onClick}
+            onClick={onClick}
             sx={mergeSx(
                 styles.filterButton,
                 // @ts-ignore type incompatibility of styles
-                props.filterLevel > 1 && styles.filterTooLossy,
+                filterLevel > 1 && styles.filterTooLossy,
                 visibilityStyle
             )}
         />
     );
-};
+}
 
 export interface ColumnHeaderProps extends BoxProps {
     label: ReactNode;
@@ -155,7 +156,7 @@ export const ColumnHeader = forwardRef<typeof Box, ColumnHeaderProps>(
         }, [onFilterClick]);
 
         return (
-            //@ts-ignore it does not let us define Box with onMouseEnter/onMouseLeave attributes with 'div' I think, not sure though
+            // @ts-ignore it does not let us define Box with onMouseEnter/onMouseLeave attributes with 'div' I think, not sure though
             <Box
                 ref={topmostDiv}
                 onMouseEnter={onHover}

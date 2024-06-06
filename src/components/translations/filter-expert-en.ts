@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-const filter_expert_en = {
+const filterExpertEn = {
     id: 'ID',
     name: 'Name',
     energySource: 'Energy source',
@@ -72,4 +72,4 @@ const filter_expert_en = {
     voltageLevelProperty2: 'Voltage level property 2',
 };
 
-export default filter_expert_en;
+export default filterExpertEn;

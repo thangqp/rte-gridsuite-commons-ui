@@ -1,3 +1,14 @@
+/* eslint-disable func-names */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-return-assign */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-promise-executor-return */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable no-alert */
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable react/jsx-no-bind */
+/* eslint-disable react/prop-types */
 /**
  * Copyright (c) 2020, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -6,24 +17,6 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-import TopBar from '../../src/components/TopBar';
-import SnackbarProvider from '../../src/components/SnackbarProvider';
-import AuthenticationRouter from '../../src/components/AuthenticationRouter';
-import CardErrorBoundary from '../../src/components/CardErrorBoundary';
-import {
-    ElementType,
-    EQUIPMENT_TYPE,
-    equipmentStyles,
-    getFileIcon,
-    initializeAuthenticationDev,
-    LANG_ENGLISH,
-    LANG_FRENCH,
-    LANG_SYSTEM,
-    LIGHT_THEME,
-    logout,
-} from '../../src';
-import { useSnackMessage } from '../../src/hooks/useSnackMessage';
 
 import {
     Box,
@@ -41,13 +34,27 @@ import {
     ThemeProvider,
     Typography,
 } from '@mui/material';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
-
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { useMatch } from 'react-router';
 import { IntlProvider, useIntl } from 'react-intl';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
-
+import TopBar from '../../src/components/TopBar';
+import SnackbarProvider from '../../src/components/SnackbarProvider';
+import AuthenticationRouter from '../../src/components/AuthenticationRouter';
+import CardErrorBoundary from '../../src/components/CardErrorBoundary';
 import {
+    ElementType,
+    EQUIPMENT_TYPE,
+    equipmentStyles,
+    getFileIcon,
+    initializeAuthenticationDev,
+    LANG_ENGLISH,
+    LANG_FRENCH,
+    LANG_SYSTEM,
+    LIGHT_THEME,
+    logout,
     card_error_boundary_en,
     card_error_boundary_fr,
     element_search_en,
@@ -72,9 +79,12 @@ import {
     top_bar_fr,
     treeview_finder_en,
     treeview_finder_fr,
-} from '../../src/index';
+} from '../../src';
+import { useSnackMessage } from '../../src/hooks/useSnackMessage';
+
 import translations from './demo_intl';
 
+// eslint-disable-next-line import/no-unresolved
 import PowsyblLogo from '../images/powsybl_logo.svg?react';
 import AppPackage from '../../package.json';
 
@@ -91,21 +101,21 @@ import {
     testDataTree,
 } from '../data/TreeViewFinder';
 
-import { LOGS_JSON } from '../data/ReportViewer';
+import LOGS_JSON from '../data/ReportViewer';
 
-import { searchEquipments } from '../data/EquipmentSearchBar';
+import searchEquipments from '../data/EquipmentSearchBar';
 import { EquipmentItem } from '../../src/components/ElementSearchDialog/equipment-item';
 import OverflowableText from '../../src/components/OverflowableText';
 
 import { setShowAuthenticationRouterLogin } from '../../src/redux/actions';
 import { TableTab } from './TableTab';
-import { FlatParametersTab } from './FlatParametersTab';
+import FlatParametersTab from './FlatParametersTab';
 
 import { toNestedGlobalSelectors } from '../../src/utils/styles';
-import { InputsTab } from './InputsTab';
+import InputsTab from './InputsTab';
 import inputs_en from '../../src/components/translations/inputs-en';
 import inputs_fr from '../../src/components/translations/inputs-fr';
-import { EquipmentSearchDialog } from './equipment-search';
+import EquipmentSearchDialog from './equipment-search';
 
 const messages = {
     en: {
@@ -157,9 +167,8 @@ const darkTheme = createTheme({
 const getMuiTheme = (theme) => {
     if (theme === LIGHT_THEME) {
         return lightTheme;
-    } else {
-        return darkTheme;
     }
+    return darkTheme;
 };
 
 const style = {
@@ -192,13 +201,14 @@ const CustomTreeViewFinder = styled(TreeViewFinder)(
     TreeViewFinderCustomStylesEmotion
 );
 
-const Crasher = () => {
+function Crasher() {
     const [crash, setCrash] = useState(false);
     if (crash) {
+        // eslint-disable-next-line no-undef
         window.foonotexists.bar();
     }
     return <Button onClick={() => setCrash(true)}>CRASH ME</Button>;
-};
+}
 
 function SnackErrorButton() {
     const { snackError } = useSnackMessage();
@@ -292,14 +302,15 @@ function PermanentSnackButton() {
     );
 }
 
-const validateUser = (user) => {
+const validateUser = () => {
     // change to false to simulate user unauthorized access
-    return new Promise((resolve) =>
-        window.setTimeout(() => resolve(true), 500)
-    );
+    return new Promise((resolve) => {
+        // eslint-disable-next-line no-undef
+        window.setTimeout(() => resolve(true), 500);
+    });
 };
 
-const AppContent = ({ language, onLanguageClick }) => {
+function AppContent({ language, onLanguageClick }) {
     const navigate = useNavigate();
     const location = useLocation();
     const intl = useIntl();
@@ -344,9 +355,8 @@ const AppContent = ({ language, onLanguageClick }) => {
             .map((node) => {
                 if (node.children && node.children.length > 0) {
                     return 1 + countNodes(node.children);
-                } else {
-                    return 1;
                 }
+                return 1;
             })
             .reduce((a, b) => {
                 return a + b;
@@ -457,7 +467,7 @@ const AppContent = ({ language, onLanguageClick }) => {
 
     function testIcons() {
         return (
-            <Grid container direction={'column'}>
+            <Grid container direction="column">
                 {Object.keys(ElementType).map((type) => (
                     <Grid container item key={type}>
                         <Grid item>{getFileIcon(type)}</Grid>
@@ -602,7 +612,7 @@ const AppContent = ({ language, onLanguageClick }) => {
                 Logs
             </Button>
             <ReportViewerDialog
-                title={'Logs test'}
+                title="Logs test"
                 open={openReportViewer}
                 onClose={() => setOpenReportViewer(false)}
                 jsonReport={LOGS_JSON}
@@ -676,12 +686,9 @@ const AppContent = ({ language, onLanguageClick }) => {
                         sortedAlphabetically ? sortAlphabetically : undefined
                     }
                     // Customisation props to pass the counter in the title
-                    title={
-                        'Number of nodes : ' +
-                        countNodes(
-                            dataFormat === 'Tree' ? nodesTree : nodesList
-                        )
-                    }
+                    title={`Number of nodes : ${countNodes(
+                        dataFormat === 'Tree' ? nodesTree : nodesList
+                    )}`}
                 />
                 <Button
                     variant="contained"
@@ -712,13 +719,10 @@ const AppContent = ({ language, onLanguageClick }) => {
                     }
                     onlyLeaves={onlyLeaves}
                     // Customisation props
-                    title={
-                        'Custom Title TreeViewFinder, Number of nodes : ' +
-                        countNodes(
-                            dataFormat === 'Tree' ? nodesTree : nodesList
-                        )
-                    }
-                    validationButtonText={'Move To this location'}
+                    title={`Custom Title TreeViewFinder, Number of nodes : ${countNodes(
+                        dataFormat === 'Tree' ? nodesTree : nodesList
+                    )}`}
+                    validationButtonText="Move To this location"
                 />
             </div>
             <div
@@ -734,8 +738,8 @@ const AppContent = ({ language, onLanguageClick }) => {
                     }}
                     label="text"
                     id="overflowableText-textField"
-                    size={'small'}
-                    defaultValue={'Set large text here to test'}
+                    size="small"
+                    defaultValue="Set large text here to test"
                     onChange={onChangeOverflowableText}
                 />
                 <OverflowableText
@@ -814,7 +818,7 @@ const AppContent = ({ language, onLanguageClick }) => {
                                 handleEquipmentLabellingClick
                             }
                             equipmentLabelling={equipmentLabelling}
-                            withElementsSearch={true}
+                            withElementsSearch
                             searchingLabel={intl.formatMessage({
                                 id: 'equipment_search/label',
                             })}
@@ -890,9 +894,9 @@ const AppContent = ({ language, onLanguageClick }) => {
             </ThemeProvider>
         </StyledEngineProvider>
     );
-};
+}
 
-const App = () => {
+function App() {
     const [computedLanguage, setComputedLanguage] = useState(LANG_ENGLISH);
     const [language, setLanguage] = useState(LANG_ENGLISH);
 
@@ -911,7 +915,7 @@ const App = () => {
     };
 
     return (
-        <BrowserRouter basename={'/'}>
+        <BrowserRouter basename="/">
             <IntlProvider
                 locale={computedLanguage}
                 messages={messages[computedLanguage]}
@@ -923,6 +927,6 @@ const App = () => {
             </IntlProvider>
         </BrowserRouter>
     );
-};
+}
 
 export default App;

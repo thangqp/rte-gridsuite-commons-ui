@@ -12,8 +12,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import { Box, BoxProps, SxProps, Tooltip } from '@mui/material';
-import { styled } from '@mui/system';
+import { Box, BoxProps, SxProps, Tooltip, styled } from '@mui/material';
 import { Style } from 'node:util';
 
 const overflowStyle = {
@@ -114,14 +113,15 @@ export const OverflowableText = styled(
                 <Box
                     {...props}
                     ref={element}
-                    children={children || text}
                     className={className}
                     sx={
                         isMultiLine
                             ? multilineOverflowStyle(maxLineCount)
                             : overflowStyle.overflow
                     }
-                />
+                >
+                    {children || text}
+                </Box>
             </Tooltip>
         );
     }

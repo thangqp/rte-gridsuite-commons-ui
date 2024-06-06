@@ -12,8 +12,8 @@ import {
     closeSnackbar,
     useSnackbar,
 } from 'notistack';
-import { useIntlRef } from './useIntlRef';
 import { IntlShape } from 'react-intl';
+import useIntlRef from './useIntlRef';
 
 interface SnackInputs extends Omit<OptionsObject, 'variant' | 'style'> {
     messageTxt?: string;
@@ -31,8 +31,65 @@ export interface UseSnackMessageReturn {
     closeSnackbar: typeof closeSnackbar;
 }
 
+function checkInputs(txt?: string, id?: string, values?: any) {
+    if (txt && (id || values)) {
+        console.warn('Snack inputs should be [*Txt] OR [*Id, *Values]');
+    }
+}
+
+function checkAndTranslateIfNecessary(
+    intlRef: MutableRefObject<IntlShape>,
+    txt?: string,
+    id?: string,
+    values?: any
+) {
+    checkInputs(txt, id, values);
+    return (
+        txt ??
+        (id
+            ? intlRef.current.formatMessage(
+                  {
+                      id,
+                  },
+                  values
+              )
+            : null)
+    );
+}
+
+function makeMessage(
+    intlRef: MutableRefObject<IntlShape>,
+    snackInputs: SnackInputs
+): string | null {
+    const message = checkAndTranslateIfNecessary(
+        intlRef,
+        snackInputs.messageTxt,
+        snackInputs.messageId,
+        snackInputs.messageValues
+    );
+    const header = checkAndTranslateIfNecessary(
+        intlRef,
+        snackInputs.headerTxt,
+        snackInputs.headerId,
+        snackInputs.headerValues
+    );
+
+    let fullMessage = '';
+    if (header) {
+        fullMessage += header;
+    }
+    if (message) {
+        if (header) {
+            fullMessage += '\n\n';
+        }
+        fullMessage += message;
+    }
+    return fullMessage;
+}
+
 export function useSnackMessage(): UseSnackMessageReturn {
     const intlRef = useIntlRef();
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const enqueue = useCallback(
@@ -41,9 +98,9 @@ export function useSnackMessage(): UseSnackMessageReturn {
             if (message === null) {
                 return;
             }
-            return enqueueSnackbar(message, {
+            enqueueSnackbar(message, {
                 ...snackInputs,
-                variant: variant,
+                variant,
                 style: { whiteSpace: 'pre-line' },
             });
         },
@@ -82,60 +139,4 @@ export function useSnackMessage(): UseSnackMessageReturn {
     );
 
     return { snackError, snackInfo, snackWarning, closeSnackbar };
-}
-
-function checkAndTranslateIfNecessary(
-    intlRef: MutableRefObject<IntlShape>,
-    txt?: string,
-    id?: string,
-    values?: any
-) {
-    checkInputs(txt, id, values);
-    return (
-        txt ??
-        (id
-            ? intlRef.current.formatMessage(
-                  {
-                      id: id,
-                  },
-                  values
-              )
-            : null)
-    );
-}
-
-function checkInputs(txt?: string, id?: string, values?: any) {
-    if (txt && (id || values)) {
-        console.warn('Snack inputs should be [*Txt] OR [*Id, *Values]');
-    }
-}
-
-function makeMessage(
-    intlRef: MutableRefObject<IntlShape>,
-    snackInputs: SnackInputs
-): string | null {
-    const message = checkAndTranslateIfNecessary(
-        intlRef,
-        snackInputs.messageTxt,
-        snackInputs.messageId,
-        snackInputs.messageValues
-    );
-    const header = checkAndTranslateIfNecessary(
-        intlRef,
-        snackInputs.headerTxt,
-        snackInputs.headerId,
-        snackInputs.headerValues
-    );
-
-    let fullMessage = '';
-    if (header) {
-        fullMessage += header;
-    }
-    if (message) {
-        if (header) {
-            fullMessage += '\n\n';
-        }
-        fullMessage += message;
-    }
-    return fullMessage;
 }

@@ -5,4 +5,5 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-export { default } from './MultipleSelectionDialog';
+// eslint-disable-next-line import/prefer-default-export
+export { default as MultipleSelectionDialog } from './MultipleSelectionDialog';

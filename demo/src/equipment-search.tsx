@@ -13,7 +13,7 @@ import {
     EquipmentType,
 } from '../../src/index';
 
-export const EquipmentSearchDialog = () => {
+function EquipmentSearchDialog() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +30,7 @@ export const EquipmentSearchDialog = () => {
             <ElementSearchDialog
                 open={isSearchOpen}
                 onClose={() => setIsSearchOpen(false)}
-                searchingLabel={'testSearch'}
+                searchingLabel="testSearch"
                 onSearchTermChange={updateSearchTerm}
                 onSelectionChange={(element: any) => {
                     console.log(element);
@@ -65,4 +65,6 @@ export const EquipmentSearchDialog = () => {
             />
         </>
     );
-};
+}
+
+export default EquipmentSearchDialog;

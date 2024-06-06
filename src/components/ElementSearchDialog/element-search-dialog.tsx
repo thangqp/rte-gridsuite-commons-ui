@@ -16,8 +16,8 @@ import {
 } from '@mui/material';
 import { Search, SearchOff } from '@mui/icons-material';
 import { useIntl } from 'react-intl';
-import { EquipmentInfos } from '../../index';
 import * as React from 'react';
+import { EquipmentInfos } from '../../utils/EquipmentType';
 
 interface ElementSearchDialogProps {
     open: boolean;
@@ -34,7 +34,7 @@ interface ElementSearchDialogProps {
     loadingText?: string;
 }
 
-const ElementSearchDialog = (props: ElementSearchDialogProps) => {
+function ElementSearchDialog(props: Readonly<ElementSearchDialogProps>) {
     const intl = useIntl();
 
     const {
@@ -67,9 +67,9 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
         <Dialog
             open={open}
             onClose={handleClose}
-            disableRestoreFocus={true}
+            disableRestoreFocus
             aria-labelledby="dialog-title-search"
-            fullWidth={true}
+            fullWidth
         >
             <DialogContent>
                 <Autocomplete
@@ -115,14 +115,13 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
                             typeof value === 'string'
                         ) {
                             return option === value;
-                        } else {
-                            return option.id === value.id;
                         }
+                        return option.id === value.id;
                     }}
                     options={isLoading ? [] : elementsFound}
                     loading={isLoading}
                     loadingText={loadingText}
-                    autoHighlight={true}
+                    autoHighlight
                     noOptionsText={intl.formatMessage({
                         id: 'element_search/noResult',
                     })}
@@ -140,7 +139,7 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
                     }
                     renderInput={(params: any) => (
                         <TextField
-                            autoFocus={true}
+                            autoFocus
                             {...params}
                             label={
                                 searchingLabel ??
@@ -169,6 +168,6 @@ const ElementSearchDialog = (props: ElementSearchDialogProps) => {
             </DialogContent>
         </Dialog>
     );
-};
+}
 
 export default ElementSearchDialog;

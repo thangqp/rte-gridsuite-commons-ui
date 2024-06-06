@@ -11,7 +11,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useController } from 'react-hook-form';
 import { UUID } from 'crypto';
 import { TreeViewFinderNodeProps } from '../TreeViewFinder';
-import { FieldConstants } from '../../utils/field-constants';
+import FieldConstants from '../../utils/field-constants';
 import DirectoryItemSelector from '../DirectoryItemSelector/directory-item-selector';
 import { ElementType } from '../../utils/ElementType';
 import { fetchDirectoryElementPath } from '../../services';
@@ -25,11 +25,16 @@ export interface ModifyElementSelectionProps {
     onElementValidated?: (elementId: UUID) => void;
 }
 
-const ModifyElementSelection: React.FunctionComponent<
-    ModifyElementSelectionProps
-> = (props) => {
+function ModifyElementSelection(props: Readonly<ModifyElementSelectionProps>) {
     const intl = useIntl();
-
+    const {
+        elementType,
+        dialogTitleLabel,
+        dialogMessageLabel,
+        dialogOpeningButtonLabel,
+        noElementMessageLabel,
+        onElementValidated,
+    } = props;
     const [open, setOpen] = useState<boolean>(false);
     const [activeDirectoryName, setActiveDirectoryName] = useState('');
 
@@ -59,8 +64,8 @@ const ModifyElementSelection: React.FunctionComponent<
     const handleClose = (nodes: TreeViewFinderNodeProps[]) => {
         if (nodes.length) {
             onChange(nodes[0].id);
-            if (props.onElementValidated) {
-                props.onElementValidated(nodes[0].id as UUID);
+            if (onElementValidated) {
+                onElementValidated(nodes[0].id as UUID);
             }
         }
         setOpen(false);
@@ -83,7 +88,7 @@ const ModifyElementSelection: React.FunctionComponent<
                 color="primary"
                 component="label"
             >
-                <FormattedMessage id={props.dialogOpeningButtonLabel} />
+                <FormattedMessage id={dialogOpeningButtonLabel} />
             </Button>
             <Typography
                 sx={{
@@ -91,32 +96,31 @@ const ModifyElementSelection: React.FunctionComponent<
                     fontWeight: 'bold',
                 }}
             >
-                {activeDirectoryName
-                    ? activeDirectoryName
-                    : props?.noElementMessageLabel
-                    ? intl.formatMessage({
-                          id: props.noElementMessageLabel,
-                      })
-                    : ''}
+                {activeDirectoryName ||
+                    (props?.noElementMessageLabel
+                        ? intl.formatMessage({
+                              id: noElementMessageLabel,
+                          })
+                        : '')}
             </Typography>
             <DirectoryItemSelector
                 open={open}
                 onClose={handleClose}
-                types={[props.elementType]}
-                onlyLeaves={props.elementType !== ElementType.DIRECTORY}
+                types={[elementType]}
+                onlyLeaves={elementType !== ElementType.DIRECTORY}
                 multiSelect={false}
                 validationButtonText={intl.formatMessage({
                     id: 'confirmDirectoryDialog',
                 })}
                 title={intl.formatMessage({
-                    id: props.dialogTitleLabel,
+                    id: dialogTitleLabel,
                 })}
                 contentText={intl.formatMessage({
-                    id: props.dialogMessageLabel,
+                    id: dialogMessageLabel,
                 })}
             />
         </Grid>
     );
-};
+}
 
 export default ModifyElementSelection;

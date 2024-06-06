@@ -1,15 +1,26 @@
 {
   "root": true,
   "extends": [
-    "react-app",
+    "airbnb",
+    "airbnb-typescript",
     "plugin:prettier/recommended"
   ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "ignorePatterns": [
     // node_modules is implicitly always ignored
-    "dist"
+    "dist",
+    "jest.setup.ts",
+    "jest.config.ts"
   ],
   "rules": {
     "prettier/prettier": "warn",
-    "curly": "error"
+    "curly": "error",
+    "no-console": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error"
   }
 }
