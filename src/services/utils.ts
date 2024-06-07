@@ -80,7 +80,7 @@ function prepareRequest(init?: InitRequest, token?: Token): RequestInit {
     return initCopy;
 }
 
-function safeFetch(url: Url, initCopy: InitRequest) {
+function safeFetch(url: Url, initCopy: InitRequest): Promise<Response> {
     return fetch(url, initCopy).then((response) =>
         response.ok ? response : handleError(response)
     );
