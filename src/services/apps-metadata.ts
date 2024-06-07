@@ -76,12 +76,12 @@ export async function fetchStudyMetadata(): Promise<StudyMetadata> {
 }
 
 export const fetchDefaultParametersValues = () => {
-  return fetchStudyMetadata().then((studyMetadata) => {
-    console.info(
-      'fecthing default parameters values from apps-metadata file'
-    );
-    return studyMetadata.defaultParametersValues;
-  });
+    return fetchStudyMetadata().then((studyMetadata) => {
+        console.info(
+            'fetching default parameters values from apps-metadata file'
+        );
+        return studyMetadata.defaultParametersValues;
+    });
 };
 
 export function fetchVersion(): Promise<VersionJson> {

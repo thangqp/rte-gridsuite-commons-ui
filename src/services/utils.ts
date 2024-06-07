@@ -6,7 +6,7 @@
  */
 
 import { getUserToken } from '../redux/commonStore';
-import { fetchEnv, fetchStudyMetadata } from '@gridsuite/commons-ui';
+import { Env, fetchEnv } from './apps-metadata';
 
 export type InitRequest = Partial<RequestInit>;
 export type Token = string;
@@ -136,27 +136,31 @@ export function fetchIdpSettings() {
     return fetch('idpSettings.json');
 }
 
-export function fetchAuthorizationCodeFlowFeatureFlag() {
-    console.info(`Fetching authorization code flow feature flag...`);
+export function fetchAuthorizationCodeFlowFeatureFlag(): Promise<boolean> {
+    console.debug('Fetching authorization code flow feature flag...');
     return fetchEnv()
-        .then((env) =>
-            fetch(env.appsMetadataServerUrl + '/authentication.json')
+        .then((env: Env) =>
+            fetch(`${env.appsMetadataServerUrl}/authentication.json`)
         )
-        .then((res) => res.json())
-        .then((res) => {
-            console.log(
+        .then((res: Response) => res.json())
+        .then((res: { authorizationCodeFlowFeatureFlag: boolean }) => {
+            console.info(
                 `Authorization code flow is ${
                     res.authorizationCodeFlowFeatureFlag
                         ? 'enabled'
                         : 'disabled'
                 }`
             );
-            return res.authorizationCodeFlowFeatureFlag;
+            return res.authorizationCodeFlowFeatureFlag || false;
         })
         .catch((error) => {
-            console.error(error);
+            console.error(
+                `Error while fetching the authentication code flow: ${getErrorMessage(
+                    error
+                )}`
+            );
             console.warn(
-                `Something wrong happened when retrieving authentication.json: authorization code flow will be disabled`
+                'Something wrong happened when retrieving authentication.json: authorization code flow will be disabled'
             );
             return false;
         });
@@ -167,5 +171,32 @@ export function getUrlWithToken(baseUrl: string) {
         return baseUrl + '&access_token=' + getUserToken();
     } else {
         return baseUrl + '?access_token=' + getUserToken();
+    }
+}
+
+export function getRestBase(): string {
+    // We use the `baseURI` (from `<base/>` in index.html) to build the URL, which is corrected by httpd/nginx
+    return (
+        document.baseURI.replace(/\/+$/, '') + import.meta.env.VITE_API_GATEWAY
+    );
+}
+
+export function getErrorMessage(error: unknown): string | null {
+    if (error instanceof Error) {
+        return error.message;
+    } else if (error instanceof Object && 'message' in error) {
+        if (
+            typeof error.message === 'string' ||
+            typeof error.message === 'number' ||
+            typeof error.message === 'boolean'
+        ) {
+            return `${error.message}`;
+        } else {
+            return JSON.stringify(error.message ?? undefined) ?? null;
+        }
+    } else if (typeof error === 'string') {
+        return error;
+    } else {
+        return JSON.stringify(error ?? undefined) ?? null;
     }
 }
