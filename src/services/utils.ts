@@ -162,15 +162,6 @@ export function fetchAuthorizationCodeFlowFeatureFlag() {
         });
 }
 
-export const fetchDefaultParametersValues = () => {
-    return fetchStudyMetadata().then((studyMetadata) => {
-        console.info(
-            'fecthing default parameters values from apps-metadata file'
-        );
-        return studyMetadata.defaultParametersValues;
-    });
-};
-
 export function getUrlWithToken(baseUrl: string) {
     if (baseUrl.includes('?')) {
         return baseUrl + '&access_token=' + getUserToken();
