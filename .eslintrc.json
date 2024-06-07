@@ -3,6 +3,7 @@
   "extends": [
     "airbnb",
     "airbnb-typescript",
+    "airbnb/hooks",
     "plugin:prettier/recommended"
   ],
   "parserOptions": {
@@ -11,8 +12,9 @@
   "ignorePatterns": [
     // node_modules is implicitly always ignored
     "dist",
-    "jest.setup.ts",
-    "jest.config.ts"
+    "vite.config.mts",
+    "jest.config.ts",
+    "jest.setup.ts"
   ],
   "rules": {
     "prettier/prettier": "warn",

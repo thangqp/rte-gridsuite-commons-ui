@@ -57,7 +57,7 @@ function ErrorInput({ name, InputField }: Readonly<ErrorInputProps>) {
         if (error && errorRef.current) {
             errorRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [isSubmitting]);
+    }, [error, isSubmitting]);
 
     if (error?.message) {
         return (

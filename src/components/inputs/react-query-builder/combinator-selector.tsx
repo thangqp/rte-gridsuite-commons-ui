@@ -18,7 +18,7 @@ function CombinatorSelector(props: Readonly<CombinatorSelectorProps>) {
     const handlePopupConfirmation = useCallback(() => {
         handleOnChange(tempCombinator);
         setOpenPopup(false);
-    }, [props, tempCombinator]);
+    }, [handleOnChange, tempCombinator]);
 
     return (
         <>
