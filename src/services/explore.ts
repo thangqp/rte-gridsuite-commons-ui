@@ -7,9 +7,9 @@
 
 import { UUID } from 'crypto';
 import {
-    backendFetch,
-    backendFetchJson,
-    getRequestParamFromList,
+  backendFetch,
+  backendFetchJson,
+  getRequestParamFromList, Token
 } from './utils';
 import { ElementAttributes } from '../utils/types';
 
@@ -21,7 +21,7 @@ export function createFilter(
     name: string,
     description: string,
     parentDirectoryUuid?: UUID,
-    token?: string
+    token?: Token
 ) {
     let urlSearchParams = new URLSearchParams();
     urlSearchParams.append('name', name);

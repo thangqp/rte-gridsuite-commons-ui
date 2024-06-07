@@ -6,7 +6,7 @@
  */
 
 import { getUserToken } from '../redux/commonStore';
-import { Env, fetchEnv } from './apps-metadata';
+import { Url, Env, fetchEnv } from './apps-metadata';
 
 export type InitRequest = Partial<RequestInit>;
 export type Token = string;
@@ -15,32 +15,35 @@ export interface ErrorWithStatus extends Error {
     status?: number;
 }
 
-export function backendFetch(url: string, init: any, token?: string) {
-    const initCopy = prepareRequest(init, token);
-    return safeFetch(url, initCopy);
+export function backendFetch(
+    url: Url,
+    init?: InitRequest,
+    token?: Token
+): Promise<Response> {
+    return safeFetch(url, prepareRequest(init, token));
 }
 
 export async function backendFetchJson(
-    url: string,
-    init?: any,
-    token?: string
-) {
+    url: Url,
+    init?: InitRequest,
+    token?: Token
+): Promise<any>  {
     return (await backendFetch(url, init, token)).json();
 }
 
 export async function backendFetchText(
-    url: string,
-    init?: any,
-    token?: string
-) {
+    url: Url,
+    init?: InitRequest,
+    token?: Token
+): Promise<string>  {
     return (await backendFetch(url, init, token)).text();
 }
 
 export async function backendFetchFile(
-    url: string,
-    init?: any,
-    token?: string
-) {
+    url: Url,
+    init?: InitRequest,
+    token?: Token
+): Promise<Blob>  {
     return (await backendFetch(url, init, token)).blob();
 }
 
@@ -77,7 +80,7 @@ function prepareRequest(init?: InitRequest, token?: Token): RequestInit {
     return initCopy;
 }
 
-function safeFetch(url: string, initCopy: any) {
+function safeFetch(url: Url, initCopy: InitRequest) {
     return fetch(url, initCopy).then((response) =>
         response.ok ? response : handleError(response)
     );

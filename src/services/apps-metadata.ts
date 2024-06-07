@@ -5,6 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import { PredefinedProperties } from '../utils/types';
+import { getErrorMessage } from './utils';
 
 // https://github.com/gridsuite/deployment/blob/main/docker-compose/docker-compose.base.yml
 // https://github.com/gridsuite/deployment/blob/main/k8s/resources/common/config/apps-metadata.json
@@ -85,12 +86,14 @@ export const fetchDefaultParametersValues = () => {
 };
 
 export function fetchVersion(): Promise<VersionJson> {
-    console.info(`Fetching global metadata...`);
+    console.debug(`Fetching global metadata...`);
     return fetchEnv()
-        .then((env) => fetch(env.appsMetadataServerUrl + '/version.json'))
-        .then((response) => response.json())
-        .catch((reason) => {
-            console.error('Error while fetching the version : ' + reason);
-            return reason;
+        .then((env: Env) => fetch(`${env.appsMetadataServerUrl}/version.json`))
+        .then((response: Response) => response.json())
+        .catch((error) => {
+            console.error(
+                `Error while fetching the version: ${getErrorMessage(error)}`
+            );
+            throw error;
         });
 }
