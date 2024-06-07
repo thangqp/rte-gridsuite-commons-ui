@@ -68,7 +68,7 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
     checkboxListSx,
     labelSx,
     enableKeyboardSelection,
-    isCheckBoxDraggable,
+    isCheckBoxDraggable = false,
     isDragDisable,
     draggableProps,
     secondaryAction,
