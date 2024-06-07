@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 /**
  * Hook to deal with list of components multiselection
@@ -7,19 +7,10 @@ import { useCallback, useEffect, useState } from 'react';
  */
 export const useMultiselect = (elementIds: string[]) => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [lastSelectedElementId, setLastSelectedElementId] = useState<
-        string | null
-    >(null);
 
-    const clearSelection = () => {
+    const clearSelection = useCallback(() => {
         setSelectedIds([]);
-    };
-
-    useEffect(() => {
-        clearSelection();
-        console.log(lastSelectedElementId);
-        setLastSelectedElementId(null);
-    }, [elementIds, lastSelectedElementId]);
+    }, []);
 
     const toggleSelection = useCallback(
         (elementToToggleId: string) => {
@@ -33,96 +24,33 @@ export const useMultiselect = (elementIds: string[]) => {
                 );
             }
             setSelectedIds(newSelectedIds);
-            setLastSelectedElementId(elementToToggleId);
+            //setLastSelectedElementId(elementToToggleId);
         },
         [selectedIds]
     );
-
-    /*const addElementsToSelection = useCallback(
-        (elementsToSelectIds: string[]) => {
-            const newSelectedIds = [
-                ...selectedIds,
-                ...elementsToSelectIds.filter(
-                    (id) => !selectedIds.includes(id)
-                ),
-            ];
-            setSelectedIds(newSelectedIds);
-        },
-        [selectedIds]
-    );*/
-
-    /*const removeElementsFromSelection = useCallback(
-        (elementsToUnselectIds: string[]) => {
-            const newSelectedIds = selectedIds.filter(
-                (id) => !elementsToUnselectIds.includes(id)
-            );
-            setSelectedIds(newSelectedIds);
-        },
-        [selectedIds]
-    ); */
-
-    /*const handleShiftClick = useCallback(
-        (clickedElementId: string) => {
-            window.getSelection()?.empty();
-
-            const lastSelectedIdIndex = lastSelectedElementId
-                ? elementIds.indexOf(lastSelectedElementId)
-                : -1;
-            const clickedElementIdIndex = elementIds.indexOf(clickedElementId);
-
-            if (clickedElementIdIndex < 0) {
-                return;
-            }
-
-            if (lastSelectedIdIndex < 0) {
-                toggleSelection(clickedElementId);
-                return;
-            }
-
-            const elementsToToggle = elementIds.slice(
-                Math.min(lastSelectedIdIndex, clickedElementIdIndex),
-                Math.max(lastSelectedIdIndex, clickedElementIdIndex) + 1
-            );
-
-            if (selectedIds.includes(clickedElementId)) {
-                removeElementsFromSelection(elementsToToggle);
-            } else {
-                addElementsToSelection(elementsToToggle);
-            }
-            setLastSelectedElementId(clickedElementId);
-        },
-        [
-            elementIds,
-            lastSelectedElementId,
-            selectedIds,
-            addElementsToSelection,
-            removeElementsFromSelection,
-            toggleSelection,
-        ]
-    );*/
 
     const handleShiftAndCtrlClick = (
         clickEvent: React.MouseEvent<HTMLButtonElement, MouseEvent>,
         clickedElementId: string
     ) => {
-        if (clickEvent.shiftKey) {
-            //handleShiftClick(clickedElementId);
+        /*if (clickEvent.shiftKey) {
+            handleShiftClick(clickedElementId);
             return;
         }
 
         if (clickEvent.ctrlKey) {
             toggleSelection(clickedElementId);
             return;
-        }
+        }*/
     };
 
-    const toggleSelectAll = () => {
+    const toggleSelectAll = useCallback(() => {
         if (selectedIds.length === 0) {
             setSelectedIds([...elementIds]);
         } else {
             setSelectedIds([]);
         }
-    };
+    }, [elementIds, selectedIds.length]);
 
     return {
         selectedIds,

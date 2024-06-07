@@ -6,17 +6,17 @@
  */
 
 import React, {
+    FunctionComponent,
+    MouseEvent,
+    useCallback,
     useEffect,
     useState,
-    MouseEvent,
-    FunctionComponent,
-    useCallback,
 } from 'react';
-import { List, ListItem, IconButton, Divider, Box } from '@mui/material';
+import { Box, Divider, IconButton, List, ListItem } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Draggable } from 'react-beautiful-dnd';
-import { useMultiselect } from './use-multiselect';
 import CheckBoxItem, { HasId } from './check-box-item';
+import { useMultiselect } from './use-multiselect';
 
 interface CheckboxListProps {
     itemRenderer?: (params: {
@@ -75,6 +75,17 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
     enableSecondaryActionOnHover = true,
     ...props
 }) => {
+    /*const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const toggleSelection = (elementToToggleId: string) => {
+        console.log('elementToToggleId : ', elementToToggleId);
+    };
+    const clearSelection = useCallback(() => {
+        setSelectedIds([]);
+    }, []);
+    const toggleSelectAll = useCallback(() => {
+        const valuesIds = values.map((v) => getValueId(v));
+        setSelectedIds(valuesIds);
+    }, [values, getValueId]);*/
     const {
         toggleSelection,
         selectedIds,
