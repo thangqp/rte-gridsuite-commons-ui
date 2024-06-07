@@ -75,17 +75,6 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
     enableSecondaryActionOnHover = true,
     ...props
 }) => {
-    /*const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const toggleSelection = (elementToToggleId: string) => {
-        console.log('elementToToggleId : ', elementToToggleId);
-    };
-    const clearSelection = useCallback(() => {
-        setSelectedIds([]);
-    }, []);
-    const toggleSelectAll = useCallback(() => {
-        const valuesIds = values.map((v) => getValueId(v));
-        setSelectedIds(valuesIds);
-    }, [values, getValueId]);*/
     const {
         toggleSelection,
         selectedIds,
@@ -96,13 +85,9 @@ const CheckboxList: FunctionComponent<CheckboxListProps> = ({
 
     const isChecked = useCallback(
         (item: any) => {
-            console.log('testing is selectedIds : ', selectedIds);
-            console.log('testing is item : ', item);
-
             const check = selectedIds.some((checkedItem: any) =>
                 itemComparator(checkedItem, item)
             );
-            console.log('testing is checked : ', check);
 
             return check;
         },
