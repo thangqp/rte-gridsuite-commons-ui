@@ -123,10 +123,14 @@ export const getRequestParamFromList = (
     return new URLSearchParams(params.map((param) => [paramName, param]));
 };
 
-export const getWsBase = () =>
+export function getWsBase(): string {
+  // We use the `baseURI` (from `<base/>` in index.html) to build the URL, which is corrected by httpd/nginx
+  return (
     document.baseURI
-        .replace(/^http:\/\//, 'ws://')
-        .replace(/^https:\/\//, 'wss://');
+      .replace(/^http(s?):\/\//, 'ws$1://')
+      .replace(/\/+$/, '') + import.meta.env.VITE_WS_GATEWAY
+  );
+}
 
 export function fetchIdpSettings() {
     return fetch('idpSettings.json');
@@ -155,17 +159,6 @@ export function fetchAuthorizationCodeFlowFeatureFlag() {
                 `Something wrong happened when retrieving authentication.json: authorization code flow will be disabled`
             );
             return false;
-        });
-}
-
-export function fetchVersion() {
-    console.info(`Fetching global metadata...`);
-    return fetchEnv()
-        .then((env) => fetch(env.appsMetadataServerUrl + '/version.json'))
-        .then((response) => response.json())
-        .catch((reason) => {
-            console.error('Error while fetching the version : ' + reason);
-            return reason;
         });
 }
 

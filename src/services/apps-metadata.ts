@@ -20,6 +20,10 @@ export type Env = {
     //[key: string]: string;
 };
 
+export type VersionJson = {
+    deployVersion?: string;
+};
+
 export async function fetchEnv(): Promise<Env> {
     return (await fetch('env.json')).json();
 }
@@ -69,4 +73,15 @@ export async function fetchStudyMetadata(): Promise<StudyMetadata> {
     } else {
         return studyMetadata[0]; // There should be only one study metadata
     }
+}
+
+export function fetchVersion(): Promise<VersionJson> {
+    console.info(`Fetching global metadata...`);
+    return fetchEnv()
+        .then((env) => fetch(env.appsMetadataServerUrl + '/version.json'))
+        .then((response) => response.json())
+        .catch((reason) => {
+            console.error('Error while fetching the version : ' + reason);
+            return reason;
+        });
 }
