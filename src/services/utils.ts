@@ -67,7 +67,7 @@ export const downloadFile = (blob: Blob, filename: string, type?: FileType) => {
 function prepareRequest(init?: InitRequest, token?: Token): RequestInit {
     if (!(typeof init === 'undefined' || typeof init === 'object')) {
         throw new TypeError(
-            `Argument 2 of backendFetch is not an object ${typeof init}`
+            `First argument of prepareRequest is not an object ${typeof init}`
         );
     }
     const initCopy: RequestInit = Object.assign({}, init);
