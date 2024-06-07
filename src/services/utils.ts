@@ -15,11 +15,7 @@ export interface ErrorWithStatus extends Error {
     status?: number;
 }
 
-export function backendFetch(
-    url: Url,
-    init?: InitRequest,
-    token?: Token
-): Promise<Response> {
+export function backendFetch(url: Url, init?: InitRequest, token?: Token) {
     return safeFetch(url, prepareRequest(init, token));
 }
 
@@ -27,7 +23,7 @@ export async function backendFetchJson(
     url: Url,
     init?: InitRequest,
     token?: Token
-): Promise<any>  {
+): Promise<unknown> {
     return (await backendFetch(url, init, token)).json();
 }
 
@@ -35,7 +31,7 @@ export async function backendFetchText(
     url: Url,
     init?: InitRequest,
     token?: Token
-): Promise<string>  {
+) {
     return (await backendFetch(url, init, token)).text();
 }
 
@@ -43,7 +39,7 @@ export async function backendFetchFile(
     url: Url,
     init?: InitRequest,
     token?: Token
-): Promise<Blob>  {
+) {
     return (await backendFetch(url, init, token)).blob();
 }
 
