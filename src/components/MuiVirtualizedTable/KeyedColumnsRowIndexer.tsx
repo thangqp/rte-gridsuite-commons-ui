@@ -174,7 +174,7 @@ const codedColumnsFromKeyAndDirection = (
 
     let ret = [];
     const columIndexByKey: Record<string, number> = {};
-    for (let colIdx = 0; colIdx < columns.length; colIdx + 1) {
+    for (let colIdx = 0; colIdx < columns.length; colIdx += 1) {
         const col = columns[colIdx];
         const colKey = col.dataKey;
         columIndexByKey[colKey] = colIdx;
@@ -495,11 +495,11 @@ export class KeyedColumnsRowIndexer {
             }
         });
 
-        for (let rowIdx = 0; rowIdx < rows.length; rowIdx + 1) {
+        for (let rowIdx = 0; rowIdx < rows.length; rowIdx += 1) {
             const row = rows[rowIdx];
             let acceptsRow = true;
             const acceptedOnRow: Record<number, any> = {};
-            for (let colIdx = 0; colIdx < columns.length; colIdx + 1) {
+            for (let colIdx = 0; colIdx < columns.length; colIdx += 1) {
                 const col = columns[colIdx];
                 const helper = getHelper(col);
                 const colKey = col.dataKey;
@@ -636,30 +636,24 @@ export class KeyedColumnsRowIndexer {
                 } else {
                     this.sortingState?.splice(wasAtIdx, 1);
                 }
-            } else {
-                // AMEND
-                // eslint-disable-next-line no-lonely-if
-                if (wasAtIdx < 0) {
-                    if (
-                        this.lastUsedRank - 1 >
-                        // @ts-ignore could be undefined, how to handle this case ?
-                        this.sortingState.length
-                    ) {
-                        return false;
-                    }
-                    this.sortingState?.splice(this.lastUsedRank - 1, 0, [
-                        colKey,
-                        canonicalForSign(1),
-                    ]);
-                } else if (!(this.isThreeState && wasSignDir === -1)) {
-                    // @ts-ignore could be null but hard to handle with such accesses
-                    this.sortingState[wasAtIdx][1] = canonicalForSign(
-                        -wasSignDir
-                    );
-                } else {
-                    this.lastUsedRank = wasAtIdx + 1;
-                    this.sortingState?.splice(wasAtIdx, 1);
+            } else if (wasAtIdx < 0) {
+                if (
+                    this.lastUsedRank - 1 >
+                    // @ts-ignore could be undefined, how to handle this case ?
+                    this.sortingState.length
+                ) {
+                    return false;
                 }
+                this.sortingState?.splice(this.lastUsedRank - 1, 0, [
+                    colKey,
+                    canonicalForSign(1),
+                ]);
+            } else if (!(this.isThreeState && wasSignDir === -1)) {
+                // @ts-ignore could be null but hard to handle with such accesses
+                this.sortingState[wasAtIdx][1] = canonicalForSign(-wasSignDir);
+            } else {
+                this.lastUsedRank = wasAtIdx + 1;
+                this.sortingState?.splice(wasAtIdx, 1);
             }
         }
         this.bumpVersion();

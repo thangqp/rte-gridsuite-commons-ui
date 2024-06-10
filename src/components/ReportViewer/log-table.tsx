@@ -50,7 +50,7 @@ function LogTable({
     onRowClick,
     selectedSeverity,
     setSelectedSeverity,
-}: LogTableProps) {
+}: Readonly<LogTableProps>) {
     const intl = useIntl();
 
     const theme = useTheme();
