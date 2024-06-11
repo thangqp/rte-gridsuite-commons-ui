@@ -11,6 +11,7 @@ import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import {
+    ActionWithRulesAndAddersProps,
     Field,
     formatQuery,
     QueryBuilder,
@@ -39,11 +40,11 @@ interface CustomReactQueryBuilderProps {
     fields: Field[];
 }
 
-function RuleAddButton(props: any) {
+function RuleAddButton(props: Readonly<ActionWithRulesAndAddersProps>) {
     return <AddButton {...props} label="rule" />;
 }
 
-function GroupAddButton(props: any) {
+function GroupAddButton(props: Readonly<ActionWithRulesAndAddersProps>) {
     return <AddButton {...props} label="subGroup" />;
 }
 

@@ -14,7 +14,6 @@ import React, {
 } from 'react';
 import { useIntl } from 'react-intl';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
 
 import {
@@ -29,7 +28,6 @@ import {
     ModalProps,
 } from '@mui/material';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { TreeItem, TreeView, TreeViewClasses } from '@mui/x-tree-view';
 import {
     Check as CheckIcon,

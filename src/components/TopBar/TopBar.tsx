@@ -41,7 +41,6 @@ import {
     Settings as SettingsIcon,
     WbSunny as WbSunnyIcon,
 } from '@mui/icons-material';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
 
 import { User } from 'oidc-client';

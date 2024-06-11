@@ -332,7 +332,10 @@ function DirectoryItemSelector({
         }
     }, [open, updateRootDirectories, expanded, fetchDirectory]);
 
-    function sortHandlingDirectories(a: any, b: any): number {
+    function sortHandlingDirectories(
+        a: TreeViewFinderNodeProps,
+        b: TreeViewFinderNodeProps
+    ): number {
         // If children property is set it means it's a directory, they are handled differently in order to keep them at the top of the list
         if (a.children && !b.children) {
             return -1;
@@ -346,8 +349,7 @@ function DirectoryItemSelector({
     return (
         <TreeViewFinder
             onTreeBrowse={fetchDirectory as (NodeId: string) => void}
-            // eslint-disable-next-line react/jsx-no-bind
-            sortMethod={sortHandlingDirectories}
+            sortMethod={(a, b) => sortHandlingDirectories(a, b)}
             multiSelect // defaulted to true
             open={open}
             expanded={expanded as string[]}

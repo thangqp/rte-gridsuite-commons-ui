@@ -7,7 +7,6 @@
 
 import { PropsWithChildren, ReactNode, useContext } from 'react';
 import { Box, Theme, Typography } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { alpha, styled } from '@mui/system';
 import { TreeItem, TreeItemProps } from '@mui/lab';
 import { Label } from '@mui/icons-material';

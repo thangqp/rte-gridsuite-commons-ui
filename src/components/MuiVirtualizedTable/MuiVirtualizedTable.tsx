@@ -54,7 +54,6 @@ import {
     TableCell,
     TextField,
 } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
 import { GetApp as GetAppIcon } from '@mui/icons-material';
 import {

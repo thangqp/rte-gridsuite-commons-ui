@@ -19,7 +19,6 @@ import {
     ArrowRight as ArrowRightIcon,
 } from '@mui/icons-material';
 import { Grid } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { TreeView } from '@mui/x-tree-view';
 import ReportItem from './report-item';
 import LogReport from './log-report';
@@ -49,7 +48,7 @@ export interface ReportViewerProps {
 export default function ReportViewer({
     jsonReport,
     maxSubReports = MAX_SUB_REPORTS,
-}: ReportViewerProps) {
+}: Readonly<ReportViewerProps>) {
     const [selectedNode, setSelectedNode] = useState<string | null>(null);
     const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
     const [logs, setLogs] = useState<LogReportItem[]>([]);
@@ -211,7 +210,3 @@ export default function ReportViewer({
         )
     );
 }
-
-ReportViewer.defaultProps = {
-    maxSubReports: MAX_SUB_REPORTS,
-};

@@ -12,7 +12,6 @@ import { IntlProvider } from 'react-intl';
 
 import { red } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { beforeEach, afterEach, it, expect } from '@jest/globals';
 import TopBar, { LANG_ENGLISH } from './TopBar';
 import { top_bar_en } from '../..';

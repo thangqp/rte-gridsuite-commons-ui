@@ -22,7 +22,6 @@ import {
     FilterAltOutlined as FilterAltOutlinedIcon,
 } from '@mui/icons-material';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
 import { Box, BoxProps, Theme } from '@mui/material';
 import { mergeSx } from '../../utils/styles';

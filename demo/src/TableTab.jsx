@@ -6,7 +6,6 @@
  */
 
 import { useCallback, useMemo, useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
 import {
     Box,

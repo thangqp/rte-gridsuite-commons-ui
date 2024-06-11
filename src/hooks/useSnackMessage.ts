@@ -9,7 +9,7 @@ import { MutableRefObject, useCallback } from 'react';
 import {
     BaseVariant,
     OptionsObject,
-    closeSnackbar,
+    closeSnackbar as closeSnackbarFromNotistack,
     useSnackbar,
 } from 'notistack';
 import { IntlShape } from 'react-intl';
@@ -28,7 +28,7 @@ export interface UseSnackMessageReturn {
     snackError: (snackInputs: SnackInputs) => void;
     snackWarning: (snackInputs: SnackInputs) => void;
     snackInfo: (snackInputs: SnackInputs) => void;
-    closeSnackbar: typeof closeSnackbar;
+    closeSnackbar: typeof closeSnackbarFromNotistack;
 }
 
 function checkInputs(txt?: string, id?: string, values?: any) {
@@ -89,7 +89,6 @@ function makeMessage(
 
 export function useSnackMessage(): UseSnackMessageReturn {
     const intlRef = useIntlRef();
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const enqueue = useCallback(

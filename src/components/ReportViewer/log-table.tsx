@@ -7,7 +7,6 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { TableCell, Theme, useTheme } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
 import { MuiVirtualizedTable } from '../MuiVirtualizedTable';
 import { FilterButton } from './filter-button';

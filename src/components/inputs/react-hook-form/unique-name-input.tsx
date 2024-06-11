@@ -145,9 +145,7 @@ function UniqueNameInput({
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         onChange(e.target.value);
-        if (onManualChangeCallback) {
-            onManualChangeCallback();
-        }
+        onManualChangeCallback?.();
     };
 
     const translatedLabel = <FormattedMessage id={label} />;

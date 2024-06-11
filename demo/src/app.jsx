@@ -33,9 +33,7 @@ import {
     ThemeProvider,
     Typography,
 } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { useMatch } from 'react-router';
 import { IntlProvider, useIntl } from 'react-intl';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';

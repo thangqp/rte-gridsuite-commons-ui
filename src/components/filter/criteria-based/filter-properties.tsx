@@ -52,7 +52,7 @@ function propertyValuesTest(
     if (doublePropertyValues) {
         return isForLineOrHvdcLine ? values?.length! > 0 : true;
     }
-    return isForLineOrHvdcLine ? true : values?.length! > 0;
+    return isForLineOrHvdcLine || values?.length! > 0;
 }
 
 export const filterPropertiesYupSchema = {

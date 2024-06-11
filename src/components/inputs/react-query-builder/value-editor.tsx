@@ -39,10 +39,9 @@ const styles = {
 };
 
 function ValueEditor(props: Readonly<ValueEditorProps>) {
-    const { field, operator, value } = props;
+    const { field, operator, value, rule, handleOnChange, inputType } = props;
     const formContext = useFormContext();
     const { getValues } = formContext;
-    const { rule, handleOnChange, inputType } = props;
     const itemFilter = useCallback(
         (filterValue: any) => {
             if (filterValue?.type === ElementType.FILTER) {

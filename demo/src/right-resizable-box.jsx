@@ -7,13 +7,10 @@
 
 import { useState } from 'react';
 import { MoreVert as ResizePanelHandleIcon } from '@mui/icons-material';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { ResizableBox } from 'react-resizable';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { useWindowWidth } from '@react-hook/window-size';
 import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { styled } from '@mui/system';
 import { mergeSx } from '../../src/utils/styles';
 

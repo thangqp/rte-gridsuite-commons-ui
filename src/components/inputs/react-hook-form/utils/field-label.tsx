@@ -25,9 +25,4 @@ function FieldLabel({
     );
 }
 
-FieldLabel.defaultProps = {
-    optional: false,
-    values: undefined,
-};
-
 export default FieldLabel;
