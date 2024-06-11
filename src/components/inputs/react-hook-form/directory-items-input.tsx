@@ -26,7 +26,7 @@ import ErrorInput from './error-management/error-input';
 import { useSnackMessage } from '../../../hooks/useSnackMessage';
 import { TreeViewFinderNodeProps } from '../../TreeViewFinder';
 import { mergeSx } from '../../../utils/styles';
-import { OverflowableText } from '../../OverflowableText';
+import OverflowableText from '../../OverflowableText';
 import MidFormError from './error-management/mid-form-error';
 import DirectoryItemSelector from '../../DirectoryItemSelector/directory-item-selector';
 import { fetchDirectoryElementPath } from '../../../services';

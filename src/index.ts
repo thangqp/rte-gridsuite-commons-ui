@@ -8,19 +8,19 @@
 export { TreeViewFinder } from './components/TreeViewFinder';
 export { TopBar } from './components/TopBar';
 export { default as AboutDialog } from './components/TopBar/AboutDialog';
-export { SnackbarProvider } from './components/SnackbarProvider';
-export { AuthenticationRouter } from './components/AuthenticationRouter';
+export { default as SnackbarProvider } from './components/SnackbarProvider';
+export { default as AuthenticationRouter } from './components/AuthenticationRouter';
 export { MuiVirtualizedTable } from './components/MuiVirtualizedTable';
 export {
     KeyedColumnsRowIndexer,
     ChangeWays,
 } from './components/MuiVirtualizedTable';
-export { ReportViewer } from './components/ReportViewer';
-export { ReportViewerDialog } from './components/ReportViewerDialog';
-export { OverflowableText } from './components/OverflowableText';
+export { default as ReportViewer } from './components/ReportViewer';
+export { default as ReportViewerDialog } from './components/ReportViewerDialog';
+export { default as OverflowableText } from './components/OverflowableText';
 export { ElementSearchDialog } from './components/ElementSearchDialog';
-export { FlatParameters } from './components/FlatParameters';
-export { MultipleSelectionDialog } from './components/MultipleSelectionDialog';
+export { default as FlatParameters } from './components/FlatParameters';
+export { default as MultipleSelectionDialog } from './components/MultipleSelectionDialog';
 export { default as CustomMuiDialog } from './components/dialogs/custom-mui-dialog';
 export { default as DescriptionModificationDialog } from './components/dialogs/description-modification-dialog';
 export { default as ModifyElementSelection } from './components/dialogs/modify-element-selection';
@@ -138,7 +138,7 @@ export { default as directory_items_input_fr } from './components/translations/d
 
 export { TagRenderer } from './components/ElementSearchDialog';
 export { EquipmentItem } from './components/ElementSearchDialog/equipment-item';
-export { CardErrorBoundary } from './components/CardErrorBoundary';
+export { default as CardErrorBoundary } from './components/CardErrorBoundary';
 export { default as useIntlRef } from './hooks/useIntlRef';
 export { useSnackMessage } from './hooks/useSnackMessage';
 export { default as useDebounce } from './hooks/useDebounce';

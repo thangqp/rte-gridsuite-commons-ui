@@ -18,7 +18,7 @@ import {
     FullscreenExit as FullscreenExitIcon,
 } from '@mui/icons-material';
 import { FormattedMessage } from 'react-intl';
-import { ReportViewer } from '../ReportViewer';
+import ReportViewer from '../ReportViewer';
 import { Report } from '../ReportViewer/report.type';
 
 const styles = {

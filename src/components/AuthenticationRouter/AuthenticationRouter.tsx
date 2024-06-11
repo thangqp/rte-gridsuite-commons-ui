@@ -10,15 +10,15 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { Alert, AlertTitle, Grid } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { UserManager } from 'oidc-client';
-import { SignInCallbackHandler } from '../SignInCallbackHandler';
+import SignInCallbackHandler from '../SignInCallbackHandler';
 import {
     handleSigninCallback,
     handleSilentRenewCallback,
     login,
     logout,
 } from '../../utils/AuthService';
-import { SilentRenewCallbackHandler } from '../SilentRenewCallbackHandler';
-import { Login } from '../Login';
+import SilentRenewCallbackHandler from '../SilentRenewCallbackHandler';
+import Login from '../Login';
 import Logout from '../Login/Logout';
 
 export interface AuthenticationRouterProps {
