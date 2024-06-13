@@ -227,6 +227,17 @@ export const CustomAgGridTable: FunctionComponent<CustomAgGridTableProps> = ({
         }
     };
 
+    const onCellEditingStopped = useCallback(
+        (event: any) => {
+            const rowIndex = getIndex(event.data);
+            if (rowIndex === -1) {
+                return;
+            }
+            update(rowIndex, event.data);
+        },
+        [getIndex, update]
+    );
+
     return (
         <Grid container spacing={2}>
             <Grid
@@ -256,9 +267,7 @@ export const CustomAgGridTable: FunctionComponent<CustomAgGridTableProps> = ({
                     onRowDataUpdated={
                         newRowAdded ? onRowDataUpdated : undefined
                     }
-                    onCellEditingStopped={(event) => {
-                        update(event.rowIndex!, event.data);
-                    }}
+                    onCellEditingStopped={onCellEditingStopped}
                     getRowId={(row) =>
                         row.data[FieldConstants.AG_GRID_ROW_UUID]
                     }
