@@ -14,6 +14,11 @@ import { Grid, useTheme } from '@mui/material';
 import BottomRightButtons from './bottom-right-buttons';
 import { useIntl } from 'react-intl';
 import { FieldConstants } from '../../../../utils/field-constants';
+import {
+    CellEditingStoppedEvent,
+    ColumnState,
+    SortChangedEvent,
+} from 'ag-grid-community';
 
 export const ROW_DRAGGING_SELECTION_COLUMN_DEF = [
     {
@@ -119,6 +124,7 @@ export const CustomAgGridTable: FunctionComponent<CustomAgGridTableProps> = ({
     const [gridApi, setGridApi] = useState<any>(null);
     const [selectedRows, setSelectedRows] = useState([]);
     const [newRowAdded, setNewRowAdded] = useState(false);
+    const [isSortApplied, setIsSortApplied] = useState(false);
 
     const { control, getValues, watch } = useFormContext();
     const useFieldArrayOutput = useFieldArray({
@@ -190,13 +196,16 @@ export const CustomAgGridTable: FunctionComponent<CustomAgGridTableProps> = ({
         setNewRowAdded(true);
     };
 
-    const getIndex = (val: any) => {
-        return getValues(name).findIndex(
-            (row: any) =>
-                row[FieldConstants.AG_GRID_ROW_UUID] ===
-                val[FieldConstants.AG_GRID_ROW_UUID]
-        );
-    };
+    const getIndex = useCallback(
+        (val: any) => {
+            return getValues(name).findIndex(
+                (row: any) =>
+                    row[FieldConstants.AG_GRID_ROW_UUID] ===
+                    val[FieldConstants.AG_GRID_ROW_UUID]
+            );
+        },
+        [getValues, name]
+    );
 
     useEffect(() => {
         if (gridApi) {
@@ -228,7 +237,7 @@ export const CustomAgGridTable: FunctionComponent<CustomAgGridTableProps> = ({
     };
 
     const onCellEditingStopped = useCallback(
-        (event: any) => {
+        (event: CellEditingStoppedEvent) => {
             const rowIndex = getIndex(event.data);
             if (rowIndex === -1) {
                 return;
@@ -237,6 +246,13 @@ export const CustomAgGridTable: FunctionComponent<CustomAgGridTableProps> = ({
         },
         [getIndex, update]
     );
+
+    const onSortChanged = useCallback((event: SortChangedEvent) => {
+        const isAnycolumnhasSort = event?.api
+            ?.getColumnState()
+            .some((col: ColumnState) => col.sort);
+        setIsSortApplied(isAnycolumnhasSort);
+    }, []);
 
     return (
         <Grid container spacing={2}>
@@ -268,6 +284,7 @@ export const CustomAgGridTable: FunctionComponent<CustomAgGridTableProps> = ({
                         newRowAdded ? onRowDataUpdated : undefined
                     }
                     onCellEditingStopped={onCellEditingStopped}
+                    onSortChanged={onSortChanged}
                     getRowId={(row) =>
                         row.data[FieldConstants.AG_GRID_ROW_UUID]
                     }
@@ -287,8 +304,8 @@ export const CustomAgGridTable: FunctionComponent<CustomAgGridTableProps> = ({
                 handleDeleteRows={handleDeleteRows}
                 handleMoveRowDown={handleMoveRowDown}
                 handleMoveRowUp={handleMoveRowUp}
-                disableUp={noRowSelected || isFirstSelected}
-                disableDown={noRowSelected || isLastSelected}
+                disableUp={noRowSelected || isFirstSelected || isSortApplied}
+                disableDown={noRowSelected || isLastSelected || isSortApplied}
                 disableDelete={noRowSelected}
                 csvProps={csvProps}
                 useFieldArrayOutput={useFieldArrayOutput}
