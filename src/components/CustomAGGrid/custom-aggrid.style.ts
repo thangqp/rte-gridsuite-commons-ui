@@ -41,6 +41,10 @@ export const styles = {
         '& .ag-cell-focus, .ag-cell': {
             border: 'none !important',
         },
+        '@keyframes blink': {
+            from: { backgroundColor: 'white'},
+            to: { backgroundColor: 'black'},
+        },
     }),
     noBorderRight: {
         // hides right border for header of "Edit" column due to column being pinned
