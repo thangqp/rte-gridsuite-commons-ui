@@ -71,7 +71,6 @@ function reloadTimerOnExpiresIn(
     userManager: UserManager,
     expiresIn: number
 ) {
-    // TODO: Can we stop doing it in the hash for implicit flow ? To make it common for both flows
     // Not allowed by TS because expires_in is supposed to be readonly
     // @ts-ignore
     user.expires_in = expiresIn;
@@ -88,16 +87,9 @@ function handleSigninSilent(
         if (user == null || getIdTokenExpiresIn(user) < 0) {
             return userManager.signinSilent().catch((error: Error) => {
                 dispatch(setShowAuthenticationRouterLogin(true));
-                const errorIssuerCodeFlow = isIssuerErrorForCodeFlow(error);
-                const errorIssuerImplicitFlow =
-                    error.message ===
-                    'authority mismatch on settings vs. signin state';
-                if (errorIssuerCodeFlow) {
+                if (isIssuerErrorForCodeFlow(error)) {
                     // Replacing authority for code flow only because it's done in the hash for implicit flow
-                    // TODO: Can we stop doing it in the hash for implicit flow ? To make it common here for both flows
                     extractIssuerToSessionStorage(error);
-                }
-                if (errorIssuerCodeFlow || errorIssuerImplicitFlow) {
                     reload();
                 }
             });
@@ -134,62 +126,10 @@ export async function initializeAuthenticationProd(
 ) {
     const idpSettings = await idpSettingsFetcher();
     try {
-        /* hack to ignore the iss check. XXX TODO to remove */
-        const regextoken = /id_token=[^&]*/;
-        const regexstate = /state=[^&]*/;
-        const regexexpires = /expires_in=[^&]*/;
-        let authority: string | undefined;
-        if (window.location.hash) {
-            const matched_id_token = window.location.hash.match(regextoken);
-            const matched_state = window.location.hash.match(regexstate);
-            if (matched_id_token != null && matched_state != null) {
-                const id_token = matched_id_token[0].split('=')[1];
-                const state = matched_state[0].split('=')[1];
-                const strState = localStorage.getItem('oidc.' + state);
-                if (strState != null) {
-                    const decoded = jwtDecode(id_token);
-                    authority = decoded.iss;
-                    const storedState = JSON.parse(strState);
-                    console.debug(
-                        'Replacing authority in storedState. Before: ',
-                        storedState.authority,
-                        'after: ',
-                        authority
-                    );
-                    storedState.authority = authority;
-                    localStorage.setItem(
-                        'oidc.' + state,
-                        JSON.stringify(storedState)
-                    );
-                    if (authority !== undefined) {
-                        sessionStorage.setItem(hackAuthorityKey, authority);
-                    }
-                    const matched_expires =
-                        window.location.hash.match(regexexpires);
-                    if (matched_expires != null) {
-                        const expires_in = parseInt(
-                            matched_expires[0].split('=')[1]
-                        );
-                        window.location.hash = window.location.hash.replace(
-                            matched_expires[0],
-                            'expires_in=' +
-                                computeMinExpiresIn(
-                                    expires_in,
-                                    id_token,
-                                    idpSettings.maxExpiresIn
-                                )
-                        );
-                    }
-                }
-            }
-        }
-        authority =
-            authority ||
-            sessionStorage.getItem(hackAuthorityKey) ||
-            idpSettings.authority?.toString();
-
         const settings = {
-            authority,
+            authority:
+                sessionStorage.getItem(hackAuthorityKey) ||
+                idpSettings.authority?.toString(),
             client_id: idpSettings.client_id,
             redirect_uri: idpSettings.redirect_uri?.toString(),
             post_logout_redirect_uri:
@@ -385,7 +325,6 @@ export function handleSigninCallback(
         .catch(function (e) {
             if (isIssuerErrorForCodeFlow(e)) {
                 // Replacing authority for code flow only because it's done in the hash for implicit flow
-                // TODO: Can we also do it here for the implicit flow ? To make it common here for both flows
                 extractIssuerToSessionStorage(e);
                 // After navigate, location will be out of a redirection route (sign-in-silent or sign-in-callback) so reloading the page will attempt a silent signin
                 // It will reload the user manager based on hacked authority at initialization with the new authority
