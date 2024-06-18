@@ -94,7 +94,7 @@ function handleSigninSilent(
     });
 }
 
-function initializeAuthenticationDev(
+export function initializeAuthenticationDev(
     dispatch: Dispatch<unknown>,
     isSilentRenew: boolean,
     validateUser: UserValidationFunc,
@@ -114,7 +114,7 @@ function initializeAuthenticationDev(
 
 const accessTokenExpiringNotificationTime = 60; // seconds
 
-function initializeAuthenticationProd(
+export function initializeAuthenticationProd(
     dispatch: Dispatch<unknown>,
     isSilentRenew: boolean,
     idpSettings: Promise<Response>,
@@ -257,14 +257,17 @@ function computeMinExpiresIn(
     return newExpiresIn;
 }
 
-function login(location: Location, userManagerInstance: UserManager) {
+export function login(location: Location, userManagerInstance: UserManager) {
     sessionStorage.setItem(pathKey, location.pathname + location.search);
     return userManagerInstance
         .signinRedirect()
         .then(() => console.debug('login'));
 }
 
-function logout(dispatch: Dispatch<unknown>, userManagerInstance: UserManager) {
+export function logout(
+    dispatch: Dispatch<unknown>,
+    userManagerInstance: UserManager
+) {
     sessionStorage.removeItem(hackAuthorityKey); //To remove when hack is removed
     return userManagerInstance.getUser().then((user) => {
         if (user) {
@@ -301,7 +304,7 @@ function getIdTokenExpiresIn(user: User) {
     return exp - now;
 }
 
-function dispatchUser(
+export function dispatchUser(
     dispatch: Dispatch<unknown>,
     userManagerInstance: CustomUserManager,
     validateUser: UserValidationFunc
@@ -363,7 +366,7 @@ function dispatchUser(
     });
 }
 
-function getPreLoginPath() {
+export function getPreLoginPath() {
     return sessionStorage.getItem(pathKey);
 }
 
@@ -374,7 +377,7 @@ function navigateToPreLoginPath(navigate: NavigateFunction) {
     }
 }
 
-function handleSigninCallback(
+export function handleSigninCallback(
     dispatch: Dispatch<unknown>,
     navigate: NavigateFunction,
     userManagerInstance: UserManager
@@ -409,7 +412,7 @@ function handleSigninCallback(
         });
 }
 
-function handleSilentRenewCallback(userManagerInstance: UserManager) {
+export function handleSilentRenewCallback(userManagerInstance: UserManager) {
     userManagerInstance.signinSilentCallback();
 }
 
@@ -507,14 +510,3 @@ function handleUser(
     console.debug('dispatch user');
     dispatchUser(dispatch, userManager, validateUser);
 }
-
-export {
-    initializeAuthenticationDev,
-    initializeAuthenticationProd,
-    handleSilentRenewCallback,
-    login,
-    logout,
-    dispatchUser,
-    handleSigninCallback,
-    getPreLoginPath,
-};
