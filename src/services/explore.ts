@@ -7,9 +7,10 @@
 
 import { UUID } from 'crypto';
 import {
-  backendFetch,
-  backendFetchJson,
-  getRequestParamFromList, Token
+    backendFetch,
+    backendFetchJson,
+    getRequestParamFromList,
+    Token,
 } from './utils';
 import { ElementAttributes } from '../utils/types';
 
