@@ -64,7 +64,7 @@ export function fetchElementsInfos(
     ids: UUID[],
     elementTypes?: string[],
     equipmentTypes?: string[]
-): Promise<ElementAttributes[]> {
+) {
     console.info('Fetching elements metadata');
 
     // Add params to Url
@@ -94,5 +94,5 @@ export function fetchElementsInfos(
     return backendFetchJson(url, {
         method: 'get',
         headers: { 'Content-Type': 'application/json' },
-    });
+    }) as Promise<ElementAttributes[]>;
 }

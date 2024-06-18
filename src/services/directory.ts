@@ -30,13 +30,10 @@ export function fetchRootFolders(
     return backendFetchJson(fetchRootFoldersUrl, {
         method: 'get',
         headers: { 'Content-Type': 'application/json' },
-    });
+    }) as Promise<ElementAttributes[]>;
 }
 
-export function fetchDirectoryContent(
-    directoryUuid: UUID,
-    types?: string[]
-): Promise<ElementAttributes[]> {
+export function fetchDirectoryContent(directoryUuid: UUID, types?: string[]) {
     console.info("Fetching Folder content '%s'", directoryUuid);
 
     // Add params to Url
@@ -51,12 +48,10 @@ export function fetchDirectoryContent(
     return backendFetchJson(fetchDirectoryContentUrl, {
         method: 'get',
         headers: { 'Content-Type': 'application/json' },
-    });
+    }) as Promise<ElementAttributes[]>;
 }
 
-export function fetchDirectoryElementPath(
-    elementUuid: UUID
-): Promise<ElementAttributes[]> {
+export function fetchDirectoryElementPath(elementUuid: UUID) {
     console.info(`Fetching element '${elementUuid}' and its parents info ...`);
     const fetchPathUrl = `${PREFIX_DIRECTORY_SERVER_QUERIES}/v1/elements/${encodeURIComponent(
         elementUuid
@@ -65,7 +60,7 @@ export function fetchDirectoryElementPath(
     return backendFetchJson(fetchPathUrl, {
         method: 'get',
         headers: { 'Content-Type': 'application/json' },
-    });
+    }) as Promise<ElementAttributes[]>;
 }
 
 export function elementExists(
