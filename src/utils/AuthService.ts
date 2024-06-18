@@ -21,6 +21,7 @@ import { NavigateFunction } from 'react-router-dom';
 import { Url } from '../services';
 
 type UserValidationFunc = (user: User) => Promise<boolean>;
+type IdpSettingsGetter = () => Promise<IdpSettings>;
 
 export type IdpSettings = {
     authority: Url;
@@ -128,14 +129,13 @@ const accessTokenExpiringNotificationTime = 60; // seconds
 export function initializeAuthenticationProd(
     dispatch: Dispatch<unknown>,
     isSilentRenew: boolean,
-    idpSettings: Promise<Response>,
+    idpSettingsFetcher: IdpSettingsGetter,
     validateUser: UserValidationFunc,
     authorizationCodeFlowEnabled: boolean,
     isSigninCallback: boolean
 ) {
-    return idpSettings
-        .then((r) => r.json())
-        .then((idpSettings: IdpSettings) => {
+    return idpSettingsFetcher()
+        .then((idpSettings) => {
             /* hack to ignore the iss check. XXX TODO to remove */
             const regextoken = /id_token=[^&]*/;
             const regexstate = /state=[^&]*/;
