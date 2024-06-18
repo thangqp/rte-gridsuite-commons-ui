@@ -7,19 +7,30 @@
 import { Log, User, UserManager } from 'oidc-client';
 import { UserManagerMock } from './UserManagerMock';
 import {
+    resetAuthenticationRouterError,
     setLoggedUser,
+    setLogoutError,
+    setShowAuthenticationRouterLogin,
     setSignInCallbackError,
     setUnauthorizedUserInfo,
-    setLogoutError,
     setUserValidationError,
-    resetAuthenticationRouterError,
-    setShowAuthenticationRouterLogin,
 } from '../redux/actions';
 import { jwtDecode } from 'jwt-decode';
 import { Dispatch } from 'react';
 import { NavigateFunction } from 'react-router-dom';
+import { Url } from '../services';
 
 type UserValidationFunc = (user: User) => Promise<boolean>;
+
+export type IdpSettings = {
+    authority: Url;
+    client_id: string;
+    redirect_uri: Url;
+    post_logout_redirect_uri: Url;
+    silent_redirect_uri: Url;
+    scope: string;
+    maxExpiresIn?: number;
+};
 
 type CustomUserManager = UserManager & {
     authorizationCodeFlowEnabled?: boolean;
@@ -124,7 +135,7 @@ export function initializeAuthenticationProd(
 ) {
     return idpSettings
         .then((r) => r.json())
-        .then((idpSettings) => {
+        .then((idpSettings: IdpSettings) => {
             /* hack to ignore the iss check. XXX TODO to remove */
             const regextoken = /id_token=[^&]*/;
             const regexstate = /state=[^&]*/;
@@ -177,7 +188,7 @@ export function initializeAuthenticationProd(
             authority =
                 authority ||
                 sessionStorage.getItem(hackAuthorityKey) ||
-                idpSettings.authority;
+                idpSettings.authority?.toString();
 
             const responseSettings = authorizationCodeFlowEnabled
                 ? { response_type: 'code' }
@@ -188,9 +199,11 @@ export function initializeAuthenticationProd(
             const settings = {
                 authority,
                 client_id: idpSettings.client_id,
-                redirect_uri: idpSettings.redirect_uri,
-                post_logout_redirect_uri: idpSettings.post_logout_redirect_uri,
-                silent_redirect_uri: idpSettings.silent_redirect_uri,
+                redirect_uri: idpSettings.redirect_uri?.toString(),
+                post_logout_redirect_uri:
+                    idpSettings.post_logout_redirect_uri?.toString(),
+                silent_redirect_uri:
+                    idpSettings.silent_redirect_uri?.toString(),
                 scope: idpSettings.scope,
                 automaticSilentRenew: !isSilentRenew,
                 accessTokenExpiringNotificationTime:
