@@ -34,7 +34,6 @@ export type IdpSettings = {
 };
 
 type CustomUserManager = UserManager & {
-    authorizationCodeFlowEnabled?: boolean;
     idpSettings?: {
         maxExpiresIn?: number;
     };
@@ -131,7 +130,6 @@ export async function initializeAuthenticationProd(
     isSilentRenew: boolean,
     idpSettingsFetcher: IdpSettingsGetter,
     validateUser: UserValidationFunc,
-    authorizationCodeFlowEnabled: boolean,
     isSigninCallback: boolean
 ) {
     const idpSettings = await idpSettingsFetcher();
@@ -190,12 +188,6 @@ export async function initializeAuthenticationProd(
             sessionStorage.getItem(hackAuthorityKey) ||
             idpSettings.authority?.toString();
 
-        const responseSettings = authorizationCodeFlowEnabled
-            ? { response_type: 'code' }
-            : {
-                  response_type: 'id_token token',
-                  response_mode: 'fragment',
-              };
         const settings = {
             authority,
             client_id: idpSettings.client_id,
@@ -207,13 +199,11 @@ export async function initializeAuthenticationProd(
             automaticSilentRenew: !isSilentRenew,
             accessTokenExpiringNotificationTime:
                 accessTokenExpiringNotificationTime,
-            ...responseSettings,
+            response_type: 'code',
         };
         let userManager: CustomUserManager = new UserManager(settings);
         // Hack to enrich UserManager object
         userManager.idpSettings = idpSettings; //store our settings in there as well to use it later
-        // Hack to enrich UserManager object
-        userManager.authorizationCodeFlowEnabled = authorizationCodeFlowEnabled;
         if (!isSilentRenew) {
             handleUser(dispatch, userManager, validateUser);
             if (!isSigninCallback) {
@@ -346,20 +336,17 @@ export function dispatchUser(
                     console.debug(
                         'User has been successfully loaded from store.'
                     );
-
                     // In authorization code flow we have to make the oidc-client lib re-evaluate the date of the token renewal timers
                     // because it is not hacked at page loading on the fragment before oidc-client lib initialization
-                    if (userManagerInstance.authorizationCodeFlowEnabled) {
-                        reloadTimerOnExpiresIn(
-                            user,
-                            userManagerInstance,
-                            computeMinExpiresIn(
-                                user.expires_in,
-                                user.id_token,
-                                userManagerInstance.idpSettings?.maxExpiresIn
-                            )
-                        );
-                    }
+                    reloadTimerOnExpiresIn(
+                        user,
+                        userManagerInstance,
+                        computeMinExpiresIn(
+                            user.expires_in,
+                            user.id_token,
+                            userManagerInstance.idpSettings?.maxExpiresIn
+                        )
+                    );
                     return dispatch(setLoggedUser(user));
                 })
                 .catch((e) => {
