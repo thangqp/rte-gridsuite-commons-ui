@@ -106,7 +106,7 @@ function handleSigninSilent(
     });
 }
 
-export function initializeAuthenticationDev(
+export async function initializeAuthenticationDev(
     dispatch: Dispatch<unknown>,
     isSilentRenew: boolean,
     validateUser: UserValidationFunc,
@@ -121,12 +121,12 @@ export function initializeAuthenticationDev(
             handleSigninSilent(dispatch, userManager);
         }
     }
-    return Promise.resolve(userManager);
+    return userManager;
 }
 
 const accessTokenExpiringNotificationTime = 60; // seconds
 
-export function initializeAuthenticationProd(
+export async function initializeAuthenticationProd(
     dispatch: Dispatch<unknown>,
     isSilentRenew: boolean,
     idpSettingsFetcher: IdpSettingsGetter,
@@ -134,101 +134,98 @@ export function initializeAuthenticationProd(
     authorizationCodeFlowEnabled: boolean,
     isSigninCallback: boolean
 ) {
-    return idpSettingsFetcher()
-        .then((idpSettings) => {
-            /* hack to ignore the iss check. XXX TODO to remove */
-            const regextoken = /id_token=[^&]*/;
-            const regexstate = /state=[^&]*/;
-            const regexexpires = /expires_in=[^&]*/;
-            let authority: string | undefined;
-            if (window.location.hash) {
-                const matched_id_token = window.location.hash.match(regextoken);
-                const matched_state = window.location.hash.match(regexstate);
-                if (matched_id_token != null && matched_state != null) {
-                    const id_token = matched_id_token[0].split('=')[1];
-                    const state = matched_state[0].split('=')[1];
-                    const strState = localStorage.getItem('oidc.' + state);
-                    if (strState != null) {
-                        const decoded = jwtDecode(id_token);
-                        authority = decoded.iss;
-                        const storedState = JSON.parse(strState);
-                        console.debug(
-                            'Replacing authority in storedState. Before: ',
-                            storedState.authority,
-                            'after: ',
-                            authority
+    const idpSettings = await idpSettingsFetcher();
+    try {
+        /* hack to ignore the iss check. XXX TODO to remove */
+        const regextoken = /id_token=[^&]*/;
+        const regexstate = /state=[^&]*/;
+        const regexexpires = /expires_in=[^&]*/;
+        let authority: string | undefined;
+        if (window.location.hash) {
+            const matched_id_token = window.location.hash.match(regextoken);
+            const matched_state = window.location.hash.match(regexstate);
+            if (matched_id_token != null && matched_state != null) {
+                const id_token = matched_id_token[0].split('=')[1];
+                const state = matched_state[0].split('=')[1];
+                const strState = localStorage.getItem('oidc.' + state);
+                if (strState != null) {
+                    const decoded = jwtDecode(id_token);
+                    authority = decoded.iss;
+                    const storedState = JSON.parse(strState);
+                    console.debug(
+                        'Replacing authority in storedState. Before: ',
+                        storedState.authority,
+                        'after: ',
+                        authority
+                    );
+                    storedState.authority = authority;
+                    localStorage.setItem(
+                        'oidc.' + state,
+                        JSON.stringify(storedState)
+                    );
+                    if (authority !== undefined) {
+                        sessionStorage.setItem(hackAuthorityKey, authority);
+                    }
+                    const matched_expires =
+                        window.location.hash.match(regexexpires);
+                    if (matched_expires != null) {
+                        const expires_in = parseInt(
+                            matched_expires[0].split('=')[1]
                         );
-                        storedState.authority = authority;
-                        localStorage.setItem(
-                            'oidc.' + state,
-                            JSON.stringify(storedState)
+                        window.location.hash = window.location.hash.replace(
+                            matched_expires[0],
+                            'expires_in=' +
+                                computeMinExpiresIn(
+                                    expires_in,
+                                    id_token,
+                                    idpSettings.maxExpiresIn
+                                )
                         );
-                        if (authority !== undefined) {
-                            sessionStorage.setItem(hackAuthorityKey, authority);
-                        }
-                        const matched_expires =
-                            window.location.hash.match(regexexpires);
-                        if (matched_expires != null) {
-                            const expires_in = parseInt(
-                                matched_expires[0].split('=')[1]
-                            );
-                            window.location.hash = window.location.hash.replace(
-                                matched_expires[0],
-                                'expires_in=' +
-                                    computeMinExpiresIn(
-                                        expires_in,
-                                        id_token,
-                                        idpSettings.maxExpiresIn
-                                    )
-                            );
-                        }
                     }
                 }
             }
-            authority =
-                authority ||
-                sessionStorage.getItem(hackAuthorityKey) ||
-                idpSettings.authority?.toString();
+        }
+        authority =
+            authority ||
+            sessionStorage.getItem(hackAuthorityKey) ||
+            idpSettings.authority?.toString();
 
-            const responseSettings = authorizationCodeFlowEnabled
-                ? { response_type: 'code' }
-                : {
-                      response_type: 'id_token token',
-                      response_mode: 'fragment',
-                  };
-            const settings = {
-                authority,
-                client_id: idpSettings.client_id,
-                redirect_uri: idpSettings.redirect_uri?.toString(),
-                post_logout_redirect_uri:
-                    idpSettings.post_logout_redirect_uri?.toString(),
-                silent_redirect_uri:
-                    idpSettings.silent_redirect_uri?.toString(),
-                scope: idpSettings.scope,
-                automaticSilentRenew: !isSilentRenew,
-                accessTokenExpiringNotificationTime:
-                    accessTokenExpiringNotificationTime,
-                ...responseSettings,
-            };
-            let userManager: CustomUserManager = new UserManager(settings);
-            // Hack to enrich UserManager object
-            userManager.idpSettings = idpSettings; //store our settings in there as well to use it later
-            // Hack to enrich UserManager object
-            userManager.authorizationCodeFlowEnabled =
-                authorizationCodeFlowEnabled;
-            if (!isSilentRenew) {
-                handleUser(dispatch, userManager, validateUser);
-                if (!isSigninCallback) {
-                    handleSigninSilent(dispatch, userManager);
-                }
+        const responseSettings = authorizationCodeFlowEnabled
+            ? { response_type: 'code' }
+            : {
+                  response_type: 'id_token token',
+                  response_mode: 'fragment',
+              };
+        const settings = {
+            authority,
+            client_id: idpSettings.client_id,
+            redirect_uri: idpSettings.redirect_uri?.toString(),
+            post_logout_redirect_uri:
+                idpSettings.post_logout_redirect_uri?.toString(),
+            silent_redirect_uri: idpSettings.silent_redirect_uri,
+            scope: idpSettings.scope,
+            automaticSilentRenew: !isSilentRenew,
+            accessTokenExpiringNotificationTime:
+                accessTokenExpiringNotificationTime,
+            ...responseSettings,
+        };
+        let userManager: CustomUserManager = new UserManager(settings);
+        // Hack to enrich UserManager object
+        userManager.idpSettings = idpSettings; //store our settings in there as well to use it later
+        // Hack to enrich UserManager object
+        userManager.authorizationCodeFlowEnabled = authorizationCodeFlowEnabled;
+        if (!isSilentRenew) {
+            handleUser(dispatch, userManager, validateUser);
+            if (!isSigninCallback) {
+                handleSigninSilent(dispatch, userManager);
             }
-            return userManager;
-        })
-        .catch((error) => {
-            console.debug('error when importing the idp settings', error);
-            dispatch(setShowAuthenticationRouterLogin(true));
-            throw error;
-        });
+        }
+        return userManager;
+    } catch (error: any) {
+        console.debug('error when importing the idp settings', error);
+        dispatch(setShowAuthenticationRouterLogin(true));
+        throw error;
+    }
 }
 
 function computeMinExpiresIn(
