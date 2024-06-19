@@ -18,6 +18,7 @@ import { UUID } from 'crypto';
 import { elementExistsType } from './criteria-based/criteria-based-filter-edition-dialog';
 import { FilterType } from './constants/filter-constants';
 import { DescriptionField } from './utils/description-field';
+import RadioInput from '../inputs/react-hook-form/radio-input';
 
 interface FilterFormProps {
     creation?: boolean;
@@ -60,7 +61,20 @@ export const FilterForm: FunctionComponent<FilterFormProps> = (props) => {
                     elementExists={props.elementExists}
                 />
             </Grid>
-            {props.creation && <DescriptionField />}
+            {props.creation && (
+                <>
+                    {props.creation && <DescriptionField />}
+                    {!props.sourceFilterForExplicitNamingConversion && (
+                        <Grid item>
+                            <RadioInput
+                                name={FieldConstants.FILTER_TYPE}
+                                options={Object.values(FilterType)}
+                                formProps={{ onChange: handleChange }} // need to override this in order to do not activate the validate button when changing the filter type
+                            />
+                        </Grid>
+                    )}
+                </>
+            )}
             {filterType === FilterType.CRITERIA_BASED.id && (
                 <CriteriaBasedFilterForm />
             )}
