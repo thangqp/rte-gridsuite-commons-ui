@@ -19,6 +19,7 @@ import { UUID } from 'crypto';
 import { elementExistsType } from './criteria-based/criteria-based-filter-edition-dialog';
 import ExpandingTextField from '../inputs/react-hook-form/ExpandingTextField';
 import { FilterType } from './constants/filter-constants';
+import { DescriptionField } from './utils/description-field';
 
 interface FilterFormProps {
     creation?: boolean;
@@ -61,29 +62,7 @@ export const FilterForm: FunctionComponent<FilterFormProps> = (props) => {
                     elementExists={props.elementExists}
                 />
             </Grid>
-            {props.creation && (
-                <>
-                    <Grid item xs={12}>
-                        <Box>
-                            <ExpandingTextField
-                                name={FieldConstants.DESCRIPTION}
-                                label={'descriptionProperty'}
-                                minRows={3}
-                                rows={5}
-                            />
-                        </Box>
-                    </Grid>
-                    {!props.sourceFilterForExplicitNamingConversion && (
-                        <Grid item>
-                            <RadioInput
-                                name={FieldConstants.FILTER_TYPE}
-                                options={Object.values(FilterType)}
-                                formProps={{ onChange: handleChange }} // need to override this in order to do not activate the validate button when changing the filter type
-                            />
-                        </Grid>
-                    )}
-                </>
-            )}
+            {props.creation && <DescriptionField />}
             {filterType === FilterType.CRITERIA_BASED.id && (
                 <CriteriaBasedFilterForm />
             )}
