@@ -12,12 +12,10 @@ import ExplicitNamingFilterForm from './explicit-naming/explicit-naming-filter-f
 import React, { FunctionComponent, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import ExpertFilterForm from './expert/expert-filter-form';
-import { Box, Grid } from '@mui/material';
-import RadioInput from '../inputs/react-hook-form/radio-input';
+import { Grid } from '@mui/material';
 import { ElementType } from '../../utils/ElementType';
 import { UUID } from 'crypto';
 import { elementExistsType } from './criteria-based/criteria-based-filter-edition-dialog';
-import ExpandingTextField from '../inputs/react-hook-form/ExpandingTextField';
 import { FilterType } from './constants/filter-constants';
 import { DescriptionField } from './utils/description-field';
 
