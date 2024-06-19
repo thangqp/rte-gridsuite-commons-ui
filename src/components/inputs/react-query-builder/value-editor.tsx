@@ -6,10 +6,10 @@
  */
 
 import { ValueEditorProps } from 'react-querybuilder';
-import React, { useCallback } from 'react';
 import { MaterialValueEditor } from '@react-querybuilder/material';
 import Box from '@mui/material/Box';
 import { useFormContext } from 'react-hook-form';
+import { useCallback } from 'react';
 import CountryValueEditor from './country-value-editor';
 import TranslatedValueEditor from './translated-value-editor';
 import TextValueEditor from './text-value-editor';

@@ -5,8 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useEffect } from 'react';
 import { validate as uuidValidate } from 'uuid';
+import { useEffect } from 'react';
 import useCustomFormContext from '../react-hook-form/provider/use-custom-form-context';
 import { fetchElementsInfos } from '../../../services';
 import DirectoryItemsInput from '../react-hook-form/directory-items-input';

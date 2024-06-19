@@ -4,7 +4,8 @@
     "airbnb",
     "airbnb-typescript",
     "airbnb/hooks",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:react/jsx-runtime"
   ],
   "parserOptions": {
     "project": "./tsconfig.json"
@@ -20,8 +21,6 @@
     "prettier/prettier": "warn",
     "curly": "error",
     "no-console": "off",
-    "react/jsx-props-no-spreading": "off",
-    "react/react-in-jsx-scope": "off",
-    "@typescript-eslint/no-shadow": "error"
+    "react/jsx-props-no-spreading": "off"
   }
 }

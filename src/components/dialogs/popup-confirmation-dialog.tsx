@@ -52,8 +52,4 @@ function PopupConfirmationDialog({
     );
 }
 
-PopupConfirmationDialog.defaultProps = {
-    validateButtonLabel: undefined,
-};
-
 export default PopupConfirmationDialog;

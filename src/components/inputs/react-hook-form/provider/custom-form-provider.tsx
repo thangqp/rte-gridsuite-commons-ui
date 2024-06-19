@@ -27,7 +27,7 @@ export const CustomFormContext = createContext<CustomFormContextProps>({
     language: getSystemLanguage(),
 });
 
-function CustomFormProvider(props: CustomFormProviderProps) {
+function CustomFormProvider(props: Readonly<CustomFormProviderProps>) {
     const {
         validationSchema,
         removeOptional,
@@ -53,10 +53,5 @@ function CustomFormProvider(props: CustomFormProviderProps) {
         </FormProvider>
     );
 }
-
-CustomFormProvider.defaultProps = {
-    removeOptional: false,
-    language: undefined,
-};
 
 export default CustomFormProvider;

@@ -205,7 +205,7 @@ function ExplicitNamingFilterForm({
     const openConfirmationPopup = () => {
         return getValues(FILTER_EQUIPMENTS_ATTRIBUTES).some(
             (row: FilterTableRow) =>
-                row[DISTRIBUTION_KEY] ?? row[FieldConstants.EQUIPMENT_ID]
+                row[DISTRIBUTION_KEY] || row[FieldConstants.EQUIPMENT_ID]
         );
     };
 

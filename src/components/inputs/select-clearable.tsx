@@ -64,8 +64,4 @@ function SelectClearable(props: Readonly<SelectClearableProps>) {
     );
 }
 
-SelectClearable.defaultProps = {
-    label: undefined,
-};
-
 export default SelectClearable;

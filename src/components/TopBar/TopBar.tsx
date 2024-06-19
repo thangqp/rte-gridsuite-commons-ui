@@ -196,7 +196,7 @@ function TopBar({
     equipmentLabelling,
     onLanguageClick,
     language,
-}: PropsWithChildren<TopBarProps>) {
+}: Readonly<PropsWithChildren<TopBarProps>>) {
     const [anchorElSettingsMenu, setAnchorElSettingsMenu] =
         useState<Element | null>(null);
     const [anchorElAppsMenu, setAnchorElAppsMenu] = useState<Element | null>(
@@ -644,14 +644,5 @@ function TopBar({
         </AppBar>
     );
 }
-
-TopBar.defaultProps = {
-    onParametersClick: undefined,
-    onAboutClick: undefined,
-    onThemeClick: undefined,
-    theme: undefined,
-    onEquipmentLabellingClick: undefined,
-    equipmentLabelling: undefined,
-};
 
 export default TopBar;

@@ -6,10 +6,9 @@
  */
 
 import { ValueSelectorProps } from 'react-querybuilder';
-import React from 'react';
 import { MaterialValueSelector } from '@react-querybuilder/material';
 
-function ValueSelector(props: ValueSelectorProps) {
+function ValueSelector(props: Readonly<ValueSelectorProps>) {
     return (
         <MaterialValueSelector
             {...props}
