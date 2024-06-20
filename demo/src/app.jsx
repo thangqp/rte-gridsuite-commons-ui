@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/* eslint-disable func-names, no-nested-ternary, no-return-assign, @typescript-eslint/no-unused-vars, no-promise-executor-return, @typescript-eslint/no-unused-expressions, no-alert, no-undef, @typescript-eslint/no-shadow, react/jsx-no-bind, react/prop-types */
+/* eslint-disable func-names, no-nested-ternary, no-return-assign, @typescript-eslint/no-unused-vars, no-promise-executor-return, @typescript-eslint/no-unused-expressions, no-alert, no-undef, @typescript-eslint/no-shadow, react/jsx-no-bind, react/prop-types, import/no-extraneous-dependencies */
 
 import {
     Box,
