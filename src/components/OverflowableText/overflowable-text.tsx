@@ -12,7 +12,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import { Box, BoxProps, SxProps, Tooltip, styled } from '@mui/material';
+import { Box, BoxProps, SxProps, Theme, Tooltip, styled } from '@mui/material';
 import { Style } from 'node:util';
 
 const overflowStyle = {
@@ -42,7 +42,7 @@ export interface OverflowableTextProps extends BoxProps {
     text?: ReactElement | string;
     maxLineCount?: number;
     tooltipStyle?: Style;
-    tooltipSx?: SxProps;
+    tooltipSx?: SxProps<Theme>;
 }
 
 export const OverflowableText = styled(

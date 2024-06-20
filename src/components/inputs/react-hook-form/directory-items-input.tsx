@@ -178,7 +178,6 @@ function DirectoryItemsInput({
             if (chip) {
                 fetchDirectoryElementPath(chip).then((response: any[]) => {
                     const path = response
-                        .reverse() // we reverse the order so the root parent is first in the list
                         .filter((e) => e.elementUuid !== chip)
                         .map((e) => e.elementUuid);
 

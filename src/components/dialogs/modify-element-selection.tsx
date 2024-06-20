@@ -50,7 +50,6 @@ function ModifyElementSelection(props: Readonly<ModifyElementSelectionProps>) {
                 setActiveDirectoryName(
                     res
                         .map((element: any) => element.elementName.trim())
-                        .reverse()
                         .join('/')
                 );
             });

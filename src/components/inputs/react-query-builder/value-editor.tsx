@@ -6,25 +6,23 @@
  */
 
 import { ValueEditorProps } from 'react-querybuilder';
+import { useCallback } from 'react';
 import { MaterialValueEditor } from '@react-querybuilder/material';
 import Box from '@mui/material/Box';
 import { useFormContext } from 'react-hook-form';
-import { useCallback } from 'react';
 import CountryValueEditor from './country-value-editor';
 import TranslatedValueEditor from './translated-value-editor';
 import TextValueEditor from './text-value-editor';
 
-import {
-    DataType,
-    FieldType,
-    OperatorType,
-} from '../../filter/expert/expert-filter.type';
+import { DataType, FieldType } from '../../filter/expert/expert-filter.type';
+import FieldConstants from '../../../utils/field-constants';
 import { Substation, VoltageLevel } from '../../../utils/equipment-types';
 import ElementValueEditor from './element-value-editor';
 import { ElementType } from '../../../utils/ElementType';
 import PropertyValueEditor from './property-value-editor';
 import { FilterType } from '../../filter/constants/filter-constants';
-import FieldConstants from '../../../utils/field-constants';
+import GroupValueEditor from './composite-rule-editor/group-value-editor';
+import { OPERATOR_OPTIONS } from '../../filter/expert/expert-filter-constants';
 
 const styles = {
     noArrows: {
@@ -39,7 +37,15 @@ const styles = {
 };
 
 function ValueEditor(props: Readonly<ValueEditorProps>) {
-    const { field, operator, value, rule, handleOnChange, inputType } = props;
+    const {
+        field,
+        operator,
+        value,
+        rule,
+        handleOnChange,
+        inputType,
+        fieldData,
+    } = props;
     const formContext = useFormContext();
     const { getValues } = formContext;
     const itemFilter = useCallback(
@@ -66,8 +72,8 @@ function ValueEditor(props: Readonly<ValueEditorProps>) {
     );
 
     if (
-        operator === OperatorType.EXISTS ||
-        operator === OperatorType.NOT_EXISTS
+        operator === OPERATOR_OPTIONS.EXISTS.name ||
+        operator === OPERATOR_OPTIONS.NOT_EXISTS.name
     ) {
         // No value needed for these operators
         return null;
@@ -80,6 +86,8 @@ function ValueEditor(props: Readonly<ValueEditorProps>) {
         return <CountryValueEditor {...props} />;
     }
     if (
+        field === FieldType.REGULATION_TYPE ||
+        field === FieldType.SVAR_REGULATION_MODE ||
         field === FieldType.ENERGY_SOURCE ||
         field === FieldType.SHUNT_COMPENSATOR_TYPE ||
         field === FieldType.LOAD_TYPE ||
@@ -89,8 +97,8 @@ function ValueEditor(props: Readonly<ValueEditorProps>) {
         return <TranslatedValueEditor {...props} />;
     }
     if (
-        operator === OperatorType.IS_PART_OF ||
-        operator === OperatorType.IS_NOT_PART_OF
+        operator === OPERATOR_OPTIONS.IS_PART_OF.name ||
+        operator === OPERATOR_OPTIONS.IS_NOT_PART_OF.name
     ) {
         let equipmentTypes;
         if (
@@ -121,6 +129,8 @@ function ValueEditor(props: Readonly<ValueEditorProps>) {
     if (
         field === FieldType.ID ||
         field === FieldType.NAME ||
+        field === FieldType.REGULATING_TERMINAL_VL_ID ||
+        field === FieldType.REGULATING_TERMINAL_CONNECTABLE_ID ||
         field === FieldType.VOLTAGE_LEVEL_ID ||
         field === FieldType.VOLTAGE_LEVEL_ID_1 ||
         field === FieldType.VOLTAGE_LEVEL_ID_2
@@ -160,6 +170,10 @@ function ValueEditor(props: Readonly<ValueEditorProps>) {
             />
         );
     }
+    if (fieldData.dataType === DataType.COMBINATOR) {
+        return <GroupValueEditor {...props} />;
+    }
+
     return (
         <Box sx={inputType === 'number' ? styles.noArrows : undefined}>
             <MaterialValueEditor

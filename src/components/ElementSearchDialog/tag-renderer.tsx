@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import clsx from 'clsx';
-import { SxProps } from '@mui/material';
+import { SxProps, Theme } from '@mui/material';
 import OverflowableText from '../OverflowableText';
 import { EQUIPMENT_TYPE, EquipmentType } from '../../utils/EquipmentType';
 import { mergeSx } from '../../utils/styles';
@@ -17,8 +17,8 @@ interface TagRendererProps {
             equipmentVlTag?: string;
         };
         styles?: {
-            equipmentTag?: SxProps;
-            equipmentVlTag?: SxProps;
+            equipmentTag?: SxProps<Theme>;
+            equipmentVlTag?: SxProps<Theme>;
         };
     };
     element: {
