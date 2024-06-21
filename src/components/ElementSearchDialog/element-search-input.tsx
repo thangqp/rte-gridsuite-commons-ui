@@ -15,6 +15,7 @@ import { useIntl } from 'react-intl';
 export type RenderElementProps<T> = HTMLAttributes<HTMLLIElement> & {
     element: T;
     inputValue: string;
+    onClose?: () => void;
 };
 
 export interface ElementSearchInputProps<T>
@@ -23,6 +24,7 @@ export interface ElementSearchInputProps<T>
         'sx' | 'size' | 'loadingText' | 'loading'
     > {
     searchTerm: string;
+    onClose?: () => void;
     onSearchTermChange: (searchTerm: string) => void;
     onSelectionChange: (selection: T) => void;
     getOptionLabel: (option: T) => string;
@@ -48,6 +50,7 @@ export const ElementSearchInput = <T,>(props: ElementSearchInputProps<T>) => {
         renderInput,
         getOptionLabel,
         isOptionEqualToValue,
+        onClose: handleClose,
         showResults,
         searchTerm,
         loadingText,
@@ -109,6 +112,7 @@ export const ElementSearchInput = <T,>(props: ElementSearchInputProps<T>) => {
                     ...optionProps,
                     element,
                     inputValue,
+                    onClose: handleClose,
                 })
             }
             renderInput={(params: AutocompleteRenderInputParams) =>

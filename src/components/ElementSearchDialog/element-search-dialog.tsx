@@ -37,6 +37,7 @@ export const ElementSearchDialog = <T,>(props: ElementSearchDialogProps<T>) => {
             <DialogContent>
                 <ElementSearchInput
                     onSearchTermChange={onSearchTermChange}
+                    onClose={onClose}
                     {...rest}
                 />
             </DialogContent>
